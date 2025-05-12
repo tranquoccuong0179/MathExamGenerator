@@ -1,0 +1,6 @@
+@MathExamGenerator.API_HostAddress = http://localhost:5109
+
+GET {{MathExamGenerator.API_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
