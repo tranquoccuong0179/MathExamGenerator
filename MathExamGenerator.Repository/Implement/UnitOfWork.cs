@@ -66,52 +66,5 @@ namespace MathExamGenerator.Repository.Implement
                 throw new Exception(exceptionMessage);
             }
         }
-
-        public async Task BeginTransactionAsync()
-        {
-            if (_currentTransaction == null)
-            {
-                _currentTransaction = await Context.Database.BeginTransactionAsync();
-            }
-        }
-
-        public async Task CommitTransactionAsync()
-        {
-            try
-            {
-                await CommitAsync();
-                await _currentTransaction?.CommitAsync();
-            }
-            catch
-            {
-                await RollbackTransactionAsync();
-                throw;
-            }
-            finally
-            {
-                await DisposeTransactionAsync();
-            }
-        }
-
-        public async Task RollbackTransactionAsync()
-        {
-            try
-            {
-                await _currentTransaction?.RollbackAsync();
-            }
-            finally
-            {
-                await DisposeTransactionAsync();
-            }
-        }
-
-        public async Task DisposeTransactionAsync()
-        {
-            if (_currentTransaction != null)
-            {
-                await _currentTransaction.DisposeAsync();
-                _currentTransaction = null;
-            }
-        }
     }
 }
