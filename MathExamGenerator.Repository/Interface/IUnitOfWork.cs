@@ -12,10 +12,6 @@ namespace MathExamGenerator.Repository.Interface
         int Commit();
 
         Task<int> CommitAsync();
-        Task BeginTransactionAsync();
-        Task CommitTransactionAsync();
-        Task RollbackTransactionAsync();
-        Task DisposeTransactionAsync();
     }
 
     public interface IUnitOfWork<TContext> : IUnitOfWork where TContext : DbContext
