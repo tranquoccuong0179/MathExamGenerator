@@ -1,9 +1,12 @@
 ﻿using MathExamGenerator.Model.Entity;
 using MathExamGenerator.Repository.Implement;
 using MathExamGenerator.Repository.Interface;
+using MathExamGenerator.Service.Implement;
+using MathExamGenerator.Service.Interface;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
+using StackExchange.Redis;
 
 namespace MathExamGenerator.API
 {
@@ -23,6 +26,8 @@ namespace MathExamGenerator.API
 
         public static IServiceCollection AddCustomServices(this IServiceCollection services)
         {
+            services.AddScoped<IAccountService, AccountService>();
+            services.AddScoped<IEmailSender, EmailSender>();
             return services;
         }
         public static IServiceCollection AddHttpClientServices(this IServiceCollection services)
@@ -43,6 +48,15 @@ namespace MathExamGenerator.API
                 : base(() => serviceProvider.GetRequiredService<T>())
             {
             }
+        }
+
+        public static IServiceCollection AddRedis(this IServiceCollection services)
+        {
+            IConfiguration configuration = new ConfigurationBuilder()
+                .AddJsonFile("appsettings.json", optional: true, reloadOnChange: true).Build();
+            var redisConnectionString = configuration.GetConnectionString("Redis");
+            services.AddSingleton<IConnectionMultiplexer>(ConnectionMultiplexer.Connect(redisConnectionString));
+            return services;
         }
 
         public static IServiceCollection AddJwtValidation(this IServiceCollection services)
