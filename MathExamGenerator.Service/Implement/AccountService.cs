@@ -1,0 +1,101 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using AutoMapper;
+using MathExamGenerator.Model.Entity;
+using MathExamGenerator.Model.Payload.Request.Account;
+using MathExamGenerator.Model.Payload.Response;
+using MathExamGenerator.Model.Payload.Response.Account;
+using MathExamGenerator.Model.Payload.Settings;
+using MathExamGenerator.Model.Utils;
+using MathExamGenerator.Repository.Interface;
+using MathExamGenerator.Service.Interface;
+using Microsoft.AspNetCore.Http;
+using Microsoft.Extensions.Logging;
+using StackExchange.Redis;
+
+namespace MathExamGenerator.Service.Implement
+{
+    public class AccountService : BaseService<AccountService>, IAccountService
+    {
+        private readonly IConnectionMultiplexer _redis;
+        private readonly IEmailSender _emailSender;
+
+        public AccountService(IUnitOfWork<MathExamGeneratorContext> unitOfWork, 
+                              ILogger<AccountService> logger, IMapper mapper, 
+                              IHttpContextAccessor httpContextAccessor, 
+                              IConnectionMultiplexer redis, 
+                              IEmailSender emailSender) : base(unitOfWork, logger, mapper, httpContextAccessor)
+        {
+            _redis = redis;
+            _emailSender = emailSender;
+        }
+
+        public Task<BaseResponse<RegisterResponse>> Register(RegisterRequest request)
+        {
+            throw new NotImplementedException();
+        }
+
+        public async Task<BaseResponse<bool>> SendOtp(string email)
+        {
+            var redisDb = _redis.GetDatabase();
+
+            var key = "emailOtp:" + email;
+
+            var existingOtp = await redisDb.StringGetAsync(key);
+            if (!string.IsNullOrEmpty(existingOtp))
+            {
+                return new BaseResponse<bool>()
+                {
+                    Status = StatusCodes.Status409Conflict.ToString(),
+                    Message = "Mã OTP đã được gửi, vui lòng chờ một lát",
+                    Data = false
+                };
+            }
+
+            var accounts = await _unitOfWork.GetRepository<Account>().GetListAsync();
+
+            var otp = OtpUtil.GenerateOtp();
+
+            string html = GetTemplate(email, otp);
+
+            var emailMessage = new EmailMessage()
+            {
+                ToAddress = email,
+                Body = html,
+                Subject = otp + " là mã xác thực của bạn",
+            };
+            await _emailSender.SendEmailAsync(emailMessage);
+
+            var redisSuccess = await redisDb.StringSetAsync(key, otp, TimeSpan.FromMinutes(5));
+
+            if (!redisSuccess)
+                throw new BadHttpRequestException("Lỗi khi lưu mã OTP");
+            return new BaseResponse<bool>()
+            {
+                Status = StatusCodes.Status200OK.ToString(),
+                Message = "Gửi mã OTP thành công",
+                Data = true
+            };
+        }
+
+        public string GetTemplate(string email, string otp)
+        {
+            var wwwRootPath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot");
+            var templatePath = Path.Combine(wwwRootPath, "html", "template.html");
+
+            if (!File.Exists(templatePath))
+                throw new FileNotFoundException("Không tìm thấy template email OTP");
+
+            var templateContent = File.ReadAllText(templatePath);
+
+            templateContent = templateContent.Replace("{otp}", otp);
+            templateContent = templateContent.Replace("{email}", email);
+
+            return templateContent;
+        }
+
+    }
+}
