@@ -5,6 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using AutoMapper;
 using MathExamGenerator.Model.Entity;
+using MathExamGenerator.Model.Exceptions;
 using MathExamGenerator.Model.Payload.Request.Account;
 using MathExamGenerator.Model.Payload.Response;
 using MathExamGenerator.Model.Payload.Response.Account;
@@ -33,9 +34,52 @@ namespace MathExamGenerator.Service.Implement
             _emailSender = emailSender;
         }
 
-        public Task<BaseResponse<RegisterResponse>> Register(RegisterRequest request)
+        public async Task<BaseResponse<RegisterResponse>> Register(RegisterRequest request)
         {
-            throw new NotImplementedException();
+            var accountList = await _unitOfWork.GetRepository<Account>().GetListAsync();
+            if (accountList.Any(a => a.Username.Equals(request.Username)))
+            {
+                throw new BadHttpRequestException("Tên đăng nhập đã tồn tại");
+            }
+
+            if (accountList.Any(a => a.Email.Equals(request.Email)))
+            {
+                throw new BadHttpRequestException("Email đã tồn tại");
+            }
+
+            if (accountList.Any(a => a.Phone.Equals(request.Phone)))
+            {
+                throw new BadHttpRequestException("Số điện thoại đã tồn tại");
+            }
+
+            var redisDb = _redis.GetDatabase();
+            if (redisDb == null) throw new RedisServerException("Không thể kết nối tới Redis");
+
+            var key = "emailOtp:" + request.Email;
+            var storedOtp = await redisDb.StringGetAsync(key);
+
+            if (string.IsNullOrEmpty(storedOtp))
+                throw new NotFoundException("Không tìm thấy mã OTP");
+            if (!storedOtp.Equals(request.Otp))
+                throw new BadHttpRequestException("Mã OTP không chính xác");
+
+            var account = _mapper.Map<Account>(request);
+
+            await _unitOfWork.GetRepository<Account>().InsertAsync(account);
+
+            var isSuccess = await _unitOfWork.CommitAsync() > 0;
+
+            if (!isSuccess)
+            {
+                throw new Exception("Một lỗi đã xảy ra trong quá trình đăng ký tài khoản");
+            }
+
+            return new BaseResponse<RegisterResponse>
+            {
+                Status = StatusCodes.Status200OK.ToString(),
+                Message = "Tạo tài khoản thành công",
+                Data = _mapper.Map<RegisterResponse>(account)
+            };
         }
 
         public async Task<BaseResponse<bool>> SendOtp(string email)

@@ -7,6 +7,7 @@ using AutoMapper;
 using MathExamGenerator.Model.Entity;
 using MathExamGenerator.Model.Enum;
 using MathExamGenerator.Model.Payload.Request.Account;
+using MathExamGenerator.Model.Payload.Response.Account;
 using MathExamGenerator.Model.Utils;
 
 namespace MathExamGenerator.Model.Mapper
@@ -21,7 +22,9 @@ namespace MathExamGenerator.Model.Mapper
                 .ForMember(dest => dest.Role, opt => opt.MapFrom(src => RoleEnum.USER.GetDescriptionFromEnum()))
                 .ForMember(dest => dest.IsActive, opt => opt.MapFrom(src => true))
                 .ForMember(dest => dest.CreateAt, opt => opt.MapFrom(src => TimeUtil.GetCurrentSEATime()))
-                .ForMember(dest => dest.UpdateAt, opt => opt.MapFrom(src => TimeUtil.GetCurrentSEATime())); ;
+                .ForMember(dest => dest.UpdateAt, opt => opt.MapFrom(src => TimeUtil.GetCurrentSEATime()));
+
+            CreateMap<Account, RegisterResponse>();
         }
     }
 }
