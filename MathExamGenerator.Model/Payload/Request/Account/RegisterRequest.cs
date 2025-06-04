@@ -16,6 +16,8 @@ namespace MathExamGenerator.Model.Payload.Request.Account
 
         public string Email { get; set; } = null!;
 
+        public string Otp { get; set; } = null!;
+
         public string Phone { get; set; } = null!;
 
         public DateOnly? DateOfBirth { get; set; }
@@ -23,5 +25,6 @@ namespace MathExamGenerator.Model.Payload.Request.Account
         public string Gender { get; set; } = null!;
 
         public string? AvatarUrl { get; set; }
+
     }
 }
