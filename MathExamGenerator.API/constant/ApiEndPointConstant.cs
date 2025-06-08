@@ -16,5 +16,11 @@
             public const string Otp = AccountEndPoint + "/otp";
             public const string Register = AccountEndPoint + "/register";
         } 
+
+        public static class Authentication
+        {
+            public const string AuthenticationEndPoint = ApiEndpoint + "/auth";
+            public const string Authenticate = AuthenticationEndPoint;
+        }
     }
 }
