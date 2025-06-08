@@ -75,7 +75,7 @@ namespace MathExamGenerator.API
             {
                 options.TokenValidationParameters = new TokenValidationParameters()
                 {
-                    ValidIssuer = "MATH",
+                    ValidIssuer = "MATHGENERATOR",
                     ValidateIssuer = true,
                     ValidateAudience = false,
                     ValidateIssuerSigningKey = true,
