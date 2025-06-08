@@ -44,7 +44,7 @@ namespace MathExamGenerator.Model.Utils
                 : DateTime.Now.AddDays(30);
 
             var token = new JwtSecurityToken(
-                issuer: "MATH",
+                issuer: "MATHGENERATOR",
                 audience: null,
                 claims: claims,
                 notBefore: DateTime.Now,
