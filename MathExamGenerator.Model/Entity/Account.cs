@@ -7,23 +7,25 @@ public partial class Account
 {
     public Guid Id { get; set; }
 
-    public string Username { get; set; } = null!;
+    public string? UserName { get; set; }
 
-    public string Password { get; set; } = null!;
+    public string? Password { get; set; }
 
-    public string FullName { get; set; } = null!;
+    public string? Role { get; set; }
 
-    public string Email { get; set; } = null!;
+    public string? FullName { get; set; }
 
-    public string Phone { get; set; } = null!;
+    public string? Email { get; set; }
+
+    public string? Phone { get; set; }
 
     public DateOnly? DateOfBirth { get; set; }
 
-    public string Gender { get; set; } = null!;
+    public string? Gender { get; set; }
 
     public string? AvatarUrl { get; set; }
 
-    public string Role { get; set; } = null!;
+    public int? QuizFree { get; set; }
 
     public bool? IsActive { get; set; }
 
@@ -32,4 +34,22 @@ public partial class Account
     public DateTime? UpdateAt { get; set; }
 
     public DateTime? DeleteAt { get; set; }
+
+    public virtual ICollection<Deposit> Deposits { get; set; } = new List<Deposit>();
+
+    public virtual ICollection<Like> Likes { get; set; } = new List<Like>();
+
+    public virtual ICollection<Report> ReportReportedAccounts { get; set; } = new List<Report>();
+
+    public virtual ICollection<Report> ReportSendAccounts { get; set; } = new List<Report>();
+
+    public virtual ICollection<Teacher> Teachers { get; set; } = new List<Teacher>();
+
+    public virtual ICollection<TestHistory> TestHistories { get; set; } = new List<TestHistory>();
+
+    public virtual ICollection<TestStorage> TestStorages { get; set; } = new List<TestStorage>();
+
+    public virtual ICollection<UserInfo> UserInfos { get; set; } = new List<UserInfo>();
+
+    public virtual ICollection<Wallet> Wallets { get; set; } = new List<Wallet>();
 }
