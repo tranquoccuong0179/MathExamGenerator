@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Drawing;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -14,6 +15,7 @@ using MathExamGenerator.Model.Utils;
 using MathExamGenerator.Repository.Interface;
 using MathExamGenerator.Service.Interface;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.Extensions.Logging;
 using StackExchange.Redis;
 
@@ -37,7 +39,7 @@ namespace MathExamGenerator.Service.Implement
         public async Task<BaseResponse<RegisterResponse>> Register(RegisterRequest request)
         {
             var accountList = await _unitOfWork.GetRepository<Account>().GetListAsync();
-            if (accountList.Any(a => a.Username.Equals(request.Username)))
+            if (accountList.Any(a => a.UserName.Equals(request.Username)))
             {
                 throw new BadHttpRequestException("Tên đăng nhập đã tồn tại");
             }
@@ -66,6 +68,30 @@ namespace MathExamGenerator.Service.Implement
             var account = _mapper.Map<Account>(request);
 
             await _unitOfWork.GetRepository<Account>().InsertAsync(account);
+
+            var userInfo = new UserInfo()
+            {
+                Id = Guid.NewGuid(),
+                Point = 0,
+                AccountId = account.Id,
+                IsActive = true,
+                CreateAt = TimeUtil.GetCurrentSEATime(),
+                UpdateAt = TimeUtil.GetCurrentSEATime(),
+            };
+
+            await _unitOfWork.GetRepository<UserInfo>().InsertAsync(userInfo);
+
+            var wallet = new Wallet()
+            {
+                Id = Guid.NewGuid(),
+                AccountId = account.Id,
+                Point = 0,
+                IsActive = true,
+                CreateAt = TimeUtil.GetCurrentSEATime(),
+                UpdateAt = TimeUtil.GetCurrentSEATime(),
+            };
+
+            await _unitOfWork.GetRepository<Wallet>().InsertAsync(wallet);
 
             var isSuccess = await _unitOfWork.CommitAsync() > 0;
 
