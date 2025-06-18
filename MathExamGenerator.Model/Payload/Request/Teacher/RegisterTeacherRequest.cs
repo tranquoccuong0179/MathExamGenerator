@@ -5,9 +5,9 @@ using System.Text;
 using System.Threading.Tasks;
 using MathExamGenerator.Model.Enum;
 
-namespace MathExamGenerator.Model.Payload.Request.Account
+namespace MathExamGenerator.Model.Payload.Request.Teacher
 {
-    public class RegisterRequest
+    public class RegisterTeacherRequest
     {
         public string UserName { get; set; } = null!;
 
@@ -17,9 +17,9 @@ namespace MathExamGenerator.Model.Payload.Request.Account
 
         public string Email { get; set; } = null!;
 
-        public string Otp { get; set; } = null!;
-
         public string Phone { get; set; } = null!;
+
+        public string Otp { get; set; } = null!;
 
         public DateOnly? DateOfBirth { get; set; }
 
@@ -27,5 +27,10 @@ namespace MathExamGenerator.Model.Payload.Request.Account
 
         public string? AvatarUrl { get; set; }
 
+        public string? Description { get; set; }
+
+        public string SchoolName { get; set; } = null!;
+
+        public Guid LocationId { get; set; }
     }
 }

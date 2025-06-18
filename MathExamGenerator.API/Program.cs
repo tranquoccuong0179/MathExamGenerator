@@ -1,5 +1,6 @@
 using MathExamGenerator.API;
 using MathExamGenerator.API.Middlewares;
+using MathExamGenerator.Model.Enum;
 using MathExamGenerator.Model.Payload.Settings;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
@@ -54,6 +55,13 @@ builder.Services.AddSwaggerGen(c =>
         },
     };
     c.AddSecurityRequirement(securityRequirement);
+    c.MapType<GenderEnum>(() => new OpenApiSchema
+    {
+        Type = "string",
+        Enum = Enum.GetNames(typeof(GenderEnum))
+               .Select(name => new OpenApiString(name) as IOpenApiAny)
+               .ToList()
+    });
 });
 builder.Services.Configure<SMTPSettings>(builder.Configuration.GetSection("SmtpSettings"));
 builder.Services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();

@@ -22,5 +22,11 @@
             public const string AuthenticationEndPoint = ApiEndpoint + "/auth";
             public const string Authenticate = AuthenticationEndPoint;
         }
+
+        public static class Teacher
+        {
+            public const string TeacherEndPoint = ApiEndpoint + "/teacher";
+            public const string RegisterTeacher = TeacherEndPoint;
+        }
     }
 }
