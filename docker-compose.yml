@@ -1,0 +1,18 @@
+
+  mathgeneratorapi:
+    build:
+      context: ./MathExamGenerator.API
+      dockerfile: Dockerfile
+    container_name: mathgeneratorapi
+    depends_on:
+      - sqlserver
+    environment:
+      - ConnectionStrings__DefaultConnection=Server=14.225.253.29;Database=MathExamGenerator;User Id=sa;Password=winnertech123@;TrustServerCertificate=True;
+    ports:
+      - "8888:8080"
+    networks:
+      - my_network
+   
+  networks:
+  my_network:
+    driver: bridge
