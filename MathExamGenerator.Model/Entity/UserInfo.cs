@@ -20,8 +20,4 @@ public partial class UserInfo
     public DateTime? DeleteAt { get; set; }
 
     public virtual Account? Account { get; set; }
-
-    public virtual ICollection<Comment> Comments { get; set; } = new List<Comment>();
-
-    public virtual ICollection<Reply> Replies { get; set; } = new List<Reply>();
 }

@@ -3,17 +3,15 @@ using System.Collections.Generic;
 
 namespace MathExamGenerator.Model.Entity;
 
-public partial class Reply
+public partial class Subject
 {
     public Guid Id { get; set; }
 
-    public Guid? CommentId { get; set; }
+    public string? Name { get; set; }
 
-    public Guid? AccountId { get; set; }
+    public string? Code { get; set; }
 
     public bool? IsActive { get; set; }
-
-    public string? Content { get; set; }
 
     public DateTime? CreateAt { get; set; }
 
@@ -21,7 +19,7 @@ public partial class Reply
 
     public DateTime? DeleteAt { get; set; }
 
-    public virtual Account? Account { get; set; }
+    public virtual ICollection<ExamMatrix> ExamMatrices { get; set; } = new List<ExamMatrix>();
 
-    public virtual Comment? Comment { get; set; }
+    public virtual ICollection<SubjectBook> SubjectBooks { get; set; } = new List<SubjectBook>();
 }

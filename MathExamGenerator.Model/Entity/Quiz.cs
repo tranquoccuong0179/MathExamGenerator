@@ -23,6 +23,8 @@ public partial class Quiz
 
     public DateTime? DeleteAt { get; set; }
 
+    public virtual ICollection<QuizQuestion> QuizQuestions { get; set; } = new List<QuizQuestion>();
+
     public virtual ICollection<TestHistory> TestHistories { get; set; } = new List<TestHistory>();
 
     public virtual ICollection<TestStorage> TestStorages { get; set; } = new List<TestStorage>();

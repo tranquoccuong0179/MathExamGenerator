@@ -35,15 +35,17 @@ public partial class Account
 
     public DateTime? DeleteAt { get; set; }
 
+    public virtual ICollection<Comment> Comments { get; set; } = new List<Comment>();
+
     public virtual ICollection<Deposit> Deposits { get; set; } = new List<Deposit>();
 
-    public virtual ICollection<Like> Likes { get; set; } = new List<Like>();
+    public virtual ICollection<LikeComment> LikeComments { get; set; } = new List<LikeComment>();
+
+    public virtual ICollection<Reply> Replies { get; set; } = new List<Reply>();
 
     public virtual ICollection<Report> ReportReportedAccounts { get; set; } = new List<Report>();
 
     public virtual ICollection<Report> ReportSendAccounts { get; set; } = new List<Report>();
-
-    public virtual ICollection<Teacher> Teachers { get; set; } = new List<Teacher>();
 
     public virtual ICollection<TestHistory> TestHistories { get; set; } = new List<TestHistory>();
 

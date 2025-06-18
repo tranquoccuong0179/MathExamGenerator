@@ -3,11 +3,15 @@ using System.Collections.Generic;
 
 namespace MathExamGenerator.Model.Entity;
 
-public partial class Teacher
+public partial class SubjectBook
 {
     public Guid Id { get; set; }
 
-    public Guid? AccountId { get; set; }
+    public Guid? SubjectId { get; set; }
+
+    public string? Title { get; set; }
+
+    public string? FileUrl { get; set; }
 
     public string? Description { get; set; }
 
@@ -19,11 +23,7 @@ public partial class Teacher
 
     public DateTime? DeleteAt { get; set; }
 
-    public string? SchoolName { get; set; }
+    public virtual ICollection<BookChapter> BookChapters { get; set; } = new List<BookChapter>();
 
-    public Guid? LocationId { get; set; }
-
-    public virtual ICollection<ExamExchange> ExamExchanges { get; set; } = new List<ExamExchange>();
-
-    public virtual Location? Location { get; set; }
+    public virtual Subject? Subject { get; set; }
 }

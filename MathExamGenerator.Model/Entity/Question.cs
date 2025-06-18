@@ -27,7 +27,11 @@ public partial class Question
 
     public DateTime? DeleteAt { get; set; }
 
+    public Guid? BookTopicId { get; set; }
+
     public virtual ICollection<Answer> Answers { get; set; } = new List<Answer>();
+
+    public virtual BookTopic? BookTopic { get; set; }
 
     public virtual Category? Category { get; set; }
 
@@ -36,4 +40,8 @@ public partial class Question
     public virtual ExamExchange? ExamExchange { get; set; }
 
     public virtual ICollection<ExamQuestion> ExamQuestions { get; set; } = new List<ExamQuestion>();
+
+    public virtual ICollection<QuestionHistory> QuestionHistories { get; set; } = new List<QuestionHistory>();
+
+    public virtual ICollection<QuizQuestion> QuizQuestions { get; set; } = new List<QuizQuestion>();
 }

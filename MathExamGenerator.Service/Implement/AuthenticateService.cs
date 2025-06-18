@@ -27,7 +27,7 @@ namespace MathExamGenerator.Service.Implement
         public async Task<BaseResponse<AuthenticateResponse>> Authenticate(AuthenticateRequest request)
         {
             Expression<Func<Account, bool>> searchFilter = p =>
-                  (p.Username.Equals(request.UsernameOrEmailOrPhone)
+                  (p.UserName.Equals(request.UsernameOrEmailOrPhone)
                   || p.Email.Equals(request.UsernameOrEmailOrPhone)
                   || p.Phone.Equals(request.UsernameOrEmailOrPhone)) &&
                   p.Password.Equals(PasswordUtil.HashPassword(request.Password)) &&
@@ -54,7 +54,7 @@ namespace MathExamGenerator.Service.Implement
                 Email = account.Email,
                 FullName = account.FullName,
                 Phone = account.Phone,
-                Username = account.Username,
+                Username = account.UserName,
                 Role = account.Role
             };
 
