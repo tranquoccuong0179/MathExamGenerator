@@ -1,8 +1,10 @@
+version: "3.8"
 
+services:
   mathgeneratorapi:
     build:
-      context: ./MathExamGenerator.API
-      dockerfile: Dockerfile
+      context: .
+      dockerfile: MathExamGenerator.API/Dockerfile
     container_name: mathgeneratorapi
     depends_on:
       - sqlserver
@@ -12,7 +14,18 @@
       - "8888:8080"
     networks:
       - my_network
-   
-  networks:
+
+  sqlserver:
+    image: mcr.microsoft.com/mssql/server:2022-latest
+    container_name: sqlserver
+    environment:
+      - ACCEPT_EULA=Y
+      - SA_PASSWORD=winnertech123@
+    ports:
+      - "1433:1433"
+    networks:
+      - my_network
+
+networks:
   my_network:
     driver: bridge
