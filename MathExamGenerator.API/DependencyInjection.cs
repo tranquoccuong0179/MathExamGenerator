@@ -51,25 +51,14 @@ namespace MathExamGenerator.API
             }
         }
 
-        // public static IServiceCollection AddRedis(this IServiceCollection services)
-        // {
-        //     IConfiguration configuration = new ConfigurationBuilder()
-        //         .AddJsonFile("appsettings.json", optional: true, reloadOnChange: true).Build();
-        //     var redisConnectionString = configuration.GetConnectionString("Redis");
-        //     services.AddSingleton<IConnectionMultiplexer>(ConnectionMultiplexer.Connect(redisConnectionString));
-        //     return services;
-        // }
-                    public static IServiceCollection AddRedis(this IServiceCollection services, IConfiguration configuration)
-            {
-                var redisConn = configuration.GetConnectionString("Redis")
-                            ?? throw new InvalidOperationException("Redis connection string not found");
-                
-                services.AddSingleton<IConnectionMultiplexer>(
-                    _ => ConnectionMultiplexer.Connect(redisConn));
-                
-                return services;
-            }
-
+        public static IServiceCollection AddRedis(this IServiceCollection services, IConfiguration configuration)
+        {
+            var redisConn = configuration.GetConnectionString("Redis")
+                ?? throw new InvalidOperationException("Redis connection string not found");                
+            services.AddSingleton<IConnectionMultiplexer>(
+                _ => ConnectionMultiplexer.Connect(redisConn));               
+            return services;
+        }
 
         public static IServiceCollection AddJwtValidation(this IServiceCollection services)
         {
