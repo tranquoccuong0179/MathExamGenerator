@@ -1,5 +1,7 @@
+version: "3.8"
 
-  mathgeneratorapi:
+services:
+mathgeneratorapi:
     build:
       context: ./MathExamGenerator.API
       dockerfile: Dockerfile
@@ -13,6 +15,6 @@
     networks:
       - my_network
    
-  networks:
+networks:
   my_network:
     driver: bridge
