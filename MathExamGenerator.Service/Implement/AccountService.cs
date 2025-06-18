@@ -37,7 +37,7 @@ namespace MathExamGenerator.Service.Implement
         public async Task<BaseResponse<RegisterResponse>> Register(RegisterRequest request)
         {
             var accountList = await _unitOfWork.GetRepository<Account>().GetListAsync();
-            if (accountList.Any(a => a.Username.Equals(request.Username)))
+            if (accountList.Any(a => a.UserName.Equals(request.Username)))
             {
                 throw new BadHttpRequestException("Tên đăng nhập đã tồn tại");
             }

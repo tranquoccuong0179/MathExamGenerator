@@ -9,9 +9,7 @@ public partial class Exam
 
     public string? Name { get; set; }
 
-    public double? Grade { get; set; }
-
-    public TimeOnly? Time { get; set; }
+    public long? Time { get; set; }
 
     public int? Quantity { get; set; }
 
@@ -29,9 +27,11 @@ public partial class Exam
 
     public DateTime? DeleteAt { get; set; }
 
-    public virtual ICollection<ExamQuestion> ExamQuestions { get; set; } = new List<ExamQuestion>();
+    public Guid? ExamMatrixId { get; set; }
 
-    public virtual ICollection<TestHistory> TestHistories { get; set; } = new List<TestHistory>();
+    public virtual ExamMatrix? ExamMatrix { get; set; }
+
+    public virtual ICollection<ExamQuestion> ExamQuestions { get; set; } = new List<ExamQuestion>();
 
     public virtual ICollection<TestStorage> TestStorages { get; set; } = new List<TestStorage>();
 }

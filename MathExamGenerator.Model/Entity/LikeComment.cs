@@ -3,21 +3,13 @@ using System.Collections.Generic;
 
 namespace MathExamGenerator.Model.Entity;
 
-public partial class TestHistory
+public partial class LikeComment
 {
     public Guid Id { get; set; }
 
     public Guid? AccountId { get; set; }
 
-    public Guid? ExamId { get; set; }
-
-    public Guid? QuizId { get; set; }
-
-    public double? Grade { get; set; }
-
-    public string? Status { get; set; }
-
-    public TimeOnly? StartAt { get; set; }
+    public Guid? CommentId { get; set; }
 
     public bool? IsActive { get; set; }
 
@@ -29,7 +21,5 @@ public partial class TestHistory
 
     public virtual Account? Account { get; set; }
 
-    public virtual ICollection<QuestionHistory> QuestionHistories { get; set; } = new List<QuestionHistory>();
-
-    public virtual Quiz? Quiz { get; set; }
+    public virtual Comment? Comment { get; set; }
 }
