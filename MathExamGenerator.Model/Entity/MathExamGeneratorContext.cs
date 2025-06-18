@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Configuration;   // thêm dòng này đầu file
 
 namespace MathExamGenerator.Model.Entity;
 

@@ -19,7 +19,7 @@ builder.Services.AddUnitOfWork();
 builder.Services.AddCustomServices();
 builder.Services.AddJwtValidation();
 builder.Services.AddHttpClientServices();
-builder.Services.AddRedis();
+builder.Services.AddRedis(builder.Configuration); 
 builder.Services.Configure<ApiBehaviorOptions>(options =>
 {
     options.SuppressModelStateInvalidFilter = true;
