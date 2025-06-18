@@ -7,22 +7,22 @@ services:
       dockerfile: MathExamGenerator.API/Dockerfile
     container_name: mathgeneratorapi
     depends_on:
-      - sqlserver
+      - redis     
     environment:
-      - ConnectionStrings__DefaultConnection=Server=14.225.253.29;Database=MathExamGenerator;User Id=sa;Password=winnertech123@;TrustServerCertificate=True;
+      - ConnectionStrings__DefautDB=Server=14.225.253.29,1433;Database=MathExamGenerator;User Id=sa;Password=winnertech123@;TrustServerCertificate=True;Encrypt=True;MultipleActiveResultSets=true
+      - ConnectionStrings__Redis=redis:6379,abortConnect=false
+      - ASPNETCORE_ENVIRONMENT=Production
     ports:
       - "8888:8080"
     networks:
       - my_network
 
-  sqlserver:
-    image: mcr.microsoft.com/mssql/server:2022-latest
-    container_name: sqlserver
-    environment:
-      - ACCEPT_EULA=Y
-      - SA_PASSWORD=winnertech123@
+  # Giữ Redis vì bạn cần
+  redis:
+    image: redis:7
+    container_name: redis
     ports:
-      - "1433:1433"
+      - "6379:6379"
     networks:
       - my_network
 
