@@ -1,42 +1,39 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Drawing;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using AutoMapper;
 using MathExamGenerator.Model.Entity;
 using MathExamGenerator.Model.Exceptions;
-using MathExamGenerator.Model.Payload.Request.Account;
+using MathExamGenerator.Model.Payload.Request.Teacher;
 using MathExamGenerator.Model.Payload.Response;
 using MathExamGenerator.Model.Payload.Response.Account;
-using MathExamGenerator.Model.Payload.Settings;
+using MathExamGenerator.Model.Payload.Response.Teacher;
 using MathExamGenerator.Model.Utils;
 using MathExamGenerator.Repository.Interface;
 using MathExamGenerator.Service.Interface;
 using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.Extensions.Logging;
 using StackExchange.Redis;
 
 namespace MathExamGenerator.Service.Implement
 {
-    public class AccountService : BaseService<AccountService>, IAccountService
+    public class TeacherService : BaseService<TeacherService>, ITeacherService
     {
         private readonly IConnectionMultiplexer _redis;
         private readonly IEmailSender _emailSender;
-
-        public AccountService(IUnitOfWork<MathExamGeneratorContext> unitOfWork, 
-                              ILogger<AccountService> logger, IMapper mapper, 
-                              IHttpContextAccessor httpContextAccessor, 
-                              IConnectionMultiplexer redis, 
+        public TeacherService(IUnitOfWork<MathExamGeneratorContext> unitOfWork, 
+                              ILogger<TeacherService> logger, IMapper mapper, 
+                              IHttpContextAccessor httpContextAccessor,
+                              IConnectionMultiplexer redis,
                               IEmailSender emailSender) : base(unitOfWork, logger, mapper, httpContextAccessor)
         {
             _redis = redis;
             _emailSender = emailSender;
         }
 
-        public async Task<BaseResponse<RegisterResponse>> Register(RegisterRequest request)
+        public async Task<BaseResponse<RegisterTeacherResponse>> RegisterTeacher(RegisterTeacherRequest request)
         {
             var accountList = await _unitOfWork.GetRepository<Account>().GetListAsync();
             if (accountList.Any(a => a.UserName.Equals(request.UserName)))
@@ -69,17 +66,27 @@ namespace MathExamGenerator.Service.Implement
 
             await _unitOfWork.GetRepository<Account>().InsertAsync(account);
 
-            var userInfo = new UserInfo()
+            var location = await _unitOfWork.GetRepository<Location>().SingleOrDefaultAsync(
+                predicate: l => l.Id.Equals(request.LocationId) && l.IsActive == true);
+
+            if (location == null)
+            {
+                throw new NotFoundException("Không tìm thấy vị trí bạn chọn");
+            }
+
+            var teacher = new Teacher
             {
                 Id = Guid.NewGuid(),
-                Point = 0,
                 AccountId = account.Id,
+                Description = request.Description,
+                SchoolName = request.SchoolName,
+                LocationId = request.LocationId,
                 IsActive = true,
                 CreateAt = TimeUtil.GetCurrentSEATime(),
                 UpdateAt = TimeUtil.GetCurrentSEATime(),
             };
 
-            await _unitOfWork.GetRepository<UserInfo>().InsertAsync(userInfo);
+            await _unitOfWork.GetRepository<Teacher>().InsertAsync(teacher);
 
             var wallet = new Wallet()
             {
@@ -100,72 +107,27 @@ namespace MathExamGenerator.Service.Implement
                 throw new Exception("Một lỗi đã xảy ra trong quá trình đăng ký tài khoản");
             }
 
-            return new BaseResponse<RegisterResponse>
+            var response = new RegisterTeacherResponse
+            {
+                Id = account.Id,
+                UserName = account.UserName,
+                FullName = account.FullName,
+                Email = account.Email,
+                Phone = account.Phone,
+                DateOfBirth = account.DateOfBirth,
+                Gender = account.Gender,
+                AvatarUrl = account.AvatarUrl,
+                Description = teacher.Description,
+                SchoolName = teacher.SchoolName,
+                Location = location.Name,
+            };
+
+            return new BaseResponse<RegisterTeacherResponse>
             {
                 Status = StatusCodes.Status200OK.ToString(),
                 Message = "Tạo tài khoản thành công",
-                Data = _mapper.Map<RegisterResponse>(account)
+                Data = response
             };
         }
-
-        public async Task<BaseResponse<bool>> SendOtp(string email)
-        {
-            var redisDb = _redis.GetDatabase();
-
-            var key = "emailOtp:" + email;
-
-            var existingOtp = await redisDb.StringGetAsync(key);
-            if (!string.IsNullOrEmpty(existingOtp))
-            {
-                return new BaseResponse<bool>()
-                {
-                    Status = StatusCodes.Status409Conflict.ToString(),
-                    Message = "Mã OTP đã được gửi, vui lòng chờ một lát",
-                    Data = false
-                };
-            }
-
-            var accounts = await _unitOfWork.GetRepository<Account>().GetListAsync();
-
-            var otp = OtpUtil.GenerateOtp();
-
-            string html = GetTemplate(email, otp);
-
-            var emailMessage = new EmailMessage()
-            {
-                ToAddress = email,
-                Body = html,
-                Subject = otp + " là mã xác thực của bạn",
-            };
-            await _emailSender.SendEmailAsync(emailMessage);
-
-            var redisSuccess = await redisDb.StringSetAsync(key, otp, TimeSpan.FromMinutes(5));
-
-            if (!redisSuccess)
-                throw new BadHttpRequestException("Lỗi khi lưu mã OTP");
-            return new BaseResponse<bool>()
-            {
-                Status = StatusCodes.Status200OK.ToString(),
-                Message = "Gửi mã OTP thành công",
-                Data = true
-            };
-        }
-
-        public string GetTemplate(string email, string otp)
-        {
-            var wwwRootPath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot");
-            var templatePath = Path.Combine(wwwRootPath, "html", "template.html");
-
-            if (!File.Exists(templatePath))
-                throw new FileNotFoundException("Không tìm thấy template email OTP");
-
-            var templateContent = File.ReadAllText(templatePath);
-
-            templateContent = templateContent.Replace("{otp}", otp);
-            templateContent = templateContent.Replace("{email}", email);
-
-            return templateContent;
-        }
-
     }
 }

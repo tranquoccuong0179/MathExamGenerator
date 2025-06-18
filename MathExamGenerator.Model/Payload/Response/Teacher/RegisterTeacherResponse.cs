@@ -3,11 +3,10 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using MathExamGenerator.Model.Enum;
 
-namespace MathExamGenerator.Model.Payload.Response.Account
+namespace MathExamGenerator.Model.Payload.Response.Teacher
 {
-    public class RegisterResponse
+    public class RegisterTeacherResponse
     {
         public Guid Id { get; set; }
 
@@ -24,5 +23,11 @@ namespace MathExamGenerator.Model.Payload.Response.Account
         public string? Gender { get; set; }
 
         public string? AvatarUrl { get; set; }
+
+        public string? Description {  get; set; }
+
+        public string? SchoolName {  get; set; }
+
+        public string? Location { get; set; }
     }
 }
