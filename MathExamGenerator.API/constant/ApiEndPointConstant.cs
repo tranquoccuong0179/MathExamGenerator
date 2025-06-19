@@ -28,5 +28,17 @@
             public const string TeacherEndPoint = ApiEndpoint + "/teacher";
             public const string RegisterTeacher = TeacherEndPoint;
         }
+
+        public static class BookTopic
+        {
+            public const string BookTopicEndPoint = ApiEndpoint + "/book-topic";
+            public const string GetAllBookTopic = BookTopicEndPoint;
+        }
+
+        public static class SubjectBook
+        {
+            public const string SubjectBookEndPoint = ApiEndpoint + "/subject-book";
+            public const string GetAllChapterBySubjectBook = SubjectBookEndPoint + "/{id}/chapters";
+        }
     }
 }
