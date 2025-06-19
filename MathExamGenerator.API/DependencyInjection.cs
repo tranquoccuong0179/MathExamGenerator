@@ -30,6 +30,7 @@ namespace MathExamGenerator.API
             services.AddScoped<IEmailSender, EmailSender>();
             services.AddScoped<IAuthenticateService, AuthenticateService>();
             services.AddScoped<ITeacherService, TeacherService>();
+            services.AddScoped<IExamExchangeService, ExamExchangeService>();
             return services;
         }
         public static IServiceCollection AddHttpClientServices(this IServiceCollection services)

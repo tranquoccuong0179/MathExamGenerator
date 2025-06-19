@@ -9,7 +9,7 @@ public partial class Category
 
     public string? Name { get; set; }
 
-    public double? Grade { get; set; }
+    public string? Grade { get; set; }
 
     public bool? IsTrue { get; set; }
 

@@ -28,5 +28,12 @@
             public const string TeacherEndPoint = ApiEndpoint + "/teacher";
             public const string RegisterTeacher = TeacherEndPoint;
         }
+        public static class ExamEchange
+        {
+            public const string ExamExchangeEndPoint = ApiEndpoint + "/examexchange";
+            public const string GetExamExchange = ExamExchangeEndPoint;
+            public const string CreateExamExchange = ExamExchangeEndPoint + "/create";
+
+        }
     }
 }
