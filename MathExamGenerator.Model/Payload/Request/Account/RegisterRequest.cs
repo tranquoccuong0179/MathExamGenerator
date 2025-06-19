@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using MathExamGenerator.Model.Enum;
+using Microsoft.AspNetCore.Http;
 
 namespace MathExamGenerator.Model.Payload.Request.Account
 {
@@ -25,7 +26,7 @@ namespace MathExamGenerator.Model.Payload.Request.Account
 
         public GenderEnum Gender { get; set; }
 
-        public string? AvatarUrl { get; set; }
+        public IFormFile? AvatarUrl { get; set; }
 
     }
 }
