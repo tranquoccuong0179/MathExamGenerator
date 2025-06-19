@@ -50,5 +50,16 @@
             public const string LocationEndPoint = ApiEndpoint + "/location";
             public const string GetAllLocations = LocationEndPoint;
         }
+
+        public static class Exam
+        {
+            public const string ExamEndPoint = ApiEndpoint + "/exam";
+            public const string GetAllExam = ExamEndPoint;
+            public const string GetExam = ExamEndPoint + "/{id}";
+            public const string GetAllQuestionByExam = ExamEndPoint + "/{id}/questions";
+            public const string CreateExam = ExamEndPoint;
+            public const string UpdateExam = ExamEndPoint + "/{id}";
+            public const string DeleteExam = ExamEndPoint + "/{id}";
+        }
     }
 }
