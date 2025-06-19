@@ -1,4 +1,5 @@
-﻿using MathExamGenerator.Model.Entity;
+﻿using CloudinaryDotNet;
+using MathExamGenerator.Model.Entity;
 using MathExamGenerator.Repository.Implement;
 using MathExamGenerator.Repository.Interface;
 using MathExamGenerator.Service.Implement;
@@ -33,6 +34,7 @@ namespace MathExamGenerator.API
             services.AddScoped<IBookTopicService, BookTopicService>();
             services.AddScoped<IBookChapterService, BookChapterService>();
             services.AddScoped<ILocationService, LocationService>();
+            services.AddScoped<IUploadService, UploadService>();
             return services;
         }
         public static IServiceCollection AddHttpClientServices(this IServiceCollection services)
@@ -101,5 +103,23 @@ namespace MathExamGenerator.API
 
             return strConn;
         }
+
+        public static IServiceCollection AddCloudinary(this IServiceCollection services, IConfiguration configuration)
+        {
+            var account = new CloudinaryDotNet.Account(
+                configuration["Cloudinary:CloudName"],
+                configuration["Cloudinary:ApiKey"],
+                configuration["Cloudinary:Secret"]);
+
+            var cloudinary = new Cloudinary(account)
+            {
+                Api = { Secure = true }
+            };
+
+            services.AddSingleton(account);
+            services.AddSingleton(cloudinary);
+            return services;
+        }
+
     }
 }
