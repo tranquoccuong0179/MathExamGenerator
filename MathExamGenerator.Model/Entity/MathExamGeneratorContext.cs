@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Configuration;   // thêm dòng này đầu file
+using Microsoft.Extensions.Configuration;
 
 namespace MathExamGenerator.Model.Entity;
 
@@ -87,7 +87,7 @@ public partial class MathExamGeneratorContext : DbContext
 
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         => optionsBuilder.UseSqlServer(GetConnectionString("DefautDB")).UseQueryTrackingBehavior(QueryTrackingBehavior.NoTracking);
-        
+
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         modelBuilder.Entity<Account>(entity =>
@@ -517,10 +517,16 @@ public partial class MathExamGeneratorContext : DbContext
 
             entity.ToTable("Teacher");
 
+            entity.HasIndex(e => e.AccountId, "IX_Teacher_AccountId").IsUnique();
+
             entity.Property(e => e.Id).ValueGeneratedNever();
             entity.Property(e => e.CreateAt).HasColumnType("datetime");
             entity.Property(e => e.DeleteAt).HasColumnType("datetime");
             entity.Property(e => e.UpdateAt).HasColumnType("datetime");
+
+            entity.HasOne(d => d.Account).WithOne(p => p.Teacher)
+                .HasForeignKey<Teacher>(d => d.AccountId)
+                .HasConstraintName("FK_Teacher_Account");
 
             entity.HasOne(d => d.Location).WithMany(p => p.Teachers)
                 .HasForeignKey(d => d.LocationId)
