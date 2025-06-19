@@ -22,7 +22,7 @@ namespace MathExamGenerator.Service.Implement
         {
         }
 
-        public async Task<BaseResponse<IPaginate<GetChapterResponse>>> GetAllChapterByBook(Guid subjectBookId, int page, int size)
+        public async Task<BaseResponse<IPaginate<GetChapterResponse>>> GetAllChapterBySubjectBook(Guid subjectBookId, int page, int size)
         {
             var subjectBook = await _unitOfWork.GetRepository<SubjectBook>().SingleOrDefaultAsync(
                 predicate: s => s.Id.Equals(subjectBookId) && s.IsActive == true);

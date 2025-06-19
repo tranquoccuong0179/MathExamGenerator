@@ -11,6 +11,6 @@ namespace MathExamGenerator.Service.Interface
 {
     public interface IBookChapterService
     {
-        Task<BaseResponse<IPaginate<GetChapterResponse>>> GetAllChapterByBook(Guid subjectBookId, int page, int size);
+        Task<BaseResponse<IPaginate<GetChapterResponse>>> GetAllChapterBySubjectBook(Guid subjectBookId, int page, int size);
     }
 }

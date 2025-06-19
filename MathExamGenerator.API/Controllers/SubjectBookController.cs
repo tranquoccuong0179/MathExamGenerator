@@ -25,7 +25,7 @@ namespace MathExamGenerator.API.Controllers
         {
             int pageNumber = page ?? 1;
             int pageSize = size ?? 10;
-            var response = await _bookChapterService.GetAllChapterByBook(id, pageNumber, pageSize);
+            var response = await _bookChapterService.GetAllChapterBySubjectBook(id, pageNumber, pageSize);
             return StatusCode(int.Parse(response.Status), response);
         }
     }
