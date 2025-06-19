@@ -47,6 +47,8 @@ public partial class Account
 
     public virtual ICollection<Report> ReportSendAccounts { get; set; } = new List<Report>();
 
+    public virtual Teacher? Teacher { get; set; }
+
     public virtual ICollection<TestHistory> TestHistories { get; set; } = new List<TestHistory>();
 
     public virtual ICollection<TestStorage> TestStorages { get; set; } = new List<TestStorage>();
