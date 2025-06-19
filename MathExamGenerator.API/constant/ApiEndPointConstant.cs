@@ -27,6 +27,28 @@
         {
             public const string TeacherEndPoint = ApiEndpoint + "/teacher";
             public const string RegisterTeacher = TeacherEndPoint;
+            public const string GetAllTeacher = TeacherEndPoint;
+            public const string GetTeacher = TeacherEndPoint + "/{id}";
+            public const string UpdateTeacher = TeacherEndPoint;
+            public const string DeleteTeacher = TeacherEndPoint + "/{id}";
+        }
+
+        public static class BookTopic
+        {
+            public const string BookTopicEndPoint = ApiEndpoint + "/book-topic";
+            public const string GetAllBookTopic = BookTopicEndPoint;
+        }
+
+        public static class SubjectBook
+        {
+            public const string SubjectBookEndPoint = ApiEndpoint + "/subject-book";
+            public const string GetAllChapterBySubjectBook = SubjectBookEndPoint + "/{id}/chapters";
+        }
+
+        public static class Location
+        {
+            public const string LocationEndPoint = ApiEndpoint + "/location";
+            public const string GetAllLocations = LocationEndPoint;
         }
         public static class ExamEchange
         {

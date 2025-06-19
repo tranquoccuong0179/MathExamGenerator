@@ -20,6 +20,7 @@ builder.Services.AddUnitOfWork();
 builder.Services.AddCustomServices();
 builder.Services.AddJwtValidation();
 builder.Services.AddHttpClientServices();
+builder.Services.AddCloudinary(builder.Configuration);
 builder.Services.AddRedis(builder.Configuration); 
 builder.Services.Configure<ApiBehaviorOptions>(options =>
 {

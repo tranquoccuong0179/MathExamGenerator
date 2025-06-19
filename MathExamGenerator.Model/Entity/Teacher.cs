@@ -23,6 +23,8 @@ public partial class Teacher
 
     public Guid? LocationId { get; set; }
 
+    public virtual Account? Account { get; set; }
+
     public virtual ICollection<ExamExchange> ExamExchanges { get; set; } = new List<ExamExchange>();
 
     public virtual Location? Location { get; set; }
