@@ -8,6 +8,7 @@ namespace MathExamGenerator.Model.Payload.Response.ExamExchange
 {
     public class AnswerResponse
     {
+        public Guid Id { get; set; } 
         public string Content { get; set; } = default!;
         public string? Image { get; set; }   
         public bool IsTrue { get; set; } 

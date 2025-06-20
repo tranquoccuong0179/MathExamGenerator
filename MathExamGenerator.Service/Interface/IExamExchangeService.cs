@@ -1,4 +1,5 @@
-﻿using MathExamGenerator.Model.Payload.Request.ExamExchange;
+﻿using MathExamGenerator.Model.Paginate;
+using MathExamGenerator.Model.Payload.Request.ExamExchange;
 using MathExamGenerator.Model.Payload.Response;
 using MathExamGenerator.Model.Payload.Response.ExamExchange;
 using System;
@@ -11,9 +12,13 @@ namespace MathExamGenerator.Service.Interface
 {
     public interface IExamExchangeService
     {
-        Task<BaseResponse<ExamExchangeResponse>> CreateAsync(ExamExchangeRequest request);
-        Task<BaseResponse<ExamExchangeResponse?>> GetAsync(Guid id);
-        Task<BaseResponse<IEnumerable<ExamExchangeResponse>>> GetByTeacherAsync(Guid teacherId, string? status);
+        Task<BaseResponse<ExamExchangeResponse>> Create(ExamExchangeRequest request);
+        Task<BaseResponse<bool>> Delete(Guid id);
+        Task<BaseResponse<IPaginate<GetExamExchangeResponse>>> GetByTeacher(int page, int size);
+        Task<BaseResponse<ExamExchangeResponse>> GetExamChange(Guid examchangeId);
+        Task<BaseResponse<ExamExchangeResponse>> Update(Guid examchange, UpdateExamEchangeRequest request);
+        Task<BaseResponse<IPaginate<GetExamExchangeTeacherResponse>>> GetAllTeacher(int page, int size);
+
     }
 
 }

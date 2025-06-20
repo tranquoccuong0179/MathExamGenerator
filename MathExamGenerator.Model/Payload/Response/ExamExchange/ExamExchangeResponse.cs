@@ -8,8 +8,9 @@ namespace MathExamGenerator.Model.Payload.Response.ExamExchange
 {
     public class ExamExchangeResponse
     {
-        public Guid TeacherId { get; set; }            
+        public Guid Id { get; set; }
         public string Status { get; set; } = default!;
+        public Guid CategoryId { get; set; }
         public string CategoryName { get; set; } = default!;
         public string CategoryGrade { get; set; } = default!;
         public List<QuestionResponse> Questions { get; set; } = new();

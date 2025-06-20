@@ -38,9 +38,16 @@ namespace MathExamGenerator.Model.Mapper
                 .ForMember(d => d.CategoryGrade, o => o.MapFrom(s => s.Category.Grade))
                 .ForMember(d => d.Answers, o => o.MapFrom(s => s.Answers.OrderBy(a => a.CreateAt)));
             CreateMap<ExamExchange, ExamExchangeResponse>()
-                .ForMember(d => d.Questions, o => o.MapFrom(s => s.Questions.OrderBy(q => q.CreateAt)))
-                .ForMember(d => d.CategoryName, o => o.MapFrom(s => s.Questions.FirstOrDefault().Category.Name))
-                .ForMember(d => d.CategoryGrade, o => o.MapFrom(s => s.Questions.FirstOrDefault().Category.Grade));
+                .ForMember(d => d.Questions, o => o.MapFrom(s => s.Questions.OrderBy(q => q.CreateAt)));
+            // Update Question Request to Question Entity
+            CreateMap<UpdateQuestionRequest, Question>()
+                     .ForMember(d => d.Answers, o => o.Ignore())
+                    .ForMember(d => d.Id, o => o.Ignore());   // không ghi đè Id;
+            CreateMap<UpdateAnswerRequest, Answer>()
+                    .ForMember(d => d.Id, o => o.Ignore());
+            CreateMap<UpdateExamEchangeRequest, ExamExchangeResponse>();
+
+
         }
     }
 }
