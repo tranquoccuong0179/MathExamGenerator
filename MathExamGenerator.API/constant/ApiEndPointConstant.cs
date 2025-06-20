@@ -65,7 +65,7 @@
             public const string UpdateExamExchange = ExamExchangeEndPoint + "/{id}";
             public const string DeleteExamExchange = ExamExchangeEndPoint + "/{id}";
             public const string GetAllTeacher = ExamExchangeEndPoint;
-
+        }
 
             public static class User
             {
