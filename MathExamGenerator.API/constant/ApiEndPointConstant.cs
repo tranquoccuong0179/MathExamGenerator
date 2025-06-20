@@ -74,9 +74,12 @@
         public static class Subject
         {
             public const string SubjectEndPoint = ApiEndpoint + "/subject";
+            public const string CreateSubject = SubjectEndPoint;
             public const string GetAllSubjects = SubjectEndPoint;
             public const string GetSubject = SubjectEndPoint + "/{id}";
             public const string GetAllSubjectBookBySubject = SubjectEndPoint + "/{id}/subject-books";
+            public const string UpdateSubject = SubjectEndPoint + "/{id}";
+            public const string DeleteSubject = SubjectEndPoint + "/{id}";
         }
     }
 }
