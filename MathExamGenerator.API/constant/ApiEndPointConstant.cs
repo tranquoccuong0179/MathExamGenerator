@@ -61,5 +61,16 @@
             public const string UpdateExam = ExamEndPoint + "/{id}";
             public const string DeleteExam = ExamEndPoint + "/{id}";
         }
+
+        public static class ExamMatrix
+        {
+            public const string ExamMatrixEndPoint = ApiEndpoint + "/exam-matrix";
+            public const string GetAllExamMatrix = ExamMatrixEndPoint;
+            public const string GetExamMatrix = ExamMatrixEndPoint + "/{id}";
+            public const string GetMatrixStructure = ExamMatrixEndPoint + "/{id}/structure";
+            public const string CreateExamMatrix = ExamMatrixEndPoint;
+            public const string UpdateExamMatrix = ExamMatrixEndPoint + "/{id}";
+            public const string DeleteExamMatrix = ExamMatrixEndPoint + "/{id}";
+        }
     }
 }
