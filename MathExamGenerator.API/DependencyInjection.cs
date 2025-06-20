@@ -34,11 +34,9 @@ namespace MathExamGenerator.API
             services.AddScoped<IBookTopicService, BookTopicService>();
             services.AddScoped<IBookChapterService, BookChapterService>();
             services.AddScoped<ILocationService, LocationService>();
-<<<<<<< HEAD
             services.AddScoped<IExamService, ExamService>();
-=======
             services.AddScoped<IUploadService, UploadService>();
->>>>>>> d9c5690f859bb5d2181344423c617622ca7dc67e
+
             return services;
         }
         public static IServiceCollection AddHttpClientServices(this IServiceCollection services)
