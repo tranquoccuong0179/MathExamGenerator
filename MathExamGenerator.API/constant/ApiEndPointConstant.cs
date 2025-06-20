@@ -53,6 +53,19 @@
             public const string LocationEndPoint = ApiEndpoint + "/location";
             public const string GetAllLocations = LocationEndPoint;
         }
+        public static class ExamEchange
+        {
+            public const string ExamExchangeEndPoint = ApiEndpoint + "/exam-exchange";
+            public const string ExamExchangeTeacherEndPoint = ApiEndpoint + "/teacher";
+
+            public const string GetExamExchange = ExamExchangeEndPoint;
+            public const string CreateExamExchange = ExamExchangeEndPoint;
+            public const string GetExamExchangeByTeacher = ExamExchangeTeacherEndPoint + "/exam-exchange";
+            public const string GetExamExchangeById = ExamExchangeEndPoint + "/{id}";
+            public const string UpdateExamExchange = ExamExchangeEndPoint + "/{id}";
+            public const string DeleteExamExchange = ExamExchangeEndPoint + "/{id}";
+            public const string GetAllTeacher = ExamExchangeEndPoint;
+
 
         public static class User
         {
