@@ -27,5 +27,15 @@ namespace MathExamGenerator.API.Controllers
             var response = await _bookService.GetAllBookTopic(pageNumber, pageSize);
             return StatusCode(int.Parse(response.Status), response);
         }
+
+        [HttpGet(ApiEndPointConstant.BookTopic.GetBookTopic)]
+        [ProducesResponseType(typeof(BaseResponse<GetBookTopicResponse>), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(BaseResponse<GetBookTopicResponse>), StatusCodes.Status404NotFound)]
+        [ProducesErrorResponseType(typeof(ProblemDetails))]
+        public async Task<IActionResult> GetBookTopic([FromRoute] Guid id)
+        {
+            var response = await _bookService.GetBookTopic(id);
+            return StatusCode(int.Parse(response.Status), response);
+        }
     }
 }

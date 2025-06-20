@@ -1,10 +1,11 @@
 ﻿
 using MathExamGenerator.API.constant;
 using MathExamGenerator.Model.Paginate;
+using MathExamGenerator.Model.Payload.Request.User;
 using MathExamGenerator.Model.Payload.Response;
+using MathExamGenerator.Model.Payload.Response.User;
 using MathExamGenerator.Service.Interface;
 using Microsoft.AspNetCore.Mvc;
-using MathExamGenerator.Model.Payload.Response.User;
 
 namespace MathExamGenerator.API.Controllers
 {
@@ -34,6 +35,16 @@ namespace MathExamGenerator.API.Controllers
         public async Task<IActionResult> GetUser([FromRoute] Guid id)
         {
             var response = await _userService.GetUser(id);
+            return StatusCode(int.Parse(response.Status), response);
+        }
+
+        [HttpPut(ApiEndPointConstant.User.UpdateUser)]
+        [ProducesResponseType(typeof(BaseResponse<bool>), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(BaseResponse<bool>), StatusCodes.Status404NotFound)]
+        [ProducesErrorResponseType(typeof(ProblemDetails))]
+        public async Task<IActionResult> UpdateUser([FromBody] UpdateUserRequest request)
+        {
+            var response = await _userService.UpdateUser(request);
             return StatusCode(int.Parse(response.Status), response);
         }
 

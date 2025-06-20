@@ -7,6 +7,7 @@ using AutoMapper;
 using MathExamGenerator.Model.Entity;
 using MathExamGenerator.Model.Exceptions;
 using MathExamGenerator.Model.Paginate;
+using MathExamGenerator.Model.Payload.Request.User;
 using MathExamGenerator.Model.Payload.Response;
 using MathExamGenerator.Model.Payload.Response.User;
 using MathExamGenerator.Model.Utils;
@@ -123,6 +124,35 @@ namespace MathExamGenerator.Service.Implement
                 Status = StatusCodes.Status200OK.ToString(),
                 Message = "Lấy thông tin người dùng thành công",
                 Data = user
+            };
+        }
+
+        public async Task<BaseResponse<bool>> UpdateUser(UpdateUserRequest request)
+        {
+            Guid? accountId = UserUtil.GetAccountId(_httpContextAccessor.HttpContext);
+
+            var account = await _unitOfWork.GetRepository<Account>().SingleOrDefaultAsync(
+                predicate: a => a.Id.Equals(accountId) && a.IsActive == true) ?? throw new NotFoundException("Không tìm thấy tài khoản người dùng");
+
+            account.FullName = request.FullName ?? account.FullName;
+            account.DateOfBirth = request.DateOfBirth ?? account.DateOfBirth;
+            account.Gender = request.Gender.GetDescriptionFromEnum() ?? account.Gender;
+            account.UpdateAt = TimeUtil.GetCurrentSEATime();
+
+            _unitOfWork.GetRepository<Account>().UpdateAsync(account);
+
+            var isSuccess = await _unitOfWork.CommitAsync() > 0;
+
+            if (!isSuccess)
+            {
+                throw new Exception("Một lỗi đã xảy ra trong quá trình cập nhật tài khoản");
+            }
+
+            return new BaseResponse<bool>
+            {
+                Status = StatusCodes.Status200OK.ToString(),
+                Message = "Cập nhật tài khoản thành công",
+                Data = true
             };
         }
     }
