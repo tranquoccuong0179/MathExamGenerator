@@ -472,6 +472,54 @@ namespace MathExamGenerator.Service.Implement
             };
         }
 
+        public async Task<BaseResponse<bool>> ApproveExamExchange(UpdateExamExchangeStatusRequest request)
+        {
+            var examRepo = _unitOfWork.GetRepository<ExamExchange>();
+            var exam = await examRepo.SingleOrDefaultAsync(
+                predicate: e => e.Id == request.ExamExchangeId,
+                include: q => q.Include(e => e.Questions).ThenInclude(q => q.Answers))
+                ?? throw new NotFoundException("Không tìm thấy phiếu đề.");
 
+            if (exam.Status == request.NewStatus)
+                throw new Exception("Trạng thái mới trùng với trạng thái hiện tại.");
+
+            // Cập nhật status
+            exam.Status = request.NewStatus;
+            exam.UpdateAt = TimeUtil.GetCurrentSEATime();
+            _unitOfWork.Context.Entry(exam).State = EntityState.Modified;
+
+            if (request.NewStatus == "Approved")
+            {
+                foreach (var q in exam.Questions)
+                {
+                    if (q.IsActive != true)
+                    {
+                        q.IsActive = true;
+                        q.UpdateAt = TimeUtil.GetCurrentSEATime();
+                        _unitOfWork.Context.Entry(q).State = EntityState.Modified;
+                    }
+
+                    foreach (var a in q.Answers)
+                    {
+                        if (a.IsActive != true)
+                        {
+                            a.IsActive = true;
+                            a.UpdateAt = TimeUtil.GetCurrentSEATime();
+                            _unitOfWork.Context.Entry(a).State = EntityState.Modified;
+                        }
+                    }
+                }
+            }
+
+            var result = await _unitOfWork.CommitAsync();
+            if (result == 0)
+                throw new Exception("Không có thay đổi nào được ghi nhận.");
+            return new BaseResponse<bool>
+            {
+                Status = StatusCodes.Status200OK.ToString(),
+                Message = "Phê duyệt phiếu thành công",
+                Data = true
+            };
+        }
     }
 }

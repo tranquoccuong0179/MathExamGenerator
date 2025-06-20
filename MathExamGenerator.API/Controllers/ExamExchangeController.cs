@@ -78,5 +78,13 @@ namespace MathExamGenerator.API.Controllers
             var response = await _service.GetAllTeacher(pageNumber, pageSize);
             return StatusCode(int.Parse(response.Status), response);
         }
+        [HttpPost(ApiEndPointConstant.ExamEchange.ApproveExamExchange)]
+        [ProducesResponseType(typeof(BaseResponse<bool>), StatusCodes.Status200OK)]
+        [ProducesErrorResponseType(typeof(ProblemDetails))]
+        public async Task<IActionResult> ApproveExamExchange([FromBody] UpdateExamExchangeStatusRequest request)
+        {
+            var response = await _service.ApproveExamExchange(request);
+            return StatusCode(int.Parse(response.Status), response);
+        }
     }
 }
