@@ -57,7 +57,7 @@ namespace MathExamGenerator.Service.Implement
 
             if (!isSuccess)
             {
-                throw new Exception("Một lỗi đã xảy ra trong quá trình đăng ký tài khoản");
+                throw new Exception("Một lỗi đã xảy ra trong quá trình xóa tài khoản");
             }
 
             return new BaseResponse<bool>
@@ -232,6 +232,13 @@ namespace MathExamGenerator.Service.Implement
             var account = await _unitOfWork.GetRepository<Account>().SingleOrDefaultAsync(
                 predicate: a => a.Id.Equals(accountId) && a.IsActive == true) ?? throw new NotFoundException("Không tìm thấy tài khoản");
 
+            account.FullName = request.FullName ?? account.FullName;
+            account.DateOfBirth = request.DateOfBirth ?? account.DateOfBirth;
+            account.Gender = request.Gender.GetDescriptionFromEnum() ?? account.Gender;
+            account.UpdateAt = TimeUtil.GetCurrentSEATime();
+
+            _unitOfWork.GetRepository<Account>().UpdateAsync(account);
+
             var teacher = await _unitOfWork.GetRepository<Teacher>().SingleOrDefaultAsync(
                 predicate: t => t.AccountId.Equals(accountId) && t.IsActive == true) ?? throw new NotFoundException("Không tìm thấy giáo viên");
 
@@ -244,6 +251,7 @@ namespace MathExamGenerator.Service.Implement
             teacher.Description = request.Description ?? teacher.Description;
             teacher.SchoolName = request.SchoolName ?? teacher.SchoolName;
             teacher.LocationId = request.LocationId ?? teacher.LocationId;
+            teacher.UpdateAt = TimeUtil.GetCurrentSEATime();
 
             _unitOfWork.GetRepository<Teacher>().UpdateAsync(teacher);
 
@@ -251,7 +259,7 @@ namespace MathExamGenerator.Service.Implement
 
             if (!isSuccess)
             {
-                throw new Exception("Một lỗi đã xảy ra trong quá trình đăng ký tài khoản");
+                throw new Exception("Một lỗi đã xảy ra trong quá trình cập nhật tài khoản");
             }
 
             return new BaseResponse<bool>

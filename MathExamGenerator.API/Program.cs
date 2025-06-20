@@ -1,4 +1,5 @@
 using MathExamGenerator.API;
+using MathExamGenerator.API.constant;
 using MathExamGenerator.API.Middlewares;
 using MathExamGenerator.Model.Enum;
 using MathExamGenerator.Model.Payload.Settings;
@@ -10,7 +11,15 @@ using Microsoft.OpenApi.Models;
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
-
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy(name: CorsConstant.PolicyName,
+        policy =>
+        {
+            policy.WithOrigins("*")
+                .AllowAnyHeader().AllowAnyMethod();
+        });
+});
 builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();

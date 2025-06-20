@@ -6,11 +6,10 @@ using System.Threading.Tasks;
 
 namespace MathExamGenerator.Model.Enum
 {
-    public enum RoleEnum
+    public enum ExamExchangeEnum
     {
-        ADMIN,
-        MANAGER,
-        TEACHER,
-        USER
+        Pending,
+        Approved,
+        Rejected,
     }
 }

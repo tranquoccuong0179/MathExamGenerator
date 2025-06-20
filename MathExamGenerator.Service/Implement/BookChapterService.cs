@@ -52,5 +52,49 @@ namespace MathExamGenerator.Service.Implement
                 Data = response
             };
         }
+
+        public async Task<BaseResponse<IPaginate<GetChapterResponse>>> GetAllChapters(int page, int size)
+        {
+            var response = await _unitOfWork.GetRepository<BookChapter>().GetPagingListAsync(
+                selector: c => new GetChapterResponse
+                {
+                    Id = c.Id,
+                    ChapterNo = c.ChapterNo,
+                    Name = c.Name,
+                    SubjectBookId = c.SubjectBookId,
+                },
+                predicate: c => c.IsActive == true,
+                orderBy: c => c.OrderBy(c => c.ChapterNo),
+                page: page,
+                size: size);
+
+
+            return new BaseResponse<IPaginate<GetChapterResponse>>
+            {
+                Status = StatusCodes.Status200OK.ToString(),
+                Message = "Lấy danh sách thông tin chương thành công",
+                Data = response
+            };
+        }
+
+        public async Task<BaseResponse<GetChapterResponse>> GetChapter(Guid id)
+        {
+            var response = await _unitOfWork.GetRepository<BookChapter>().SingleOrDefaultAsync(
+                selector: c => new GetChapterResponse
+                {
+                    Id = c.Id,
+                    ChapterNo = c.ChapterNo,
+                    Name = c.Name,
+                    SubjectBookId = c.SubjectBookId,
+                },
+                predicate: c => c.Id.Equals(id) && c.IsActive == true) ?? throw new NotFoundException("Không tìm thấy chương sách");
+
+            return new BaseResponse<GetChapterResponse>
+            {
+                Status = StatusCodes.Status200OK.ToString(),
+                Message = "Lấy thông tin chương sách thành công",
+                Data = response
+            };
+        }
     }
 }
