@@ -50,5 +50,13 @@
             public const string LocationEndPoint = ApiEndpoint + "/location";
             public const string GetAllLocations = LocationEndPoint;
         }
+
+        public static class User
+        {
+            public const string UserEndPoint = ApiEndpoint + "/user";
+            public const string GetAllUsers = UserEndPoint;
+            public const string GetUser = UserEndPoint + "/{id}";
+            public const string DeleteUser = UserEndPoint + "/{id}";
+        }
     }
 }

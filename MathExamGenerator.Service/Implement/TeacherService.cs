@@ -57,7 +57,7 @@ namespace MathExamGenerator.Service.Implement
 
             if (!isSuccess)
             {
-                throw new Exception("Một lỗi đã xảy ra trong quá trình đăng ký tài khoản");
+                throw new Exception("Một lỗi đã xảy ra trong quá trình xóa tài khoản");
             }
 
             return new BaseResponse<bool>
@@ -251,7 +251,7 @@ namespace MathExamGenerator.Service.Implement
 
             if (!isSuccess)
             {
-                throw new Exception("Một lỗi đã xảy ra trong quá trình đăng ký tài khoản");
+                throw new Exception("Một lỗi đã xảy ra trong quá trình cập nhật tài khoản");
             }
 
             return new BaseResponse<bool>
