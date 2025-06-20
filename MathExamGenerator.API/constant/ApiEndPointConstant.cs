@@ -43,9 +43,12 @@
         public static class SubjectBook
         {
             public const string SubjectBookEndPoint = ApiEndpoint + "/subject-book";
+            public const string CreateSubjectBook = SubjectBookEndPoint;
             public const string GetAllSubjectBooks = SubjectBookEndPoint;
             public const string GetSubjectBook = SubjectBookEndPoint + "/{id}";
             public const string GetAllChapterBySubjectBook = SubjectBookEndPoint + "/{id}/chapters";
+            public const string UpdateSubjectBook = SubjectBookEndPoint + "/{id}";
+            public const string DeleteSubjectBook = SubjectBookEndPoint + "/{id}";
         }
 
         public static class Location
