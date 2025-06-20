@@ -25,15 +25,18 @@ namespace MathExamGenerator.Service.Implement
     {
         private readonly IConnectionMultiplexer _redis;
         private readonly IEmailSender _emailSender;
+        private readonly IUploadService _uploadService;
 
         public AccountService(IUnitOfWork<MathExamGeneratorContext> unitOfWork, 
                               ILogger<AccountService> logger, IMapper mapper, 
                               IHttpContextAccessor httpContextAccessor, 
                               IConnectionMultiplexer redis, 
-                              IEmailSender emailSender) : base(unitOfWork, logger, mapper, httpContextAccessor)
+                              IEmailSender emailSender,
+                              IUploadService uploadService) : base(unitOfWork, logger, mapper, httpContextAccessor)
         {
             _redis = redis;
             _emailSender = emailSender;
+            _uploadService = uploadService;
         }
 
         public async Task<BaseResponse<RegisterResponse>> Register(RegisterRequest request)
@@ -66,6 +69,8 @@ namespace MathExamGenerator.Service.Implement
                 throw new BadHttpRequestException("Mã OTP không chính xác");
 
             var account = _mapper.Map<Account>(request);
+
+            account.AvatarUrl = await _uploadService.UploadImage(request.AvatarUrl);
 
             await _unitOfWork.GetRepository<Account>().InsertAsync(account);
 

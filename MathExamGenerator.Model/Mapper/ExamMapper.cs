@@ -24,6 +24,18 @@ namespace MathExamGenerator.Model.Mapper
                 .ForMember(dest => dest.UpdateAt, opt => opt.MapFrom(src => TimeUtil.GetCurrentSEATime()));
 
             CreateMap<Exam, CreateExamResponse>();
+
+            CreateMap<Exam, GetExamResponse>();
+
+            CreateMap<Answer, AnswerResponse>();
+
+            CreateMap<Question, QuestionWithAnswerResponse>()
+                .ForMember(d => d.CategoryName, o => o.MapFrom(s => s.Category.Name))
+                .ForMember(d => d.CategoryGrade, o => o.MapFrom(s => s.Category.Grade))
+                .ForMember(d => d.Answers, o => o.MapFrom(s => s.Answers.OrderBy(a => a.CreateAt)));
+
+            CreateMap<Exam, ExamWithQuestionsResponse>()
+                .ForMember(dest => dest.Questions, opt => opt.Ignore());
         }
     }
 }

@@ -2,7 +2,6 @@
 using MathExamGenerator.Model.Payload.Request.Exam;
 using MathExamGenerator.Model.Payload.Response;
 using MathExamGenerator.Model.Payload.Response.Exam;
-using MathExamGenerator.Model.Payload.Response.Question;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -18,6 +17,6 @@ namespace MathExamGenerator.Service.Interface
         Task<BaseResponse<CreateExamResponse>> CreateExam(CreateExamRequest request);
         Task<BaseResponse<bool>> UpdateExam(Guid id, UpdateExamRequest request);
         Task<BaseResponse<bool>> DeleteExam(Guid id);
-        Task<BaseResponse<List<GetQuestionResponse>>> GetAllQuestionByExam(Guid examId);
+        Task<BaseResponse<ExamWithQuestionsResponse>> GetAllQuestionByExam(Guid examId);
     }
 }
