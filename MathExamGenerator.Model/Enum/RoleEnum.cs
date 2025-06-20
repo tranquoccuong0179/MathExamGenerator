@@ -9,6 +9,7 @@ namespace MathExamGenerator.Model.Enum
     public enum RoleEnum
     {
         ADMIN,
+        MANAGER,
         TEACHER,
         USER
     }

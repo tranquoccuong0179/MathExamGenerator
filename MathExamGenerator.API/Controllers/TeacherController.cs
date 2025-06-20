@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Mvc;
 using MathExamGenerator.Model.Payload.Request.Teacher;
 using MathExamGenerator.Model.Payload.Response.Teacher;
 using MathExamGenerator.Model.Paginate;
+using Microsoft.AspNetCore.Authorization;
 
 namespace MathExamGenerator.API.Controllers
 {
@@ -27,6 +28,7 @@ namespace MathExamGenerator.API.Controllers
             return StatusCode(int.Parse(response.Status), response);
         }
 
+        //[Authorize(Roles = "ADMIN")]
         [HttpGet(ApiEndPointConstant.Teacher.GetAllTeacher)]
         [ProducesResponseType(typeof(BaseResponse<IPaginate<GetTeacherResponse>>), StatusCodes.Status200OK)]
         [ProducesErrorResponseType(typeof(ProblemDetails))]
