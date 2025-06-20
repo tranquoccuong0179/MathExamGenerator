@@ -139,6 +139,17 @@ namespace MathExamGenerator.Service.Implement
             exam.IsActive = false;
             exam.DeleteAt = TimeUtil.GetCurrentSEATime();
             _unitOfWork.GetRepository<Exam>().UpdateAsync(exam);
+
+            var examQuestions = await _unitOfWork.GetRepository<ExamQuestion>().GetListAsync(
+                predicate: x => x.ExamId == id && x.IsActive == true);
+
+            foreach (var eq in examQuestions)
+            {
+                eq.IsActive = false;
+                eq.DeleteAt = TimeUtil.GetCurrentSEATime();
+                _unitOfWork.GetRepository<ExamQuestion>().UpdateAsync(eq);
+            }
+
             bool isSuccessfully = await _unitOfWork.CommitAsync() > 0;
 
             if (!isSuccessfully)
