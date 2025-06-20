@@ -36,6 +36,7 @@ namespace MathExamGenerator.API
             services.AddScoped<ILocationService, LocationService>();
             services.AddScoped<IExamService, ExamService>();
             services.AddScoped<IUploadService, UploadService>();
+            services.AddScoped<IExamMatrixService, ExamMatrixService>();
 
             return services;
         }
