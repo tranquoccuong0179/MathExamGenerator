@@ -51,8 +51,8 @@ namespace MathExamGenerator.API.Controllers
         }
         
         [HttpPut(ApiEndPointConstant.Teacher.UpdateTeacher)]
-        [ProducesResponseType(typeof(BaseResponse<bool>), StatusCodes.Status200OK)]
-        [ProducesResponseType(typeof(BaseResponse<bool>), StatusCodes.Status404NotFound)]
+        [ProducesResponseType(typeof(BaseResponse<GetTeacherResponse>), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(BaseResponse<GetTeacherResponse>), StatusCodes.Status404NotFound)]
         [ProducesErrorResponseType(typeof(ProblemDetails))]
         public async Task<IActionResult> UpdateTeacher([FromBody] UpdateTeacherRequest request)
         {
