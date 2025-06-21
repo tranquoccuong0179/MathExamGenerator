@@ -83,6 +83,7 @@ var app = builder.Build();
 app.UseStaticFiles();
 
 app.UseMiddleware<GlobalException>();
+app.UseCors(CorsConstant.PolicyName);
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment() || app.Environment.IsProduction() || app.Environment.IsStaging())
