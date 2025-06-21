@@ -20,8 +20,14 @@ namespace MathExamGenerator.Service.Implement
 {
     public class SubjectBookService : BaseService<SubjectBookService>, ISubjectBookService
     {
-        public SubjectBookService(IUnitOfWork<MathExamGeneratorContext> unitOfWork, ILogger<SubjectBookService> logger, IMapper mapper, IHttpContextAccessor httpContextAccessor) : base(unitOfWork, logger, mapper, httpContextAccessor)
+        private readonly IUploadService _uploadService;
+        public SubjectBookService(IUnitOfWork<MathExamGeneratorContext> unitOfWork, 
+                                  ILogger<SubjectBookService> logger, 
+                                  IMapper mapper, 
+                                  IHttpContextAccessor httpContextAccessor,
+                                  IUploadService uploadService) : base(unitOfWork, logger, mapper, httpContextAccessor)
         {
+            _uploadService = uploadService;
         }
 
         public async Task<BaseResponse<CreateSubjectBookResponse>> CreateSubjectBook(CreateSubjectBookRequest request)
@@ -41,7 +47,7 @@ namespace MathExamGenerator.Service.Implement
             {
                 Id = Guid.NewGuid(),
                 Title = request.Title,
-                FileUrl = request.FileUrl,
+                FileUrl = await _uploadService.UploadToGoogleDriveAsync(request.FileUrl),
                 Description = request.Description,
                 SubjectId = request.SubjectId,
                 IsActive = true,
