@@ -17,6 +17,6 @@ namespace MathExamGenerator.Model.Payload.Response.Exam
         public string CategoryName { get; set; } = default!;
         public string CategoryGrade { get; set; } = default!;
 
-        public List<AnswerResponse> Answers { get; set; } = new();
+        public List<ExamAnswerResponse> Answers { get; set; } = new();
     }
 }

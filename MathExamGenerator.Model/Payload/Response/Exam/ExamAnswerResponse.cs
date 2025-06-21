@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace MathExamGenerator.Model.Payload.Response.Exam
 {
-    public class AnswerResponse
+    public class ExamAnswerResponse
     {
         public Guid Id { get; set; }
         public string Content { get; set; }

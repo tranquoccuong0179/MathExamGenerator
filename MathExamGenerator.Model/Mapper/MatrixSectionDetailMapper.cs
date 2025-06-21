@@ -1,7 +1,7 @@
 ﻿using AutoMapper;
 using MathExamGenerator.Model.Entity;
-using MathExamGenerator.Model.Payload.Request.ExamMatrix;
-using MathExamGenerator.Model.Payload.Response.ExamMatrix;
+using MathExamGenerator.Model.Payload.Request.MatrixSectionDetail;
+using MathExamGenerator.Model.Payload.Response.MatrixSectionDetail;
 using MathExamGenerator.Model.Utils;
 using System;
 using System.Collections.Generic;

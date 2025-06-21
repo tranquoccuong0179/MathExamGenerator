@@ -3,8 +3,9 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using MathExamGenerator.Model.Payload.Response.MatrixSectionDetail;
 
-namespace MathExamGenerator.Model.Payload.Response.ExamMatrix
+namespace MathExamGenerator.Model.Payload.Response.MatrixSection
 {
     public class MatrixSectionStructureResponse
     {

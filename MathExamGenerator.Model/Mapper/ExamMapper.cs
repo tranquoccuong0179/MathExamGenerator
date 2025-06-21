@@ -27,7 +27,7 @@ namespace MathExamGenerator.Model.Mapper
 
             CreateMap<Exam, GetExamResponse>();
 
-            CreateMap<Answer, AnswerResponse>();
+            CreateMap<Answer, ExamAnswerResponse>();
 
             CreateMap<Question, QuestionWithAnswerResponse>()
                 .ForMember(d => d.CategoryName, o => o.MapFrom(s => s.Category.Name))
