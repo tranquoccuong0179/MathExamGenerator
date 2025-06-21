@@ -30,7 +30,8 @@ builder.Services.AddCustomServices();
 builder.Services.AddJwtValidation();
 builder.Services.AddHttpClientServices();
 builder.Services.AddCloudinary(builder.Configuration);
-builder.Services.AddRedis(builder.Configuration); 
+builder.Services.AddRedis(builder.Configuration);
+builder.Services.AddGoogleDrive(builder.Configuration);
 builder.Services.Configure<ApiBehaviorOptions>(options =>
 {
     options.SuppressModelStateInvalidFilter = true;
@@ -83,6 +84,7 @@ var app = builder.Build();
 app.UseStaticFiles();
 
 app.UseMiddleware<GlobalException>();
+app.UseCors(CorsConstant.PolicyName);
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment() || app.Environment.IsProduction() || app.Environment.IsStaging())

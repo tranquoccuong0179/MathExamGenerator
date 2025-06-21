@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Http;
 
 namespace MathExamGenerator.Model.Payload.Request.SubjectBook
 {
@@ -10,7 +11,7 @@ namespace MathExamGenerator.Model.Payload.Request.SubjectBook
     {
         public string Title { get; set; } = null!;
 
-        public string FileUrl { get; set; } = null!;
+        public IFormFile FileUrl { get; set; } = null!;
 
         public string Description { get; set; } = null!;
 

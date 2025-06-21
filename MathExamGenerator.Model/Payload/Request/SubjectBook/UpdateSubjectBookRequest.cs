@@ -4,19 +4,14 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace MathExamGenerator.Model.Payload.Response.SubjectBook
+namespace MathExamGenerator.Model.Payload.Request.SubjectBook
 {
-    public class GetSubjectBookResponse
+    public class UpdateSubjectBookRequest
     {
-        public Guid Id { get; set; }
-
         public string? Title { get; set; }
-
-        public string? FileUrl { get; set; }
 
         public string? Description { get; set; }
 
         public Guid? SubjectId { get; set; }
-
     }
 }

@@ -6,10 +6,8 @@ using System.Threading.Tasks;
 
 namespace MathExamGenerator.Model.Payload.Response.SubjectBook
 {
-    public class GetSubjectBookResponse
+    public class CreateSubjectBookResponse
     {
-        public Guid Id { get; set; }
-
         public string? Title { get; set; }
 
         public string? FileUrl { get; set; }

@@ -1,11 +1,17 @@
-﻿using CloudinaryDotNet;
+﻿using System.Text;
+using CloudinaryDotNet;
+using Google.Apis.Auth.OAuth2;
+using Google.Apis.Drive.v3;
+using Google.Apis.Services;
 using MathExamGenerator.Model.Entity;
+using MathExamGenerator.Model.Payload.Settings;
 using MathExamGenerator.Repository.Implement;
 using MathExamGenerator.Repository.Interface;
 using MathExamGenerator.Service.Implement;
 using MathExamGenerator.Service.Interface;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 using StackExchange.Redis;
 
@@ -125,6 +131,35 @@ namespace MathExamGenerator.API
 
             services.AddSingleton(account);
             services.AddSingleton(cloudinary);
+            return services;
+        }
+
+        public static IServiceCollection AddGoogleDrive(this IServiceCollection services, IConfiguration configuration)
+        {
+            var credentialsSection = configuration.GetSection("GoogleDrive:CredentialsPath");
+            var credentialsDict = credentialsSection.GetChildren().ToDictionary(x => x.Key, x => x.Value);
+            var credentialsJson = Newtonsoft.Json.JsonConvert.SerializeObject(credentialsDict);
+
+            var folderId = configuration["GoogleDrive:FolderId"];
+
+            var credential = GoogleCredential
+                .FromStream(new MemoryStream(Encoding.UTF8.GetBytes(credentialsJson)))
+                .CreateScoped(DriveService.ScopeConstants.DriveFile);
+
+            var driveService = new DriveService(new BaseClientService.Initializer
+            {
+                HttpClientInitializer = credential,
+                ApplicationName = "MathExamGenerator"
+            });
+
+            services.AddSingleton(driveService);
+
+            services.Configure<GoogleDriveSettings>(options =>
+            {
+                options.CredentialsJson = credentialsJson;
+                options.FolderId = folderId;
+            });
+
             return services;
         }
 

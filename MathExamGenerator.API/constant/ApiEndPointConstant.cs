@@ -36,16 +36,22 @@
         public static class BookTopic
         {
             public const string BookTopicEndPoint = ApiEndpoint + "/book-topic";
+            public const string CreateBookTopic = BookTopicEndPoint;
             public const string GetAllBookTopic = BookTopicEndPoint;
             public const string GetBookTopic = BookTopicEndPoint + "/{id}";
+            public const string UpdateBookTopic = BookTopicEndPoint + "/{id}";
+            public const string DeleteBookTopic = BookTopicEndPoint + "/{id}";
         }
 
         public static class SubjectBook
         {
             public const string SubjectBookEndPoint = ApiEndpoint + "/subject-book";
+            public const string CreateSubjectBook = SubjectBookEndPoint;
             public const string GetAllSubjectBooks = SubjectBookEndPoint;
             public const string GetSubjectBook = SubjectBookEndPoint + "/{id}";
             public const string GetAllChapterBySubjectBook = SubjectBookEndPoint + "/{id}/chapters";
+            public const string UpdateSubjectBook = SubjectBookEndPoint + "/{id}";
+            public const string DeleteSubjectBook = SubjectBookEndPoint + "/{id}";
         }
 
         public static class Location
@@ -104,9 +110,12 @@
         public static class BookChapter
         {
             public const string BookChapterEndPoint = ApiEndpoint + "/chapter";
+            public const string CreateBookChapter = BookChapterEndPoint;
             public const string GetAllBookChapters = BookChapterEndPoint;
             public const string GetBookChapter = BookChapterEndPoint + "/{id}";
             public const string GetAllBookTopicByChapter = BookChapterEndPoint + "/{id}/topics";
+            public const string UpdateBookChapter = BookChapterEndPoint + "/{id}";
+            public const string DeleteBookChapter = BookChapterEndPoint + "/{id}";
         }
 
         public static class Subject
