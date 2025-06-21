@@ -141,6 +141,19 @@ namespace MathExamGenerator.Service.Implement
                 };
             }
 
+            var isBeingUsed = await _unitOfWork.GetRepository<Exam>().SingleOrDefaultAsync(
+                predicate: x => x.ExamMatrixId == id && x.IsActive == true);
+
+            if (isBeingUsed != null)
+            {
+                return new BaseResponse<bool>
+                {
+                    Status = StatusCodes.Status400BadRequest.ToString(),
+                    Message = "Không thể xoá ma trận vì vẫn còn đề thi đang sử dụng nó.",
+                    Data = false
+                };
+            }
+
             matrix.IsActive = false;
             matrix.UpdateAt = TimeUtil.GetCurrentSEATime();
             matrix.DeleteAt = TimeUtil.GetCurrentSEATime();
