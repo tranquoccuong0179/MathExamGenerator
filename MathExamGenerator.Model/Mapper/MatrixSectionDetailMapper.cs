@@ -11,22 +11,18 @@ using System.Threading.Tasks;
 
 namespace MathExamGenerator.Model.Mapper
 {
-    public class ExamMatrixMapper : Profile
+    public class MatrixSectionDetailMapper : Profile
     {
-        public ExamMatrixMapper()
+        public MatrixSectionDetailMapper()
         {
-
-            CreateMap<CreateExamMatrixWithStructureRequest, ExamMatrix>()
+            CreateMap<CreateMatrixSectionDetailRequest, MatrixSectionDetail>()
                 .ForMember(dest => dest.Id, opt => opt.MapFrom(src => Guid.NewGuid()))
-                .ForMember(dest => dest.MatrixSections, opt => opt.Ignore()) 
+                .ForMember(dest => dest.MatrixSectionId, opt => opt.Ignore())
                 .ForMember(dest => dest.IsActive, opt => opt.MapFrom(src => true))
                 .ForMember(dest => dest.CreateAt, opt => opt.MapFrom(src => TimeUtil.GetCurrentSEATime()))
                 .ForMember(dest => dest.UpdateAt, opt => opt.MapFrom(src => TimeUtil.GetCurrentSEATime()));
 
-            CreateMap<ExamMatrix, GetExamMatrixResponse>();
-
-            CreateMap<ExamMatrix, ExamMatrixStructureResponse>()
-                .ForMember(dest => dest.MatrixSections, opt => opt.MapFrom(src => src.MatrixSections.Where(s => s.IsActive == true)));
+            CreateMap<MatrixSectionDetail, MatrixSectionDetailResponse>();
         }
     }
 }

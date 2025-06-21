@@ -80,8 +80,18 @@
             public const string CreateExamMatrix = ExamMatrixEndPoint;
             public const string UpdateExamMatrix = ExamMatrixEndPoint + "/{id}";
             public const string DeleteExamMatrix = ExamMatrixEndPoint + "/{id}";
+            public const string GetSectionsByMatrixId = ExamMatrixEndPoint + "/{id}/sections";
         }
-    
+
+        public static class MatrixSection
+        {
+            public const string MatrixSectionEndPoint = ApiEndpoint + "/matrix-section";
+            public const string GetMatrixSection = MatrixSectionEndPoint + "/{id}";
+            public const string GetAllMatrixSection = MatrixSectionEndPoint;
+            public const string UpdateMatrixSection = MatrixSectionEndPoint + "/{id}";
+            public const string DeleteMatrixSection = MatrixSectionEndPoint + "/{id}";
+        }
+
 
         public static class ExamEchange
         {

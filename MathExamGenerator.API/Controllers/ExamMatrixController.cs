@@ -5,22 +5,27 @@ using MathExamGenerator.Model.Payload.Response;
 using MathExamGenerator.Service.Interface;
 using Microsoft.AspNetCore.Mvc;
 using MathExamGenerator.Model.Paginate;
+using MathExamGenerator.Model.Payload.Response.MatrixSection;
+using MathExamGenerator.Service.Implement;
 
 namespace MathExamGenerator.API.Controllers
 {
     public class ExamMatrixController : BaseController<ExamMatrixController>
     {
         private readonly IExamMatrixService _examMatrixService;
+        private readonly IMatrixSectionService _matrixSectionService;
 
-        public ExamMatrixController(ILogger<ExamMatrixController> logger, IExamMatrixService examMatrixService)
+        public ExamMatrixController(ILogger<ExamMatrixController> logger, IExamMatrixService examMatrixService, IMatrixSectionService matrixSectionService)
             : base(logger)
         {
             _examMatrixService = examMatrixService;
+            _matrixSectionService = matrixSectionService;
         }
 
         [HttpPost(ApiEndPointConstant.ExamMatrix.CreateExamMatrix)]
         [ProducesResponseType(typeof(BaseResponse<GetExamMatrixResponse>), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(BaseResponse<GetExamMatrixResponse>), StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(typeof(BaseResponse<GetExamMatrixResponse>), StatusCodes.Status404NotFound)]
         [ProducesResponseType(typeof(BaseResponse<GetExamMatrixResponse>), StatusCodes.Status500InternalServerError)]
         [ProducesErrorResponseType(typeof(ProblemDetails))]
         public async Task<IActionResult> CreateExamMatrix([FromBody] CreateExamMatrixWithStructureRequest request)
@@ -45,6 +50,7 @@ namespace MathExamGenerator.API.Controllers
         [HttpDelete(ApiEndPointConstant.ExamMatrix.DeleteExamMatrix)]
         [ProducesResponseType(typeof(BaseResponse<bool>), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(BaseResponse<bool>), StatusCodes.Status404NotFound)]
+        [ProducesResponseType(typeof(BaseResponse<bool>), StatusCodes.Status400BadRequest)]
         [ProducesResponseType(typeof(BaseResponse<bool>), StatusCodes.Status500InternalServerError)]
         [ProducesErrorResponseType(typeof(ProblemDetails))]
         public async Task<IActionResult> DeleteExamMatrix([FromRoute] Guid id)
@@ -81,6 +87,16 @@ namespace MathExamGenerator.API.Controllers
         public async Task<IActionResult> GetExamMatrixById([FromRoute] Guid id)
         {
             var response = await _examMatrixService.GetById(id);
+            return StatusCode(int.Parse(response.Status), response);
+        }
+
+        [HttpGet(ApiEndPointConstant.ExamMatrix.GetSectionsByMatrixId)]
+        [ProducesResponseType(typeof(BaseResponse<List<MatrixSectionStructureResponse>>), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(BaseResponse<List<MatrixSectionStructureResponse>>), StatusCodes.Status404NotFound)]
+        [ProducesErrorResponseType(typeof(ProblemDetails))]
+        public async Task<IActionResult> GetSectionsByMatrixId([FromRoute] Guid id)
+        {
+            var response = await _matrixSectionService.GetSectionsByMatrixId(id);
             return StatusCode(int.Parse(response.Status), response);
         }
     }

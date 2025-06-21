@@ -3,7 +3,6 @@ using MathExamGenerator.Model.Entity;
 using MathExamGenerator.Model.Paginate;
 using MathExamGenerator.Model.Payload.Request.ExamMatrix;
 using MathExamGenerator.Model.Payload.Response;
-using MathExamGenerator.Model.Payload.Response.Exam;
 using MathExamGenerator.Model.Payload.Response.ExamMatrix;
 using MathExamGenerator.Model.Utils;
 using MathExamGenerator.Repository.Interface;
@@ -88,6 +87,18 @@ namespace MathExamGenerator.Service.Implement
                         };
                     }
                 }
+            }
+
+            var subject = await _unitOfWork.GetRepository<Subject>().SingleOrDefaultAsync(
+                predicate: x => x.Id == request.SubjectId && x.IsActive == true);
+
+            if (subject == null)
+            {
+                return new BaseResponse<GetExamMatrixResponse>
+                {
+                    Status = StatusCodes.Status404NotFound.ToString(),
+                    Message = "Không tìm thấy môn học.",
+                };
             }
 
             var matrix = _mapper.Map<ExamMatrix>(request);

@@ -4,8 +4,9 @@ using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using MathExamGenerator.Model.Payload.Request.MatrixSectionDetail;
 
-namespace MathExamGenerator.Model.Payload.Request.ExamMatrix
+namespace MathExamGenerator.Model.Payload.Request.MatrixSection
 {
     public class CreateMatrixSectionRequest
     {

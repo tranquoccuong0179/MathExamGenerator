@@ -5,7 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace MathExamGenerator.Model.Payload.Request.ExamMatrix
+namespace MathExamGenerator.Model.Payload.Request.MatrixSectionDetail
 {
     public class CreateMatrixSectionDetailRequest
     {

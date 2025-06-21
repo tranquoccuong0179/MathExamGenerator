@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using MathExamGenerator.Model.Payload.Response.MatrixSection;
 
 namespace MathExamGenerator.Model.Payload.Response.ExamMatrix
 {
