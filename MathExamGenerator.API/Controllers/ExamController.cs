@@ -51,7 +51,7 @@ namespace MathExamGenerator.API.Controllers
         }
 
         [HttpGet(ApiEndPointConstant.Exam.GetAllExam)]
-        [ProducesResponseType(typeof(BaseResponse<bool>), StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(typeof(BaseResponse<IPaginate<GetExamResponse>>), StatusCodes.Status400BadRequest)]
         [ProducesResponseType(typeof(BaseResponse<IPaginate<GetExamResponse>>), StatusCodes.Status200OK)]
         public async Task<IActionResult> GetAllExam([FromQuery] int? page, [FromQuery] int? size)
         {

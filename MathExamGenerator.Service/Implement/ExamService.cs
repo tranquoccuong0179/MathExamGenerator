@@ -131,12 +131,13 @@ namespace MathExamGenerator.Service.Implement
                 return new BaseResponse<bool>
                 {
                     Status = StatusCodes.Status404NotFound.ToString(),
-                    Message = "Không tìm thấy đề thi để cập nhật.",
+                    Message = "Không tìm thấy đề thi để xóa.",
                     Data = false
                 };
             }
 
             exam.IsActive = false;
+            exam.UpdateAt = TimeUtil.GetCurrentSEATime();
             exam.DeleteAt = TimeUtil.GetCurrentSEATime();
             _unitOfWork.GetRepository<Exam>().UpdateAsync(exam);
 
@@ -146,6 +147,7 @@ namespace MathExamGenerator.Service.Implement
             foreach (var eq in examQuestions)
             {
                 eq.IsActive = false;
+                eq.UpdateAt = TimeUtil.GetCurrentSEATime();
                 eq.DeleteAt = TimeUtil.GetCurrentSEATime();
                 _unitOfWork.GetRepository<ExamQuestion>().UpdateAsync(eq);
             }
