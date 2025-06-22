@@ -41,13 +41,21 @@ namespace MathExamGenerator.API
             services.AddScoped<IBookTopicService, BookTopicService>();
             services.AddScoped<IBookChapterService, BookChapterService>();
             services.AddScoped<ILocationService, LocationService>();
+            services.AddScoped<IExamService, ExamService>();
             services.AddScoped<IUploadService, UploadService>();
             services.AddScoped<IUserService, UserService>();
             services.AddScoped<ISubjectService, SubjectService>();
             services.AddScoped<ISubjectBookService, SubjectBookService>();
+            services.AddScoped<IExamMatrixService, ExamMatrixService>();
+            services.AddScoped<IMatrixSectionService, MatrixSectionService>();
+            services.AddScoped<IMatrixSectionDetailService, MatrixSectionDetailService>();
             services.AddScoped<ICommentService, CommentService>();
+            services.AddScoped<ITestHistoryService, TestHistoryService>();
             services.AddScoped<ILikeCommentService, LikeCommentService>();
             services.AddScoped<IReplyService, ReplyService>();
+            services.AddScoped<IQuestionHistoryService, QuestionHistoryService>();
+            services.AddScoped<ITestStorageService, TestStorageService>();
+
             return services;
         }
         public static IServiceCollection AddHttpClientServices(this IServiceCollection services)
