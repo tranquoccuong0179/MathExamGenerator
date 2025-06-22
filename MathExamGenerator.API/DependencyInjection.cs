@@ -48,6 +48,7 @@ namespace MathExamGenerator.API
             services.AddScoped<ISubjectBookService, SubjectBookService>();
             services.AddScoped<IExamMatrixService, ExamMatrixService>();
             services.AddScoped<IMatrixSectionService, MatrixSectionService>();
+            services.AddScoped<IMatrixSectionDetailService, MatrixSectionDetailService>();
 
             return services;
         }

@@ -90,8 +90,17 @@
             public const string GetAllMatrixSection = MatrixSectionEndPoint;
             public const string UpdateMatrixSection = MatrixSectionEndPoint + "/{id}";
             public const string DeleteMatrixSection = MatrixSectionEndPoint + "/{id}";
+            public const string GetAllDetailsBySectionId = MatrixSectionEndPoint + "/{id}/details";
         }
 
+        public static class MatrixSectionDetail
+        {
+            public const string Endpoint = ApiEndpoint + "/matrix-section-detail";
+            public const string GetAll = Endpoint;
+            public const string GetById = Endpoint + "/{id}";
+            public const string Update = Endpoint + "/{id}";
+            public const string Delete = Endpoint + "/{id}";
+        }
 
         public static class ExamEchange
         {

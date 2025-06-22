@@ -5,17 +5,20 @@ using MathExamGenerator.Service.Interface;
 using Microsoft.AspNetCore.Mvc;
 using MathExamGenerator.Model.Paginate;
 using MathExamGenerator.Model.Payload.Request.MatrixSection;
+using MathExamGenerator.Model.Payload.Response.MatrixSectionDetail;
 
 namespace MathExamGenerator.API.Controllers
 {
     public class MatrixSectionController : BaseController<MatrixSectionController>
     {
         private readonly IMatrixSectionService _matrixSectionService;
+        private readonly IMatrixSectionDetailService _detailService;
 
-        public MatrixSectionController(ILogger<MatrixSectionController> logger, IMatrixSectionService matrixSectionService)
+        public MatrixSectionController(ILogger<MatrixSectionController> logger, IMatrixSectionService matrixSectionService, IMatrixSectionDetailService detailService)
             : base(logger)
         {
             _matrixSectionService = matrixSectionService;
+            _detailService = detailService;
         }
 
         [HttpGet(ApiEndPointConstant.MatrixSection.GetAllMatrixSection)]
@@ -62,6 +65,16 @@ namespace MathExamGenerator.API.Controllers
         public async Task<IActionResult> Delete([FromRoute] Guid id)
         {
             var response = await _matrixSectionService.DeleteSection(id);
+            return StatusCode(int.Parse(response.Status), response);
+        }
+
+        [HttpGet(ApiEndPointConstant.MatrixSection.GetAllDetailsBySectionId)]
+        [ProducesResponseType(typeof(BaseResponse<List<MatrixSectionDetailResponse>>), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(BaseResponse<List<MatrixSectionDetailResponse>>), StatusCodes.Status404NotFound)]
+        [ProducesErrorResponseType(typeof(ProblemDetails))]
+        public async Task<IActionResult> GetAllDetailsBySectionId([FromRoute] Guid id)
+        {
+            var response = await _detailService.GetAllBySectionId(id);
             return StatusCode(int.Parse(response.Status), response);
         }
     }
