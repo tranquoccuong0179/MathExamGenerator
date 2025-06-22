@@ -104,5 +104,19 @@
             public const string UpdateSubject = SubjectEndPoint + "/{id}";
             public const string DeleteSubject = SubjectEndPoint + "/{id}";
         }
+
+        public static class Comment
+        {
+            public const string CommentEndPoint = ApiEndpoint + "/comment";
+            public const string CreateComment = CommentEndPoint;
+            public const string UpdateComment = CommentEndPoint + "/{id}";
+            public const string DeleteComment = CommentEndPoint + "/{id}";
+        }
+
+        public static class Question
+        {
+            public const string QuestionEndPoint = ApiEndpoint + "/question";
+            public const string GetAllCommentByQuestion = QuestionEndPoint + "/{id}/comments";
+        }
     }
 }
