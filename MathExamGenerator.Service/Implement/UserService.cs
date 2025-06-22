@@ -127,12 +127,15 @@ namespace MathExamGenerator.Service.Implement
             };
         }
 
-        public async Task<BaseResponse<bool>> UpdateUser(UpdateUserRequest request)
+        public async Task<BaseResponse<GetUserResponse>> UpdateUser(UpdateUserRequest request)
         {
             Guid? accountId = UserUtil.GetAccountId(_httpContextAccessor.HttpContext);
 
             var account = await _unitOfWork.GetRepository<Account>().SingleOrDefaultAsync(
                 predicate: a => a.Id.Equals(accountId) && a.IsActive == true) ?? throw new NotFoundException("Không tìm thấy tài khoản người dùng");
+
+            var user = await _unitOfWork.GetRepository<UserInfo>().SingleOrDefaultAsync(
+                predicate: u => u.AccountId.Equals(accountId) && u.IsActive == true) ?? throw new NotFoundException("Không tìm thấy người dùng");
 
             account.FullName = request.FullName ?? account.FullName;
             account.DateOfBirth = request.DateOfBirth ?? account.DateOfBirth;
@@ -148,11 +151,22 @@ namespace MathExamGenerator.Service.Implement
                 throw new Exception("Một lỗi đã xảy ra trong quá trình cập nhật tài khoản");
             }
 
-            return new BaseResponse<bool>
+            return new BaseResponse<GetUserResponse>
             {
                 Status = StatusCodes.Status200OK.ToString(),
                 Message = "Cập nhật tài khoản thành công",
-                Data = true
+                Data = new GetUserResponse
+                {
+                    AccountId = account.Id,
+                    UserId = user.Id,
+                    FullName = account.FullName,
+                    Email = account.Email,
+                    Phone = account.Phone,
+                    DateOfBirth = account.DateOfBirth,
+                    Gender = account.Gender,
+                    QuizFree = account.QuizFree,
+                    Point = user.Point
+                }
             };
         }
     }

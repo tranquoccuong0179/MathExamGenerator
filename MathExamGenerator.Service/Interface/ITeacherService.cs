@@ -20,6 +20,6 @@ namespace MathExamGenerator.Service.Interface
 
         Task<BaseResponse<GetTeacherResponse>> GetTeacher(Guid id);
 
-        Task<BaseResponse<bool>> UpdateTeacher(UpdateTeacherRequest request);
+        Task<BaseResponse<GetTeacherResponse>> UpdateTeacher(UpdateTeacherRequest request);
     }
 }
