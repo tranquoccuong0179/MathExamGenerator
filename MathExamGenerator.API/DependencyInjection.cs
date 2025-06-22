@@ -53,6 +53,7 @@ namespace MathExamGenerator.API
             services.AddScoped<ITestHistoryService, TestHistoryService>();
             services.AddScoped<ILikeCommentService, LikeCommentService>();
             services.AddScoped<IReplyService, ReplyService>();
+            services.AddScoped<IQuestionHistoryService, QuestionHistoryService>();
 
             return services;
         }

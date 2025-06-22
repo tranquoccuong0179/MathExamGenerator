@@ -19,6 +19,11 @@ namespace MathExamGenerator.Model.Mapper
             {
                 CreateMap<QuestionHistory, CreateQuestionHistoryResponse>();
                 CreateMap<QuestionHistory, GetQuestionHistoryResponse>();
+                CreateMap<CreateQuestionHistoryRequest, QuestionHistory>()
+                    .ForMember(dest => dest.Id, opt => opt.MapFrom(_ => Guid.NewGuid()))
+                    .ForMember(dest => dest.IsActive, opt => opt.MapFrom(_ => true))
+                    .ForMember(dest => dest.CreateAt, opt => opt.MapFrom(_ => TimeUtil.GetCurrentSEATime()))
+                    .ForMember(dest => dest.UpdateAt, opt => opt.MapFrom(_ => TimeUtil.GetCurrentSEATime()));
             }
         }
     }

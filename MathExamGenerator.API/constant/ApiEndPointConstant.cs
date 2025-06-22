@@ -182,5 +182,15 @@
             public const string UpdateReply = ReplyEndPoint + "/{id}";
             public const string DeleteReply = ReplyEndPoint + "/{id}";
         }
+
+        public static class QuestionHistory
+        {
+            public const string Endpoint = ApiEndpoint + "/question-history";
+            public const string GetAll = Endpoint;
+            public const string GetById = Endpoint + "/{id}";
+            public const string Create = Endpoint;
+            public const string Update = Endpoint + "/{id}";
+            public const string Delete = Endpoint + "/{id}";
+        }
     }
 }
