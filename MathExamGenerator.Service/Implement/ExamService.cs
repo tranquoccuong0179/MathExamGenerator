@@ -110,7 +110,11 @@ namespace MathExamGenerator.Service.Implement
 
             if (!isSuccessfully)
             {
-                throw new Exception("Một lỗi đã xảy ra trong quá trình tạo đề thi.");
+                return new BaseResponse<CreateExamResponse>
+                {
+                    Status = StatusCodes.Status500InternalServerError.ToString(),
+                    Message = "Một lỗi đã xảy ra trong quá trình tạo đề thi.",
+                };
             }
 
             return new BaseResponse<CreateExamResponse>

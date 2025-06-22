@@ -53,6 +53,7 @@ namespace MathExamGenerator.API.Controllers
         [HttpGet(ApiEndPointConstant.Exam.GetAllExam)]
         [ProducesResponseType(typeof(BaseResponse<IPaginate<GetExamResponse>>), StatusCodes.Status400BadRequest)]
         [ProducesResponseType(typeof(BaseResponse<IPaginate<GetExamResponse>>), StatusCodes.Status200OK)]
+        [ProducesErrorResponseType(typeof(ProblemDetails))]
         public async Task<IActionResult> GetAllExam([FromQuery] int? page, [FromQuery] int? size)
         {
             int pageNumber = page ?? 1;
@@ -64,6 +65,7 @@ namespace MathExamGenerator.API.Controllers
         [HttpGet(ApiEndPointConstant.Exam.GetExam)]
         [ProducesResponseType(typeof(BaseResponse<GetExamResponse>), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(BaseResponse<GetExamResponse>), StatusCodes.Status404NotFound)]
+        [ProducesErrorResponseType(typeof(ProblemDetails))]
         public async Task<IActionResult> GetExamById([FromRoute] Guid id)
         {
             var response = await _examService.GetById(id);
@@ -73,6 +75,7 @@ namespace MathExamGenerator.API.Controllers
         [HttpGet(ApiEndPointConstant.Exam.GetAllQuestionByExam)]
         [ProducesResponseType(typeof(BaseResponse<ExamWithQuestionsResponse>), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(BaseResponse<ExamWithQuestionsResponse>), StatusCodes.Status404NotFound)]
+        [ProducesErrorResponseType(typeof(ProblemDetails))]
         public async Task<IActionResult> GetQuestionsByExamId([FromRoute] Guid id)
         {
             var response = await _examService.GetAllQuestionByExam(id);

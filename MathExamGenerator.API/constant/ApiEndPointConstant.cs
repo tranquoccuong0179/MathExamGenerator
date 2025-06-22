@@ -161,5 +161,16 @@
             public const string QuestionEndPoint = ApiEndpoint + "/question";
             public const string GetAllCommentByQuestion = QuestionEndPoint + "/{id}/comments";
         }
+
+        public static class TestHistory
+        {
+            public const string TestHistoryEndpoint = ApiEndpoint + "/test-history";
+            public const string GetAll = TestHistoryEndpoint;
+            public const string GetById = TestHistoryEndpoint + "/{id}";
+            public const string Create = TestHistoryEndpoint;
+            public const string Update = TestHistoryEndpoint + "/{id}";
+            public const string Delete = TestHistoryEndpoint + "/{id}";
+            public const string GetQuestionHistoriesByTestId = TestHistoryEndpoint + "/{id}/question-histories";
+        }
     }
 }

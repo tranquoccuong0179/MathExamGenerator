@@ -50,6 +50,7 @@ namespace MathExamGenerator.API
             services.AddScoped<IMatrixSectionService, MatrixSectionService>();
             services.AddScoped<IMatrixSectionDetailService, MatrixSectionDetailService>();
             services.AddScoped<ICommentService, CommentService>();
+            services.AddScoped<ITestHistoryService, TestHistoryService>();
 
             return services;
         }
