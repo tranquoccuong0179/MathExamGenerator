@@ -18,6 +18,6 @@ namespace MathExamGenerator.Service.Interface
 
         Task<BaseResponse<bool>> DeleteUser(Guid id);
 
-        Task<BaseResponse<bool>> UpdateUser(UpdateUserRequest request);
+        Task<BaseResponse<GetUserResponse>> UpdateUser(UpdateUserRequest request);
     }
 }
