@@ -111,12 +111,22 @@
             public const string CreateComment = CommentEndPoint;
             public const string UpdateComment = CommentEndPoint + "/{id}";
             public const string DeleteComment = CommentEndPoint + "/{id}";
+            public const string LikeComment = CommentEndPoint + "/{id}/like";
+            public const string ReplyComment = CommentEndPoint + "/{id}/reply";
+            public const string GetAllReplyByComment = CommentEndPoint + "/{id}/reply";
         }
 
         public static class Question
         {
             public const string QuestionEndPoint = ApiEndpoint + "/question";
             public const string GetAllCommentByQuestion = QuestionEndPoint + "/{id}/comments";
+        }
+
+        public static class Reply
+        {
+            public const string ReplyEndPoint = ApiEndpoint + "/reply";
+            public const string UpdateReply = ReplyEndPoint + "/{id}";
+            public const string DeleteReply = ReplyEndPoint + "/{id}";
         }
     }
 }
