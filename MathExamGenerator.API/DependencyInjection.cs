@@ -54,6 +54,7 @@ namespace MathExamGenerator.API
             services.AddScoped<ILikeCommentService, LikeCommentService>();
             services.AddScoped<IReplyService, ReplyService>();
             services.AddScoped<IQuestionHistoryService, QuestionHistoryService>();
+            services.AddScoped<ITestStorageService, TestStorageService>();
 
             return services;
         }

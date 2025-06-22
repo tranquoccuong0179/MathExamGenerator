@@ -185,12 +185,22 @@
 
         public static class QuestionHistory
         {
-            public const string Endpoint = ApiEndpoint + "/question-history";
-            public const string GetAll = Endpoint;
-            public const string GetById = Endpoint + "/{id}";
-            public const string Create = Endpoint;
-            public const string Update = Endpoint + "/{id}";
-            public const string Delete = Endpoint + "/{id}";
+            public const string QuestionHistoryEndpoint = ApiEndpoint + "/question-history";
+            public const string GetAll = QuestionHistoryEndpoint;
+            public const string GetById = QuestionHistoryEndpoint + "/{id}";
+            public const string Create = QuestionHistoryEndpoint;
+            public const string Update = QuestionHistoryEndpoint + "/{id}";
+            public const string Delete = QuestionHistoryEndpoint + "/{id}";
+        }
+
+        public static class TestStorage
+        {
+            public const string TestStorageEndpoint = ApiEndpoint + "/test-storage";
+            public const string GetAll = TestStorageEndpoint;
+            public const string GetById = TestStorageEndpoint + "/{id}";
+            public const string Create = TestStorageEndpoint;
+            public const string Update = TestStorageEndpoint + "/{id}";
+            public const string Delete = TestStorageEndpoint + "/{id}";
         }
     }
 }
