@@ -67,6 +67,8 @@ namespace MathExamGenerator.Service.Implement
             var examQuestionRepo = _unitOfWork.GetRepository<ExamQuestion>();
             var questionRepo = _unitOfWork.GetRepository<Question>();
 
+            HashSet<Guid> selectedQuestionIds = new();
+
             foreach (var section in sections)
             {
                 var details = await _unitOfWork.GetRepository<MatrixSectionDetail>().GetListAsync(
@@ -78,7 +80,8 @@ namespace MathExamGenerator.Service.Implement
                         predicate: q => q.IsActive == true && 
                                         q.Level == detail.Difficulty && 
                                         q.BookTopicId == detail.BookTopicId && 
-                                        q.BookTopic.BookChapterId == detail.BookChapterId);
+                                        q.BookTopic.BookChapterId == detail.BookChapterId &&
+                                        !selectedQuestionIds.Contains(q.Id));
 
                     if (questionsQuery.Count < detail.QuestionCount)
                     {
@@ -93,6 +96,8 @@ namespace MathExamGenerator.Service.Implement
 
                     foreach (var q in selectedQuestions)
                     {
+                        selectedQuestionIds.Add(q.Id);
+
                         await examQuestionRepo.InsertAsync(new ExamQuestion
                         {
                             Id = Guid.NewGuid(),

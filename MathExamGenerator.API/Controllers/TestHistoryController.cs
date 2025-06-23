@@ -45,6 +45,7 @@ namespace MathExamGenerator.API.Controllers
         [HttpPost(ApiEndPointConstant.TestHistory.Create)]
         [ProducesResponseType(typeof(BaseResponse<CreateTestHistoryResponse>), StatusCodes.Status201Created)]
         [ProducesResponseType(typeof(BaseResponse<CreateTestHistoryResponse>), StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(typeof(BaseResponse<CreateTestHistoryResponse>), StatusCodes.Status404NotFound)]
         [ProducesResponseType(typeof(BaseResponse<CreateTestHistoryResponse>), StatusCodes.Status500InternalServerError)]
         [ProducesErrorResponseType(typeof(ProblemDetails))]
         public async Task<IActionResult> Create([FromBody] CreateTestHistoryRequest request)

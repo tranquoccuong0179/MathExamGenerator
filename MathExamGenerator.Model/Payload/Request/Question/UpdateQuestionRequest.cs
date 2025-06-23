@@ -3,8 +3,9 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using MathExamGenerator.Model.Payload.Request.Answer;
 
-namespace MathExamGenerator.Model.Payload.Request.ExamExchange
+namespace MathExamGenerator.Model.Payload.Request.Question
 {
     public class UpdateQuestionRequest
     {

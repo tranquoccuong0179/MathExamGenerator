@@ -5,6 +5,7 @@ using MathExamGenerator.Model.Paginate;
 using MathExamGenerator.Model.Payload.Request.TestStorage;
 using MathExamGenerator.Model.Payload.Response;
 using MathExamGenerator.Model.Payload.Response.QuestionHistory;
+using MathExamGenerator.Model.Payload.Response.TestHistory;
 using MathExamGenerator.Model.Payload.Response.TestStorage;
 using MathExamGenerator.Model.Utils;
 using MathExamGenerator.Repository.Interface;
@@ -61,6 +62,37 @@ namespace MathExamGenerator.Service.Implement
                     Message = "Không tìm thấy tài khoản.",
                     Data = null
                 };
+            }
+
+            if (request.ExamId.HasValue)
+            {
+                var exam = await _unitOfWork.GetRepository<Exam>().SingleOrDefaultAsync(
+                    predicate: x => x.Id == request.ExamId);
+
+                if (exam == null)
+                {
+                    return new BaseResponse<GetTestStorageResponse>
+                    {
+                        Status = StatusCodes.Status404NotFound.ToString(),
+                        Message = "Không tìm thấy Exam.",
+                        Data = null
+                    };
+                }
+            }
+            else if (request.QuizId.HasValue)
+            {
+                var quiz = await _unitOfWork.GetRepository<Quiz>().SingleOrDefaultAsync(
+                    predicate: x => x.Id == request.QuizId);
+
+                if (quiz == null)
+                {
+                    return new BaseResponse<GetTestStorageResponse>
+                    {
+                        Status = StatusCodes.Status404NotFound.ToString(),
+                        Message = "Không tìm thấy Quiz.",
+                        Data = null
+                    };
+                }
             }
 
             var entity = _mapper.Map<TestStorage>(request);
@@ -139,12 +171,27 @@ namespace MathExamGenerator.Service.Implement
                 };
             }
 
+            Guid? accountId = UserUtil.GetAccountId(_httpContextAccessor.HttpContext);
+
+            var account = await _unitOfWork.GetRepository<Account>().SingleOrDefaultAsync(
+                predicate: a => a.Id.Equals(accountId) && a.IsActive == true);
+
+            if (account == null)
+            {
+                return new BaseResponse<IPaginate<GetTestStorageResponse>>
+                {
+                    Status = StatusCodes.Status404NotFound.ToString(),
+                    Message = "Không tìm thấy tài khoản.",
+                    Data = null
+                };
+            }
+
             var result = await _unitOfWork.GetRepository<TestStorage>().GetPagingListAsync(
                 selector: x => _mapper.Map<GetTestStorageResponse>(x),
                 page: page,
                 size: size,
                 orderBy: q => q.OrderByDescending(x => x.CreateAt),
-                predicate: x => x.IsActive == true);
+                predicate: x => x.IsActive == true && x.AccountId == account.Id);
 
             return new BaseResponse<IPaginate<GetTestStorageResponse>>
             {
