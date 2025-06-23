@@ -104,5 +104,12 @@
             public const string UpdateSubject = SubjectEndPoint + "/{id}";
             public const string DeleteSubject = SubjectEndPoint + "/{id}";
         }
+
+        public static class Payment
+        {
+            public const string PaymentEndPoint = ApiEndpoint + "/payment";
+            public const string CreatePayment = PaymentEndPoint;
+            public const string HandleWebhook = PaymentEndPoint + "/webhook";
+        }
     }
 }
