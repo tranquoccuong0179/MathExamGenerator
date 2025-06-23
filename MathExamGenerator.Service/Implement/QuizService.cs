@@ -10,6 +10,7 @@ using MathExamGenerator.Model.Paginate;
 using MathExamGenerator.Model.Payload.Request.Quiz;
 using MathExamGenerator.Model.Payload.Response;
 using MathExamGenerator.Model.Payload.Response.ExamExchange;
+using MathExamGenerator.Model.Payload.Response.Question;
 using MathExamGenerator.Model.Payload.Response.Quiz;
 using MathExamGenerator.Model.Utils;
 using MathExamGenerator.Repository.Interface;
@@ -28,6 +29,21 @@ namespace MathExamGenerator.Service.Implement
 
         public async Task<BaseResponse<CreateQuizResponse>> CreateQuiz(CreateQuizRequest request)
         {
+            Guid? accountId = UserUtil.GetAccountId(_httpContextAccessor.HttpContext);
+
+            var account = await _unitOfWork.GetRepository<Account>().SingleOrDefaultAsync(
+                predicate: a => a.Id.Equals(accountId) && a.IsActive == true) ?? throw new NotFoundException("Không tìm thấy tài khoản");
+
+            if (account.QuizFree <= 0)
+            {
+                throw new BadHttpRequestException("Bạn không lượt free để tạo quiz");
+            }
+
+            if (request.BookChapterId.HasValue && request.BookTopicId.HasValue)
+            {
+                throw new BadHttpRequestException("Chỉ chọn 1 trong 2 là topic hoặc chapter");
+            }
+
             if (request.Quantity <= 0)
             {
                 throw new BadHttpRequestException("Số lượng câu hỏi phải lớn hơn 0");
@@ -38,10 +54,38 @@ namespace MathExamGenerator.Service.Implement
                 throw new BadHttpRequestException("Thời gian làm bài phải lớn hơn 0 phút");
             }
 
-            var questions = await _unitOfWork.GetRepository<Question>().GetListAsync(
-                predicate: q => q.IsActive == true);
+            ICollection<Question> questions; 
 
-            if (questions.Count < request.Quantity)
+            if (request.BookTopicId.HasValue)
+            {
+                var bookTopic = await _unitOfWork.GetRepository<BookTopic>().SingleOrDefaultAsync(
+                    predicate: b => b.Id.Equals(request.BookTopicId) && b.IsActive == true) ?? throw new NotFoundException("Không tìm thấy chủ đề muốn tạo");
+
+                questions = await _unitOfWork.GetRepository<Question>().GetListAsync(
+                    predicate: q => q.BookTopicId == request.BookTopicId && q.IsActive == true);
+            }
+            else if (request.BookChapterId.HasValue)
+            {
+                var bookChapter = await _unitOfWork.GetRepository<BookChapter>().SingleOrDefaultAsync(
+                    predicate: b => b.Id.Equals(request.BookChapterId) && b.IsActive == true,
+                    include: b => b.Include(b => b.BookTopics)) ?? throw new NotFoundException("Không tìm thấy chương muốn tạo");
+
+                var topicIds = bookChapter.BookTopics
+                    .Where(bt => bt.IsActive == true)
+                    .Select(bt => bt.Id)
+                    .ToList();
+
+                questions = await _unitOfWork.GetRepository<Question>().GetListAsync(
+                    predicate: q => q.BookTopicId.HasValue && topicIds.Contains(q.BookTopicId.Value) && q.IsActive == true
+                );
+
+            }
+            else
+            {
+                throw new BadHttpRequestException("Phải truyền topic hoặc chapter");
+            }
+
+            if (questions.Count() < request.Quantity)
             {
                 throw new BadHttpRequestException("Số câu trong hệ thống không đủ để tạo ra quiz cho bạn");
             }
@@ -52,6 +96,9 @@ namespace MathExamGenerator.Service.Implement
                 Name = request.Name,
                 Quantity = request.Quantity,
                 Time = request.Time,
+                BookTopicId = request.BookTopicId,
+                BookChapterId = request.BookChapterId,
+                IsActive = true,
                 CreateAt = TimeUtil.GetCurrentSEATime(),
             };
 
@@ -72,6 +119,10 @@ namespace MathExamGenerator.Service.Implement
             }).ToList();
 
             await _unitOfWork.GetRepository<QuizQuestion>().InsertRangeAsync(quizQuestions);
+
+            account.QuizFree -= 1;
+            account.UpdateAt = TimeUtil.GetCurrentSEATime();
+            _unitOfWork.GetRepository<Account>().UpdateAsync(account);
 
             var isSuccess = await _unitOfWork.CommitAsync() > 0;
 

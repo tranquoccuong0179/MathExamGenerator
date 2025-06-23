@@ -3,8 +3,9 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using MathExamGenerator.Model.Payload.Response.ExamExchange;
 
-namespace MathExamGenerator.Model.Payload.Response.ExamExchange
+namespace MathExamGenerator.Model.Payload.Response.Question
 {
     public class QuestionResponse
     {

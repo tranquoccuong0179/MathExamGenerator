@@ -13,5 +13,9 @@ namespace MathExamGenerator.Model.Payload.Request.Quiz
         public long Time { get; set; }
 
         public int Quantity { get; set; }
+
+        public Guid? BookTopicId { get; set; }
+
+        public Guid? BookChapterId { get; set; }
     }
 }
