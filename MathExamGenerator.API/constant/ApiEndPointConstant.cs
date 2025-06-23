@@ -59,6 +59,49 @@
             public const string LocationEndPoint = ApiEndpoint + "/location";
             public const string GetAllLocations = LocationEndPoint;
         }
+
+        public static class Exam
+        {
+            public const string ExamEndPoint = ApiEndpoint + "/exam";
+            public const string GetAllExam = ExamEndPoint;
+            public const string GetExam = ExamEndPoint + "/{id}";
+            public const string GetAllQuestionByExam = ExamEndPoint + "/{id}/questions";
+            public const string CreateExam = ExamEndPoint;
+            public const string UpdateExam = ExamEndPoint + "/{id}";
+            public const string DeleteExam = ExamEndPoint + "/{id}";
+        }
+
+        public static class ExamMatrix
+        {
+            public const string ExamMatrixEndPoint = ApiEndpoint + "/exam-matrix";
+            public const string GetAllExamMatrix = ExamMatrixEndPoint;
+            public const string GetExamMatrix = ExamMatrixEndPoint + "/{id}";
+            public const string GetMatrixStructure = ExamMatrixEndPoint + "/{id}/structure";
+            public const string CreateExamMatrix = ExamMatrixEndPoint;
+            public const string UpdateExamMatrix = ExamMatrixEndPoint + "/{id}";
+            public const string DeleteExamMatrix = ExamMatrixEndPoint + "/{id}";
+            public const string GetSectionsByMatrixId = ExamMatrixEndPoint + "/{id}/sections";
+        }
+
+        public static class MatrixSection
+        {
+            public const string MatrixSectionEndPoint = ApiEndpoint + "/matrix-section";
+            public const string GetMatrixSection = MatrixSectionEndPoint + "/{id}";
+            public const string GetAllMatrixSection = MatrixSectionEndPoint;
+            public const string UpdateMatrixSection = MatrixSectionEndPoint + "/{id}";
+            public const string DeleteMatrixSection = MatrixSectionEndPoint + "/{id}";
+            public const string GetAllDetailsBySectionId = MatrixSectionEndPoint + "/{id}/details";
+        }
+
+        public static class MatrixSectionDetail
+        {
+            public const string Endpoint = ApiEndpoint + "/matrix-section-detail";
+            public const string GetAll = Endpoint;
+            public const string GetById = Endpoint + "/{id}";
+            public const string Update = Endpoint + "/{id}";
+            public const string Delete = Endpoint + "/{id}";
+        }
+
         public static class ExamEchange
         {
             public const string ExamExchangeEndPoint = ApiEndpoint + "/exam-exchange";
@@ -110,6 +153,60 @@
             public const string PaymentEndPoint = ApiEndpoint + "/payment";
             public const string CreatePayment = PaymentEndPoint;
             public const string HandleWebhook = PaymentEndPoint + "/webhook";
+        }
+        public static class Comment
+        {
+            public const string CommentEndPoint = ApiEndpoint + "/comment";
+            public const string CreateComment = CommentEndPoint;
+            public const string UpdateComment = CommentEndPoint + "/{id}";
+            public const string DeleteComment = CommentEndPoint + "/{id}";
+            public const string LikeComment = CommentEndPoint + "/{id}/like";
+            public const string ReplyComment = CommentEndPoint + "/{id}/reply";
+            public const string GetAllReplyByComment = CommentEndPoint + "/{id}/reply";
+        }
+
+        public static class Question
+        {
+            public const string QuestionEndPoint = ApiEndpoint + "/question";
+            public const string GetAllCommentByQuestion = QuestionEndPoint + "/{id}/comments";
+        }
+
+        public static class TestHistory
+        {
+            public const string TestHistoryEndpoint = ApiEndpoint + "/test-history";
+            public const string GetAll = TestHistoryEndpoint;
+            public const string GetById = TestHistoryEndpoint + "/{id}";
+            public const string Create = TestHistoryEndpoint;
+            public const string Update = TestHistoryEndpoint + "/{id}";
+            public const string Delete = TestHistoryEndpoint + "/{id}";
+            public const string GetQuestionHistoriesByTestId = TestHistoryEndpoint + "/{id}/question-histories";
+        }
+
+        public static class Reply
+        {
+            public const string ReplyEndPoint = ApiEndpoint + "/reply";
+            public const string UpdateReply = ReplyEndPoint + "/{id}";
+            public const string DeleteReply = ReplyEndPoint + "/{id}";
+        }
+
+        public static class QuestionHistory
+        {
+            public const string QuestionHistoryEndpoint = ApiEndpoint + "/question-history";
+            public const string GetAll = QuestionHistoryEndpoint;
+            public const string GetById = QuestionHistoryEndpoint + "/{id}";
+            public const string Create = QuestionHistoryEndpoint;
+            public const string Update = QuestionHistoryEndpoint + "/{id}";
+            public const string Delete = QuestionHistoryEndpoint + "/{id}";
+        }
+
+        public static class TestStorage
+        {
+            public const string TestStorageEndpoint = ApiEndpoint + "/test-storage";
+            public const string GetAll = TestStorageEndpoint;
+            public const string GetById = TestStorageEndpoint + "/{id}";
+            public const string Create = TestStorageEndpoint;
+            public const string Update = TestStorageEndpoint + "/{id}";
+            public const string Delete = TestStorageEndpoint + "/{id}";
         }
     }
 }

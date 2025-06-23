@@ -225,7 +225,7 @@ namespace MathExamGenerator.Service.Implement
             };
         }
 
-        public async Task<BaseResponse<bool>> UpdateTeacher(UpdateTeacherRequest request)
+        public async Task<BaseResponse<GetTeacherResponse>> UpdateTeacher(UpdateTeacherRequest request)
         {
             Guid? accountId = UserUtil.GetAccountId(_httpContextAccessor.HttpContext);
 
@@ -262,11 +262,23 @@ namespace MathExamGenerator.Service.Implement
                 throw new Exception("Một lỗi đã xảy ra trong quá trình cập nhật tài khoản");
             }
 
-            return new BaseResponse<bool>
+            return new BaseResponse<GetTeacherResponse>
             {
                 Status = StatusCodes.Status200OK.ToString(),
                 Message = "Cập nhật thành công",
-                Data = true
+                Data = new GetTeacherResponse
+                {
+                    AccountId = account.Id,
+                    TeacherId = teacher.Id,
+                    FullName = account.FullName,
+                    Email = account.Email,
+                    Phone = account.Phone,
+                    DateOfBirth = account.DateOfBirth,
+                    Gender = account.Gender,
+                    Description = teacher.Description,
+                    SchoolName = teacher.SchoolName,
+                    LocationName = teacher.Location.Name
+                }
             };
         }
     }
