@@ -11,7 +11,6 @@ namespace MathExamGenerator.Model.Payload.Response.Question
     public class QuestionResponse
     {
         public Guid? BookTopicId { get; set; }   
-        public Guid? BookTopicId { get; set; }
         public string Level { get; set; } = default!;
         public string Content { get; set; } = default!;
         public string Solution { get; set; } = default!;
