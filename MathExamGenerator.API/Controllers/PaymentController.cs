@@ -5,6 +5,7 @@ using MathExamGenerator.Model.Payload.Response.Payment;
 using MathExamGenerator.Service.Implement;
 using MathExamGenerator.Service.Interface;
 using Microsoft.AspNetCore.Mvc;
+using Newtonsoft.Json;
 
 namespace MathExamGenerator.API.Controllers
 {
@@ -24,13 +25,45 @@ namespace MathExamGenerator.API.Controllers
             var response = await _paymentService.Create(request);
             return StatusCode(int.Parse(response.Status), response);
         }
+        //[HttpPost(ApiEndPointConstant.Payment.HandleWebhook)]
+        //[ProducesResponseType(typeof(BaseResponse<string>), StatusCodes.Status200OK)]
+        //[ProducesErrorResponseType(typeof(ProblemDetails))]
+        //public async Task<IActionResult> HandleWebhook([FromBody] WebhookNotification notification)
+        //{
+        //    var response = await _paymentService.HandleWebhook(notification);
+        //    return StatusCode(int.Parse(response.Status), response);
+        //}
+
         [HttpPost(ApiEndPointConstant.Payment.HandleWebhook)]
-        [ProducesResponseType(typeof(BaseResponse<string>), StatusCodes.Status200OK)]
-        [ProducesErrorResponseType(typeof(ProblemDetails))]
-        public async Task<IActionResult> HandleWebhook([FromBody] WebhookNotification notification)
+        public IActionResult HandleWebhook()
         {
-            var response = await _paymentService.HandleWebhook(notification);
-            return StatusCode(int.Parse(response.Status), response);
+            try
+            {
+                using (var reader = new StreamReader(Request.Body))
+                {
+                    var jsonBody = reader.ReadToEnd();
+                    var data = JsonConvert.DeserializeObject<dynamic>(jsonBody);
+
+                    var orderCode = data?["orderCode"]?.ToString();
+
+                    return Ok(new
+                    {
+                        code = "00",
+                        message = "success"
+                    });
+                }
+            }
+            catch (Exception ex)
+            {
+                // Log lỗi (nếu cần)
+                Console.WriteLine($"Error processing webhook: {ex.Message}");
+
+                return Ok(new
+                {
+                    code = "00",
+                    message = "success"
+                });
+            }
         }
     }
 }
