@@ -96,13 +96,8 @@ namespace MathExamGenerator.Service.Implement
             }
             else if (request.QuizId.HasValue)
             {
-                Console.WriteLine("Bắt đầu truy vấn Quiz với ID: " + request.QuizId);
-
                 var quiz = await _unitOfWork.GetRepository<Quiz>().SingleOrDefaultAsync(
                     predicate: x => x.Id == request.QuizId);
-
-                Console.WriteLine("Đã truy vấn xong Quiz");
-
 
                 if (quiz == null)
                 {
@@ -229,13 +224,27 @@ namespace MathExamGenerator.Service.Implement
                 };
             }
 
+            Guid? accountId = UserUtil.GetAccountId(_httpContextAccessor.HttpContext);
+
+            var account = await _unitOfWork.GetRepository<Account>().SingleOrDefaultAsync(
+                predicate: a => a.Id.Equals(accountId) && a.IsActive == true);
+
+            if (account == null)
+            {
+                return new BaseResponse<IPaginate<TestHistoryOverviewResponse>>
+                {
+                    Status = StatusCodes.Status404NotFound.ToString(),
+                    Message = "Không tìm thấy tài khoản.",
+                    Data = null
+                };
+            }
+
             var result = await _unitOfWork.GetRepository<TestHistory>().GetPagingListAsync(
                 selector: x => _mapper.Map<TestHistoryOverviewResponse>(x),
                 page: page,
                 size: size,
                 orderBy: q => q.OrderByDescending(x => x.CreateAt),
-                predicate: x => x.IsActive == true
-            );
+                predicate: x => x.IsActive == true && x.AccountId == account.Id);
 
             return new BaseResponse<IPaginate<TestHistoryOverviewResponse>>
             {
