@@ -9,11 +9,13 @@ public partial class Quiz
 
     public string? Name { get; set; }
 
-    public double? Grade { get; set; }
-
     public long? Time { get; set; }
 
     public int? Quantity { get; set; }
+
+    public Guid? BookTopicId { get; set; }
+
+    public Guid? BookChapterId { get; set; }
 
     public bool? IsActive { get; set; }
 
@@ -22,6 +24,10 @@ public partial class Quiz
     public DateTime? UpdateAt { get; set; }
 
     public DateTime? DeleteAt { get; set; }
+
+    public virtual BookChapter? BookChapter { get; set; }
+
+    public virtual BookTopic? BookTopic { get; set; }
 
     public virtual ICollection<QuizQuestion> QuizQuestions { get; set; } = new List<QuizQuestion>();
 

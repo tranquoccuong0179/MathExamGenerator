@@ -55,6 +55,7 @@ namespace MathExamGenerator.API
             services.AddScoped<IReplyService, ReplyService>();
             services.AddScoped<IQuestionHistoryService, QuestionHistoryService>();
             services.AddScoped<ITestStorageService, TestStorageService>();
+            services.AddScoped<IQuizService, QuizService>();
 
             return services;
         }
