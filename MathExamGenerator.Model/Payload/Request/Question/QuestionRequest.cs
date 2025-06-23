@@ -10,7 +10,6 @@ namespace MathExamGenerator.Model.Payload.Request.Question
     public class QuestionRequest
     {
         public Guid? BookTopicId { get; set; }
-        //public Guid? BookChapterId { get; set; }
         public string Level { get; set; } = default!;
         public string Content { get; set; } = default!;
         public string Solution { get; set; } = default!;
