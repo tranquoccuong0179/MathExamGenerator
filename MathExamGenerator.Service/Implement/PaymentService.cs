@@ -115,17 +115,6 @@ namespace MathExamGenerator.Service.Implement
 
 
 
-            //if (string.IsNullOrEmpty(accountIdStr))
-            //{
-            //    return new BaseResponse<string>
-            //    {
-            //        Status = StatusCodes.Status404NotFound.ToString(),
-            //        Message = "Không lấy được dữ liệu"
-            //    };
-            //}
-
-            //var accountId = Guid.Parse(accountIdStr);
-            Console.WriteLine($"AccountId: {accountId}"); // Debug log
             var wallet = await _unitOfWork.GetRepository<Wallet>().SingleOrDefaultAsync(
                     predicate: a => a.AccountId == accountId && a.IsActive == true
                     ) ?? throw new NotFoundException("Không tìm thấy ví");
@@ -135,7 +124,7 @@ namespace MathExamGenerator.Service.Implement
             {
                 Id = depositId,
                 AccountId = accountId,
-                Code = orderCode,
+                Code = orderCode.ToString(),
                 Description = "Nạp tiền qua PayOS",
                 Amount = amount,
                 IsActive = true,
