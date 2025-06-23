@@ -1,4 +1,4 @@
-using MathExamGenerator.API;
+﻿using MathExamGenerator.API;
 using MathExamGenerator.API.constant;
 using MathExamGenerator.API.Middlewares;
 using MathExamGenerator.Model.Enum;

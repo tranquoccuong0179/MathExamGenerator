@@ -208,5 +208,13 @@
             public const string Update = TestStorageEndpoint + "/{id}";
             public const string Delete = TestStorageEndpoint + "/{id}";
         }
+
+        public static class Quiz
+        {
+            public const string QuizEndPoint = ApiEndpoint + "/quiz";
+            public const string CreateQuiz = QuizEndPoint;
+            public const string GetAllQuiz = QuizEndPoint;
+            public const string GetQuiz = QuizEndPoint + "/{id}";
+        }
     }
 }
