@@ -95,9 +95,9 @@ namespace MathExamGenerator.Service.Implement
 
         }
 
-        public async Task<BaseResponse<string>> HandleWebhookAsync(WebhookNotification notification)
+        public async Task<BaseResponse<string>> HandleWebhook(WebhookNotification notification)
         {
-            if (notification == null || notification.Data == null || notification.Success == false || notification.Data.Code != "00")
+            if (notification.Success == false || notification.Data.Code != "00")
             {
                 return new BaseResponse<string>
                 {

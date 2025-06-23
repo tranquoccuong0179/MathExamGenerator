@@ -29,7 +29,7 @@ namespace MathExamGenerator.API.Controllers
         [ProducesErrorResponseType(typeof(ProblemDetails))]
         public async Task<IActionResult> HandleWebhook([FromBody] WebhookNotification notification)
         {
-            var response = await _paymentService.HandleWebhookAsync(notification);
+            var response = await _paymentService.HandleWebhook(notification);
             return StatusCode(int.Parse(response.Status), response);
         }
     }

@@ -13,6 +13,6 @@ namespace MathExamGenerator.Service.Interface
     public interface IPaymentService
     {
         Task<BaseResponse<string>> Create(PaymentRequest request);
-        Task<BaseResponse<string>> HandleWebhookAsync(WebhookNotification notification);
+        Task<BaseResponse<string>> HandleWebhook(WebhookNotification notification);
     }
 }
