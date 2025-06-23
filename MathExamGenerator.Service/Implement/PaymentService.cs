@@ -95,85 +95,95 @@ namespace MathExamGenerator.Service.Implement
 
         }
 
-        public async Task<BaseResponse<string>> HandleWebhook(WebhookNotification notification)
+       public async Task<BaseResponse<string>> HandleWebhook(WebhookNotification notification)
+{
+    try
+    {
+        if (notification.Success && notification.Data.Code == "00")
         {
-            try
+            var orderCode = notification.Data.OrderCode;
+            var amount = notification.Data.Amount;
+
+            var accountIdStr = await _redis.GetDatabase().StringGetAsync($"payos:{orderCode}");
+            string accountIdString = accountIdStr.ToString();
+
+            if (!Guid.TryParse(accountIdString, out Guid accountId))
             {
-                if (notification.Success && notification.Data.Code == "00")
-                {
-                    var orderCode = notification.Data.OrderCode;
-                    var amount = notification.Data.Amount;
-
-                    var accountIdStr = await _redis.GetDatabase().StringGetAsync($"payos:{orderCode}");
-                    if (string.IsNullOrEmpty(accountIdStr))
-                    {
-                        return new BaseResponse<string>
-                        {
-                            Status = StatusCodes.Status404NotFound.ToString(),
-                            Message = "Không lấy được dữ liệu"
-                        };
-                    }
-
-                    var accountId = Guid.Parse(accountIdStr);
-
-                    var wallet = await _unitOfWork.GetRepository<Wallet>().SingleOrDefaultAsync(
-                            predicate: a => a.AccountId == accountId && a.IsActive == true
-                            ) ?? throw new NotFoundException("Không tìm thấy ví");
-
-                    var depositId = Guid.NewGuid();
-                    var deposit = new Deposit
-                    {
-                        Id = depositId,
-                        AccountId = accountId,
-                        Code = orderCode.ToString(),
-                        Description = "Nạp tiền qua PayOS",
-                        Amount = amount,
-                        IsActive = true,
-                        CreateAt = TimeUtil.GetCurrentSEATime(),
-                    };
-                    await _unitOfWork.GetRepository<Deposit>().InsertAsync(deposit);
-
-                    // Cập nhật số dư ví
-                    wallet.Point += (int)amount;
-                    wallet.UpdateAt = TimeUtil.GetCurrentSEATime();
-                    _unitOfWork.GetRepository<Wallet>().UpdateAsync(wallet);
-                    // Tạo giao dịch (Transaction)
-                    var transaction = new Model.Entity.Transaction
-                    {
-                        Id = Guid.NewGuid(),
-                        WalletId = wallet.Id,
-                        DepositId = deposit.Id,
-                        Amount = amount,
-                        IsActive = true,
-                        CreateAt = TimeUtil.GetCurrentSEATime(),
-                    };
-                    await _unitOfWork.GetRepository<Model.Entity.Transaction>().InsertAsync(transaction);
-
-                    await _unitOfWork.CommitAsync();
-
-                    return new BaseResponse<string>
-                    {
-                        Status = StatusCodes.Status200OK.ToString(),
-                        Message = "Xử lý webhook và nạp tiền thành công"
-                    };
-                }
-                return new BaseResponse<string>
-                {
-                    Status = StatusCodes.Status400BadRequest.ToString(),
-                    Message = "Webhook không hợp lệ hoặc giao dịch không thành công"
-                };
-
-            }
-            catch (Exception ex) {
-
-                return new BaseResponse<string>
-                {
-                    Status = StatusCodes.Status500InternalServerError.ToString(),
-                    Message = $"Lỗi khi xử lý webhook: {ex.Message}"
-                };
+                // Xử lý lỗi, dữ liệu không phải GUID hợp lệ
+                throw new Exception("Dữ liệu Redis không đúng định dạng GUID");
             }
 
-           
+
+
+            //if (string.IsNullOrEmpty(accountIdStr))
+            //{
+            //    return new BaseResponse<string>
+            //    {
+            //        Status = StatusCodes.Status404NotFound.ToString(),
+            //        Message = "Không lấy được dữ liệu"
+            //    };
+            //}
+
+            //var accountId = Guid.Parse(accountIdStr);
+            Console.WriteLine($"AccountId: {accountId}"); // Debug log
+            var wallet = await _unitOfWork.GetRepository<Wallet>().SingleOrDefaultAsync(
+                    predicate: a => a.AccountId == accountId && a.IsActive == true
+                    ) ?? throw new NotFoundException("Không tìm thấy ví");
+
+            var depositId = Guid.NewGuid();
+            var deposit = new Deposit
+            {
+                Id = depositId,
+                AccountId = accountId,
+                Code = orderCode,
+                Description = "Nạp tiền qua PayOS",
+                Amount = amount,
+                IsActive = true,
+                CreateAt = TimeUtil.GetCurrentSEATime(),
+            };
+            await _unitOfWork.GetRepository<Deposit>().InsertAsync(deposit);
+
+            // Cập nhật số dư ví
+            wallet.Point += (int)amount;
+            wallet.UpdateAt = TimeUtil.GetCurrentSEATime();
+            _unitOfWork.GetRepository<Wallet>().UpdateAsync(wallet);
+            // Tạo giao dịch (Transaction)
+            var transaction = new Model.Entity.Transaction
+            {
+                Id = Guid.NewGuid(),
+                WalletId = wallet.Id,
+                DepositId = deposit.Id,
+                Amount = amount,
+                IsActive = true,
+                CreateAt = TimeUtil.GetCurrentSEATime(),
+            };
+            await _unitOfWork.GetRepository<Model.Entity.Transaction>().InsertAsync(transaction);
+
+            await _unitOfWork.CommitAsync();
+
+            return new BaseResponse<string>
+            {
+                Status = StatusCodes.Status200OK.ToString(),
+                Message = "Xử lý webhook và nạp tiền thành công"
+            };
         }
+        return new BaseResponse<string>
+        {
+            Status = StatusCodes.Status400BadRequest.ToString(),
+            Message = "Webhook không hợp lệ hoặc giao dịch không thành công"
+        };
+
+    }
+    catch (Exception ex) {
+
+        return new BaseResponse<string>
+        {
+            Status = StatusCodes.Status500InternalServerError.ToString(),
+            Message = $"Lỗi khi xử lý webhook: {ex.Message}"
+        };
+    }
+
+   
+}
     }
 }
