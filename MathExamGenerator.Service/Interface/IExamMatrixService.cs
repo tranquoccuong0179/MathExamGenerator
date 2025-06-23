@@ -15,7 +15,7 @@ namespace MathExamGenerator.Service.Interface
         Task<BaseResponse<GetExamMatrixResponse>> CreateExamMatrix(CreateExamMatrixWithStructureRequest request);
         Task<BaseResponse<IPaginate<GetExamMatrixResponse>>> GetAllExamMatrix(int page, int size);
         Task<BaseResponse<GetExamMatrixResponse>> GetById(Guid id);
-        Task<BaseResponse<bool>> UpdateExamMatrix(Guid id, UpdateExamMatrixRequest request);
+        Task<BaseResponse<bool>> UpdateExamMatrix(Guid id, UpdateExamMatrixWithStructureRequest request);
         Task<BaseResponse<bool>> DeleteExamMatrix(Guid id);
         Task<BaseResponse<ExamMatrixStructureResponse>> GetMatrixStructure(Guid id);
     }

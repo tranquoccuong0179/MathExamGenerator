@@ -155,75 +155,75 @@ namespace MathExamGenerator.Service.Implement
             };
         }
 
-        public async Task<BaseResponse<bool>> UpdateDetail(Guid id, UpdateMatrixSectionDetailRequest request)
-        {
-            var detail = await _unitOfWork.GetRepository<MatrixSectionDetail>().SingleOrDefaultAsync(
-                predicate: x => x.Id == id && x.IsActive == true);
+        //public async Task<BaseResponse<bool>> UpdateDetail(Guid id, UpdateMatrixSectionDetailRequest request)
+        //{
+        //    var detail = await _unitOfWork.GetRepository<MatrixSectionDetail>().SingleOrDefaultAsync(
+        //        predicate: x => x.Id == id && x.IsActive == true);
 
-            if (detail == null)
-            {
-                return new BaseResponse<bool>
-                {
-                    Status = StatusCodes.Status404NotFound.ToString(),
-                    Message = "Không tìm thấy detail để cập nhật.",
-                    Data = false
-                };
-            }
+        //    if (detail == null)
+        //    {
+        //        return new BaseResponse<bool>
+        //        {
+        //            Status = StatusCodes.Status404NotFound.ToString(),
+        //            Message = "Không tìm thấy detail để cập nhật.",
+        //            Data = false
+        //        };
+        //    }
 
-            var section = await _unitOfWork.GetRepository<MatrixSection>().SingleOrDefaultAsync(
-                predicate: x => x.Id == detail.MatrixSectionId);
+        //    var section = await _unitOfWork.GetRepository<MatrixSection>().SingleOrDefaultAsync(
+        //        predicate: x => x.Id == detail.MatrixSectionId);
 
-            var examUsed = await _unitOfWork.GetRepository<Exam>().SingleOrDefaultAsync(
-                predicate: e => e.ExamMatrixId == section.ExamMatrixId && e.IsActive == true);
+        //    var examUsed = await _unitOfWork.GetRepository<Exam>().SingleOrDefaultAsync(
+        //        predicate: e => e.ExamMatrixId == section.ExamMatrixId && e.IsActive == true);
 
-            if (examUsed != null)
-            {
-                return new BaseResponse<bool>
-                {
-                    Status = StatusCodes.Status400BadRequest.ToString(),
-                    Message = "Không thể cập nhật detail vì ma trận đã được sử dụng để tạo đề thi.",
-                    Data = false
-                };
-            }
+        //    if (examUsed != null)
+        //    {
+        //        return new BaseResponse<bool>
+        //        {
+        //            Status = StatusCodes.Status400BadRequest.ToString(),
+        //            Message = "Không thể cập nhật detail vì ma trận đã được sử dụng để tạo đề thi.",
+        //            Data = false
+        //        };
+        //    }
 
-            if (request.QuestionCount.HasValue && request.QuestionCount <= 0 ||
-                request.ScorePerQuestion.HasValue && request.ScorePerQuestion <= 0)
-            {
-                return new BaseResponse<bool>
-                {
-                    Status = StatusCodes.Status400BadRequest.ToString(),
-                    Message = "QuestionCount và ScorePerQuestion phải lớn hơn 0 nếu được cung cấp.",
-                    Data = false
-                };
-            }
+        //    if (request.QuestionCount.HasValue && request.QuestionCount <= 0 ||
+        //        request.ScorePerQuestion.HasValue && request.ScorePerQuestion <= 0)
+        //    {
+        //        return new BaseResponse<bool>
+        //        {
+        //            Status = StatusCodes.Status400BadRequest.ToString(),
+        //            Message = "QuestionCount và ScorePerQuestion phải lớn hơn 0 nếu được cung cấp.",
+        //            Data = false
+        //        };
+        //    }
 
-            detail.BookChapterId = request.BookChapterId ?? detail.BookChapterId;
-            detail.BookTopicId = request.BookTopicId ?? detail.BookTopicId;
-            detail.Difficulty = request.Difficulty ?? detail.Difficulty;
-            detail.QuestionCount = request.QuestionCount ?? detail.QuestionCount;
-            detail.ScorePerQuestion = request.ScorePerQuestion ?? detail.ScorePerQuestion;
-            detail.UpdateAt = TimeUtil.GetCurrentSEATime();
+        //    detail.BookChapterId = request.BookChapterId ?? detail.BookChapterId;
+        //    detail.BookTopicId = request.BookTopicId ?? detail.BookTopicId;
+        //    detail.Difficulty = request.Difficulty ?? detail.Difficulty;
+        //    detail.QuestionCount = request.QuestionCount ?? detail.QuestionCount;
+        //    detail.ScorePerQuestion = request.ScorePerQuestion ?? detail.ScorePerQuestion;
+        //    detail.UpdateAt = TimeUtil.GetCurrentSEATime();
 
-            _unitOfWork.GetRepository<MatrixSectionDetail>().UpdateAsync(detail);
+        //    _unitOfWork.GetRepository<MatrixSectionDetail>().UpdateAsync(detail);
 
-            bool isSuccessfully = await _unitOfWork.CommitAsync() > 0;
+        //    bool isSuccessfully = await _unitOfWork.CommitAsync() > 0;
 
-            if (!isSuccessfully)
-            {
-                return new BaseResponse<bool>
-                {
-                    Status = StatusCodes.Status500InternalServerError.ToString(),
-                    Message = "Một lỗi xảy ra trong quá trình cập nhật detail.",
-                    Data = isSuccessfully
-                };
-            }
+        //    if (!isSuccessfully)
+        //    {
+        //        return new BaseResponse<bool>
+        //        {
+        //            Status = StatusCodes.Status500InternalServerError.ToString(),
+        //            Message = "Một lỗi xảy ra trong quá trình cập nhật detail.",
+        //            Data = isSuccessfully
+        //        };
+        //    }
 
-            return new BaseResponse<bool>
-            {
-                Status = StatusCodes.Status200OK.ToString(),
-                Message = "Cập nhật detail thành công.",
-                Data = isSuccessfully
-            };
-        }
+        //    return new BaseResponse<bool>
+        //    {
+        //        Status = StatusCodes.Status200OK.ToString(),
+        //        Message = "Cập nhật detail thành công.",
+        //        Data = isSuccessfully
+        //    };
+        //}
     }
 }
