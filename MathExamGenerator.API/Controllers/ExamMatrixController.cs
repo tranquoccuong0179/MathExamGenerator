@@ -74,7 +74,7 @@ namespace MathExamGenerator.API.Controllers
         [ProducesResponseType(typeof(BaseResponse<bool>), StatusCodes.Status500InternalServerError)]
         [ProducesResponseType(typeof(BaseResponse<bool>), StatusCodes.Status404NotFound)]
         [ProducesErrorResponseType(typeof(ProblemDetails))]
-        public async Task<IActionResult> UpdateExamMatrix([FromRoute] Guid id, [FromBody] UpdateExamMatrixRequest request)
+        public async Task<IActionResult> UpdateExamMatrix([FromRoute] Guid id, [FromBody] UpdateExamMatrixWithStructureRequest request)
         {
             var response = await _examMatrixService.UpdateExamMatrix(id, request);
             return StatusCode(int.Parse(response.Status), response);

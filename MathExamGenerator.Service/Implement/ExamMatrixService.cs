@@ -58,21 +58,21 @@ namespace MathExamGenerator.Service.Implement
                 int totalQuestionCount = sectionReq.Details.Sum(d => d.QuestionCount);
                 double totalScore = sectionReq.Details.Sum(d => d.QuestionCount * d.ScorePerQuestion);
 
-                if (totalQuestionCount > sectionReq.TotalQuestions)
+                if (totalQuestionCount != sectionReq.TotalQuestions)
                 {
                     return new BaseResponse<GetExamMatrixResponse>
                     {
                         Status = StatusCodes.Status400BadRequest.ToString(),
-                        Message = $"Tổng số câu của các detail vượt quá TotalQuestions trong section '{sectionReq.SectionName}'."
+                        Message = $"Tổng số câu của các detail không bằng TotalQuestions trong section '{sectionReq.SectionName}'."
                     };
                 }
 
-                if (totalScore > sectionReq.TotalScore)
+                if (totalScore != sectionReq.TotalScore)
                 {
                     return new BaseResponse<GetExamMatrixResponse>
                     {
                         Status = StatusCodes.Status400BadRequest.ToString(),
-                        Message = $"Tổng điểm các detail vượt quá TotalScore trong section '{sectionReq.SectionName}'."
+                        Message = $"Tổng điểm các detail không bằng TotalScore trong section '{sectionReq.SectionName}'."
                     };
                 }
 
@@ -84,6 +84,32 @@ namespace MathExamGenerator.Service.Implement
                         {
                             Status = StatusCodes.Status400BadRequest.ToString(),
                             Message = $"Chi tiết trong section '{sectionReq.SectionName}' có giá trị QuestionCount hoặc ScorePerQuestion không hợp lệ."
+                        };
+                    }
+
+                    var topic = await _unitOfWork.GetRepository<BookTopic>().SingleOrDefaultAsync(
+                        predicate: t => t.Id == detail.BookTopicId && t.BookChapterId == detail.BookChapterId && t.IsActive == true);
+
+                    if (topic == null)
+                    {
+                        return new BaseResponse<GetExamMatrixResponse>
+                        {
+                            Status = StatusCodes.Status400BadRequest.ToString(),
+                            Message = $"Topic không hợp lệ hoặc không thuộc chapter trong section '{sectionReq.SectionName}'."
+                        };
+                    }
+
+                    var bookChapter = await _unitOfWork.GetRepository<BookChapter>().SingleOrDefaultAsync(
+                        predicate: c => c.Id == detail.BookChapterId && c.IsActive == true,
+                        include: c => c.Include(bc => bc.SubjectBook)
+                    );
+
+                    if (bookChapter == null || bookChapter.SubjectBook?.SubjectId != request.SubjectId)
+                    {
+                        return new BaseResponse<GetExamMatrixResponse>
+                        {
+                            Status = StatusCodes.Status400BadRequest.ToString(),
+                            Message = $"Chapter không thuộc đúng môn học trong section '{sectionReq.SectionName}'."
                         };
                     }
                 }
@@ -288,9 +314,10 @@ namespace MathExamGenerator.Service.Implement
             };
         }
 
-        public async Task<BaseResponse<bool>> UpdateExamMatrix(Guid id, UpdateExamMatrixRequest request)
+        public async Task<BaseResponse<bool>> UpdateExamMatrix(Guid id, UpdateExamMatrixWithStructureRequest request)
         {
-            var matrix = await _unitOfWork.GetRepository<ExamMatrix>().SingleOrDefaultAsync(
+            var matrixRepo = _unitOfWork.GetRepository<ExamMatrix>();
+            var matrix = await matrixRepo.SingleOrDefaultAsync(
                 predicate: x => x.Id == id && x.IsActive == true);
 
             if (matrix == null)
@@ -298,36 +325,162 @@ namespace MathExamGenerator.Service.Implement
                 return new BaseResponse<bool>
                 {
                     Status = StatusCodes.Status404NotFound.ToString(),
-                    Message = "Không tìm thấy ma trận để cập nhật.",
+                    Message = "Không tìm thấy ma trận để cập nhật."
                 };
             }
 
+            var examUsingMatrix = await _unitOfWork.GetRepository<Exam>().SingleOrDefaultAsync(
+                predicate: x => x.ExamMatrixId == id && x.IsActive == true);
+
+            if (examUsingMatrix != null)
+            {
+                return new BaseResponse<bool>
+                {
+                    Status = StatusCodes.Status400BadRequest.ToString(),
+                    Message = "Không thể cập nhật ma trận vì đang được sử dụng trong đề thi."
+                };
+            }
+
+            if (request == null || request.Sections == null || !request.Sections.Any())
+            {
+                return new BaseResponse<bool>
+                {
+                    Status = StatusCodes.Status400BadRequest.ToString(),
+                    Message = "Dữ liệu cập nhật ma trận không hợp lệ hoặc không có section nào."
+                };
+            }
+
+            foreach (var sectionReq in request.Sections)
+            {
+                if (sectionReq.TotalQuestions <= 0 || sectionReq.TotalScore <= 0)
+                {
+                    return new BaseResponse<bool>
+                    {
+                        Status = StatusCodes.Status400BadRequest.ToString(),
+                        Message = $"Section '{sectionReq.SectionName}' có tổng số câu hoặc tổng điểm không hợp lệ."
+                    };
+                }
+
+                if (sectionReq.Details == null || !sectionReq.Details.Any())
+                {
+                    return new BaseResponse<bool>
+                    {
+                        Status = StatusCodes.Status400BadRequest.ToString(),
+                        Message = $"Section '{sectionReq.SectionName}' không có chi tiết section."
+                    };
+                }
+
+                int totalQuestionCount = sectionReq.Details.Sum(d => d.QuestionCount);
+                double totalScore = sectionReq.Details.Sum(d => d.QuestionCount * d.ScorePerQuestion);
+
+                if (totalQuestionCount != sectionReq.TotalQuestions)
+                {
+                    return new BaseResponse<bool>
+                    {
+                        Status = StatusCodes.Status400BadRequest.ToString(),
+                        Message = $"Tổng số câu của các detail không bằng TotalQuestions trong section '{sectionReq.SectionName}'."
+                    };
+                }
+
+                if (totalScore != sectionReq.TotalScore)
+                {
+                    return new BaseResponse<bool>
+                    {
+                        Status = StatusCodes.Status400BadRequest.ToString(),
+                        Message = $"Tổng điểm các detail không bằng TotalScore trong section '{sectionReq.SectionName}'."
+                    };
+                }
+
+                foreach (var detail in sectionReq.Details)
+                {
+                    if (detail.QuestionCount <= 0 || detail.ScorePerQuestion <= 0)
+                    {
+                        return new BaseResponse<bool>
+                        {
+                            Status = StatusCodes.Status400BadRequest.ToString(),
+                            Message = $"Chi tiết trong section '{sectionReq.SectionName}' có giá trị QuestionCount hoặc ScorePerQuestion không hợp lệ."
+                        };
+                    }
+
+                    var topic = await _unitOfWork.GetRepository<BookTopic>().SingleOrDefaultAsync(
+                        predicate: t => t.Id == detail.BookTopicId && t.BookChapterId == detail.BookChapterId && t.IsActive == true);
+
+                    if (topic == null)
+                    {
+                        return new BaseResponse<bool>
+                        {
+                            Status = StatusCodes.Status400BadRequest.ToString(),
+                            Message = $"Topic không hợp lệ hoặc không thuộc chapter trong section '{sectionReq.SectionName}'."
+                        };
+                    }
+
+                    var chapter = await _unitOfWork.GetRepository<BookChapter>().SingleOrDefaultAsync(
+                        predicate: c => c.Id == detail.BookChapterId && c.IsActive == true,
+                        include: c => c.Include(b => b.SubjectBook));
+
+                    if (chapter == null || chapter.SubjectBook?.SubjectId != request.SubjectId)
+                    {
+                        return new BaseResponse<bool>
+                        {
+                            Status = StatusCodes.Status400BadRequest.ToString(),
+                            Message = $"Chapter không thuộc đúng môn học trong section '{sectionReq.SectionName}'."
+                        };
+                    }
+                }
+            }
+
+            // Cập nhật matrix
             matrix.Name = request.Name ?? matrix.Name;
             matrix.Grade = request.Grade ?? matrix.Grade;
             matrix.Description = request.Description ?? matrix.Description;
             matrix.IsActive = request.IsActive ?? matrix.IsActive;
             matrix.UpdateAt = TimeUtil.GetCurrentSEATime();
+            matrixRepo.UpdateAsync(matrix);
 
-            _unitOfWork.GetRepository<ExamMatrix>().UpdateAsync(matrix);
-            bool isSuccessfully = await _unitOfWork.CommitAsync() > 0;
+            // Xoá sections & details cũ
+            var sectionRepo = _unitOfWork.GetRepository<MatrixSection>();
+            var detailRepo = _unitOfWork.GetRepository<MatrixSectionDetail>();
 
-            if (!isSuccessfully)
+            var oldSections = await sectionRepo.GetListAsync(
+                predicate: s => s.ExamMatrixId == matrix.Id);
+            foreach (var sec in oldSections)
             {
-                return new BaseResponse<bool>
+                var details = await detailRepo.GetListAsync(
+                    predicate: d => d.MatrixSectionId == sec.Id);
+                foreach (var d in details)
                 {
-                    Status = StatusCodes.Status500InternalServerError.ToString(),
-                    Message = "Cập nhật ma trận thất bại.",
-                    Data = isSuccessfully
-                };
+                    detailRepo.DeleteAsync(d);
+                }
+                sectionRepo.DeleteAsync(sec);
             }
+
+            // Thêm section & detail mới
+            foreach (var sectionReq in request.Sections)
+            {
+                var section = _mapper.Map<MatrixSection>(sectionReq);
+                section.Id = Guid.NewGuid(); // 🛠 FIX EF tracking bug
+                section.ExamMatrixId = matrix.Id;
+                await sectionRepo.InsertAsync(section);
+
+                foreach (var detailReq in sectionReq.Details)
+                {
+                    var detail = _mapper.Map<MatrixSectionDetail>(detailReq);
+                    detail.Id = Guid.NewGuid(); // 🛠 FIX EF tracking bug
+                    detail.MatrixSectionId = section.Id;
+                    await detailRepo.InsertAsync(detail);
+                }
+            }
+
+            bool isSuccess = await _unitOfWork.CommitAsync() > 0;
 
             return new BaseResponse<bool>
             {
-                Status = StatusCodes.Status200OK.ToString(),
-                Message = "Cập nhật ma trận thành công.",
-                Data = isSuccessfully
+                Status = isSuccess ? StatusCodes.Status200OK.ToString() : StatusCodes.Status500InternalServerError.ToString(),
+                Message = isSuccess ? "Cập nhật ma trận thành công." : "Cập nhật ma trận thất bại.",
+                Data = isSuccess
             };
         }
+
     }
 }
     

@@ -40,17 +40,17 @@ namespace MathExamGenerator.API.Controllers
             return StatusCode(int.Parse(result.Status), result);
         }
 
-        [HttpPut(ApiEndPointConstant.MatrixSectionDetail.Update)]
-        [ProducesResponseType(typeof(BaseResponse<bool>), StatusCodes.Status200OK)]
-        [ProducesResponseType(typeof(BaseResponse<bool>), StatusCodes.Status400BadRequest)]
-        [ProducesResponseType(typeof(BaseResponse<bool>), StatusCodes.Status404NotFound)]
-        [ProducesResponseType(typeof(BaseResponse<bool>), StatusCodes.Status500InternalServerError)]
-        [ProducesErrorResponseType(typeof(ProblemDetails))]
-        public async Task<IActionResult> Update([FromRoute] Guid id, [FromBody] UpdateMatrixSectionDetailRequest request)
-        {
-            var result = await _matrixSectionDetailService.UpdateDetail(id, request);
-            return StatusCode(int.Parse(result.Status), result);
-        }
+        //[HttpPut(ApiEndPointConstant.MatrixSectionDetail.Update)]
+        //[ProducesResponseType(typeof(BaseResponse<bool>), StatusCodes.Status200OK)]
+        //[ProducesResponseType(typeof(BaseResponse<bool>), StatusCodes.Status400BadRequest)]
+        //[ProducesResponseType(typeof(BaseResponse<bool>), StatusCodes.Status404NotFound)]
+        //[ProducesResponseType(typeof(BaseResponse<bool>), StatusCodes.Status500InternalServerError)]
+        //[ProducesErrorResponseType(typeof(ProblemDetails))]
+        //public async Task<IActionResult> Update([FromRoute] Guid id, [FromBody] UpdateMatrixSectionDetailRequest request)
+        //{
+        //    var result = await _matrixSectionDetailService.UpdateDetail(id, request);
+        //    return StatusCode(int.Parse(result.Status), result);
+        //}
 
         [HttpDelete(ApiEndPointConstant.MatrixSectionDetail.Delete)]
         [ProducesResponseType(typeof(BaseResponse<bool>), StatusCodes.Status200OK)]

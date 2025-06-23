@@ -25,6 +25,12 @@ namespace MathExamGenerator.Model.Mapper
 
             CreateMap<MatrixSection, MatrixSectionStructureResponse>()
                 .ForMember(dest => dest.MatrixSectionDetails, opt => opt.MapFrom(src => src.MatrixSectionDetails.Where(d => d.IsActive == true)));
+
+            CreateMap<UpdateMatrixSectionWithDetailRequest, MatrixSection>()
+                .ForMember(dest => dest.Id, opt => opt.Ignore())
+                .ForMember(dest => dest.IsActive, opt => opt.MapFrom(src => true))
+                .ForMember(dest => dest.CreateAt, opt => opt.MapFrom(src => TimeUtil.GetCurrentSEATime()))
+                .ForMember(dest => dest.UpdateAt, opt => opt.MapFrom(src => TimeUtil.GetCurrentSEATime()));
         }
     }
 }
