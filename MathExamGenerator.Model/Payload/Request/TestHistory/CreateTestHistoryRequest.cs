@@ -10,7 +10,6 @@ namespace MathExamGenerator.Model.Payload.Request.TestHistory
 {
     public class CreateTestHistoryRequest
     {
-        public Guid AccountId { get; set; }
         public Guid? ExamId { get; set; }
         public Guid? QuizId { get; set; }
 
