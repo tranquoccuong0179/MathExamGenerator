@@ -118,11 +118,7 @@ namespace MathExamGenerator.Service.Implement
                     {
                         throw new Exception($"Không tìm thấy accountId trong Redis cho orderCode: {orderCode}");
                     }
-                    if (accountIdStr.IsNullOrEmpty)
-                    {
-                        throw new Exception($"Không tìm thấy accountId trong Redis cho orderCode: {orderCode}");
-                    }
-
+                   
                     string accountIdString = accountIdStr.ToString();
 
 
