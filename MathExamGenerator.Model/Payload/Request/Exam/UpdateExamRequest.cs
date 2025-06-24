@@ -14,6 +14,5 @@ namespace MathExamGenerator.Model.Payload.Request.Exam
         public DateTime? StartDate { get; set; }
         public DateTime? EndDate { get; set; }
         public bool? Minigame { get; set; }
-        public bool? IsActive { get; set; }
     }
 }

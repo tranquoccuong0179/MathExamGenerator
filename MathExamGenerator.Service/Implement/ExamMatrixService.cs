@@ -433,7 +433,7 @@ namespace MathExamGenerator.Service.Implement
             matrix.Name = request.Name ?? matrix.Name;
             matrix.Grade = request.Grade ?? matrix.Grade;
             matrix.Description = request.Description ?? matrix.Description;
-            matrix.IsActive = request.IsActive ?? matrix.IsActive;
+            matrix.IsActive = true;
             matrix.UpdateAt = TimeUtil.GetCurrentSEATime();
             matrixRepo.UpdateAsync(matrix);
 
@@ -458,14 +458,14 @@ namespace MathExamGenerator.Service.Implement
             foreach (var sectionReq in request.Sections)
             {
                 var section = _mapper.Map<MatrixSection>(sectionReq);
-                section.Id = Guid.NewGuid(); // 🛠 FIX EF tracking bug
+                section.Id = Guid.NewGuid(); 
                 section.ExamMatrixId = matrix.Id;
                 await sectionRepo.InsertAsync(section);
 
                 foreach (var detailReq in sectionReq.Details)
                 {
                     var detail = _mapper.Map<MatrixSectionDetail>(detailReq);
-                    detail.Id = Guid.NewGuid(); // 🛠 FIX EF tracking bug
+                    detail.Id = Guid.NewGuid(); 
                     detail.MatrixSectionId = section.Id;
                     await detailRepo.InsertAsync(detail);
                 }

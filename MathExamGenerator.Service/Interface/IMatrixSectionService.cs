@@ -15,7 +15,6 @@ namespace MathExamGenerator.Service.Interface
         Task<BaseResponse<List<MatrixSectionStructureResponse>>> GetSectionsByMatrixId(Guid id);
         Task<BaseResponse<MatrixSectionStructureResponse>> GetById(Guid id);
         Task<BaseResponse<IPaginate<MatrixSectionStructureResponse>>> GetAll(int page, int size);
-        Task<BaseResponse<bool>> UpdateSection(Guid id, UpdateMatrixSectionRequest request);
         Task<BaseResponse<bool>> DeleteSection(Guid id);
     }
 }
