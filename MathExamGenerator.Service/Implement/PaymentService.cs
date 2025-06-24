@@ -51,7 +51,10 @@ namespace MathExamGenerator.Service.Implement
 
                 throw new BadHttpRequestException("Số tiền phải lớn hơn 0");
             }
-            long orderCode = DateTimeOffset.UtcNow.ToUnixTimeMilliseconds();
+            var timestamp = DateTime.UtcNow.Ticks;
+            var randomPart = new Random().Next(1000, 9999); 
+
+            var orderCode = (int)(timestamp % int.MaxValue) + randomPart;
             string description = "";
             long expiredAt = DateTimeOffset.UtcNow.AddMinutes(10).ToUnixTimeSeconds();
 
@@ -101,8 +104,8 @@ namespace MathExamGenerator.Service.Implement
     {
         if (notification.Success && notification.Data.Code == "00")
         {
-            var orderCode = notification.Data.OrderCode;
-            var amount = notification.Data.Amount;
+            var orderCode = notification?.Data.OrderCode;
+             var amount = notification.Data.Amount;
 
             var accountIdStr = await _redis.GetDatabase().StringGetAsync($"payos:{orderCode}");
             string accountIdString = accountIdStr.ToString();
