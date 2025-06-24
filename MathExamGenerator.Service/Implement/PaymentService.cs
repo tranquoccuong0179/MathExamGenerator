@@ -51,7 +51,10 @@ namespace MathExamGenerator.Service.Implement
 
                 throw new BadHttpRequestException("Số tiền phải lớn hơn 0");
             }
-            long orderCode = DateTimeOffset.UtcNow.ToUnixTimeMilliseconds();
+            var timestamp = DateTime.UtcNow.Ticks;
+            var randomPart = new Random().Next(1000, 9999); 
+
+            var orderCode = (int)(timestamp % int.MaxValue) + randomPart;
             string description = "";
             long expiredAt = DateTimeOffset.UtcNow.AddMinutes(10).ToUnixTimeSeconds();
 
@@ -95,7 +98,11 @@ namespace MathExamGenerator.Service.Implement
 
         }
 
-        public async Task<BaseResponse<string>> HandleWebhook(WebhookNotification notification)
+       public async Task<BaseResponse<string>> HandleWebhook(WebhookNotification notification)
+{
+    try
+    {
+        if (notification.Success && notification.Data.Code == "00")
         {
             if (notification.Success == false || notification.Data.Code != "00")
             {
@@ -120,6 +127,21 @@ namespace MathExamGenerator.Service.Implement
             }
 
             var accountId = Guid.Parse(accountIdStr);
+
+            var orderCode = notification?.Data.OrderCode;
+             var amount = notification.Data.Amount;
+
+            var accountIdStr = await _redis.GetDatabase().StringGetAsync($"payos:{orderCode}");
+            string accountIdString = accountIdStr.ToString();
+
+            if (!Guid.TryParse(accountIdString, out Guid accountId))
+            {
+                // Xử lý lỗi, dữ liệu không phải GUID hợp lệ
+                throw new Exception("Dữ liệu Redis không đúng định dạng GUID");
+            }
+
+
+
 
             var wallet = await _unitOfWork.GetRepository<Wallet>().SingleOrDefaultAsync(
                     predicate: a => a.AccountId == accountId && a.IsActive == true
@@ -162,5 +184,23 @@ namespace MathExamGenerator.Service.Implement
                 Message = "Xử lý webhook và nạp tiền thành công"
             };
         }
+        return new BaseResponse<string>
+        {
+            Status = StatusCodes.Status400BadRequest.ToString(),
+            Message = "Webhook không hợp lệ hoặc giao dịch không thành công"
+        };
+
+    }
+    catch (Exception ex) {
+
+        return new BaseResponse<string>
+        {
+            Status = StatusCodes.Status500InternalServerError.ToString(),
+            Message = $"Lỗi khi xử lý webhook: {ex.Message}"
+        };
+    }
+
+   
+}
     }
 }
