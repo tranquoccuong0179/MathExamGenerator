@@ -6,6 +6,7 @@ using MathExamGenerator.Model.Payload.Request.Question;
 using MathExamGenerator.Model.Payload.Response.Answer;
 using MathExamGenerator.Model.Payload.Response.ExamExchange;
 using MathExamGenerator.Model.Payload.Response.Question;
+using MathExamGenerator.Model.Utils;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -21,17 +22,17 @@ namespace MathExamGenerator.Model.Mapper
             //request
             CreateMap<AnswerReQuest, Answer>()
                 .ForMember(dest => dest.Id, opt => opt.MapFrom(_ => Guid.NewGuid()))
-                .ForMember(dest => dest.CreateAt, opt => opt.MapFrom(_ => DateTime.UtcNow))
+                .ForMember(dest => dest.CreateAt, opt => opt.MapFrom(_ => TimeUtil.GetCurrentSEATime()))
                 .ForMember(dest => dest.IsActive, opt => opt.MapFrom(_ => true));
 
             CreateMap<QuestionRequest, Question>()
                 .ForMember(dest => dest.Id, opt => opt.MapFrom(_ => Guid.NewGuid()))
-                .ForMember(dest => dest.CreateAt, opt => opt.MapFrom(_ => DateTime.UtcNow))
+                .ForMember(dest => dest.CreateAt, opt => opt.MapFrom(_ => TimeUtil.GetCurrentSEATime()))
                 .ForMember(dest => dest.IsActive, opt => opt.MapFrom(_ => true));
 
             CreateMap<ExamExchangeRequest, ExamExchange>()
                 .ForMember(dest => dest.Id, opt => opt.MapFrom(_ => Guid.NewGuid()))
-                .ForMember(dest => dest.CreateAt, opt => opt.MapFrom(_ => DateTime.UtcNow))
+                .ForMember(dest => dest.CreateAt, opt => opt.MapFrom(_ => TimeUtil.GetCurrentSEATime()))
                 .ForMember(dest => dest.IsActive, opt => opt.MapFrom(_ => true))
                 .ForMember(dest => dest.Questions, opt => opt.MapFrom(src => src.Questions));
 
