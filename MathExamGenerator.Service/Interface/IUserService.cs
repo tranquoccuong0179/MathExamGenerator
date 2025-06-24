@@ -14,6 +14,8 @@ namespace MathExamGenerator.Service.Interface
     {
         Task<BaseResponse<IPaginate<GetUserResponse>>> GetAllUsers(int page, int size);
 
+        Task<BaseResponse<GetUserResponse>> GetUserProfile();
+
         Task<BaseResponse<GetUserResponse>> GetUser(Guid id);
 
         Task<BaseResponse<bool>> DeleteUser(Guid id);
