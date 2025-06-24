@@ -38,6 +38,16 @@ namespace MathExamGenerator.API.Controllers
             return StatusCode(int.Parse(response.Status), response);
         }
 
+        [HttpGet(ApiEndPointConstant.User.GetUserProfile)]
+        [ProducesResponseType(typeof(BaseResponse<GetUserResponse>), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(BaseResponse<GetUserResponse>), StatusCodes.Status404NotFound)]
+        [ProducesErrorResponseType(typeof(ProblemDetails))]
+        public async Task<IActionResult> GetUserProfile()
+        {
+            var response = await _userService.GetUserProfile();
+            return StatusCode(int.Parse(response.Status), response);
+        }
+
         [HttpPut(ApiEndPointConstant.User.UpdateUser)]
         [ProducesResponseType(typeof(BaseResponse<GetUserResponse>), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(BaseResponse<GetUserResponse>), StatusCodes.Status404NotFound)]

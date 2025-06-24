@@ -15,6 +15,7 @@
             public const string AccountEndPoint = ApiEndpoint + "/account";
             public const string Otp = AccountEndPoint + "/otp";
             public const string Register = AccountEndPoint + "/register";
+            public const string RegisterManager = AccountEndPoint + "/manager";
         }
 
         public static class Authentication
@@ -29,6 +30,7 @@
             public const string RegisterTeacher = TeacherEndPoint;
             public const string GetAllTeacher = TeacherEndPoint;
             public const string GetTeacher = TeacherEndPoint + "/{id}";
+            public const string GetTeacherProfile = TeacherEndPoint + "/profile";
             public const string UpdateTeacher = TeacherEndPoint;
             public const string DeleteTeacher = TeacherEndPoint + "/{id}";
         }
@@ -121,6 +123,7 @@
         {
             public const string UserEndPoint = ApiEndpoint + "/user";
             public const string GetAllUsers = UserEndPoint;
+            public const string GetUserProfile = UserEndPoint + "/profile";
             public const string GetUser = UserEndPoint + "/{id}";
             public const string UpdateUser = UserEndPoint;
             public const string DeleteUser = UserEndPoint + "/{id}";

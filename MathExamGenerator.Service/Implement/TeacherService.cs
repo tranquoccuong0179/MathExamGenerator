@@ -11,6 +11,7 @@ using MathExamGenerator.Model.Payload.Request.Teacher;
 using MathExamGenerator.Model.Payload.Response;
 using MathExamGenerator.Model.Payload.Response.Account;
 using MathExamGenerator.Model.Payload.Response.Teacher;
+using MathExamGenerator.Model.Payload.Response.User;
 using MathExamGenerator.Model.Utils;
 using MathExamGenerator.Repository.Interface;
 using MathExamGenerator.Service.Interface;
@@ -128,6 +129,37 @@ namespace MathExamGenerator.Service.Implement
                 Status = StatusCodes.Status200OK.ToString(),
                 Message = "Lấy thông tin giáo viên thành công",
                 Data = teacher
+            };
+        }
+
+        public async Task<BaseResponse<GetTeacherResponse>> GetTeacherProfile()
+        {
+            Guid? accountId = UserUtil.GetAccountId(_httpContextAccessor.HttpContext);
+
+            var account = await _unitOfWork.GetRepository<Account>().SingleOrDefaultAsync(
+                predicate: a => a.Id.Equals(accountId) && a.IsActive == true) ?? throw new NotFoundException("Không tìm thấy tài khoản");
+
+            var teacher = await _unitOfWork.GetRepository<Teacher>().SingleOrDefaultAsync(
+                predicate: u => u.AccountId.Equals(accountId) && u.IsActive == true,
+                include: t => t.Include(t => t.Location)) ?? throw new NotFoundException("Không tìm thấy thông tin giáo viên");
+
+            return new BaseResponse<GetTeacherResponse>
+            {
+                Status = StatusCodes.Status200OK.ToString(),
+                Message = "Lấy thông tin giáo viên thành công",
+                Data = new GetTeacherResponse
+                {
+                    AccountId = accountId.Value,
+                    TeacherId = teacher.Id,
+                    FullName = account.FullName,
+                    Email = account.Email,
+                    Phone = account.Phone,
+                    DateOfBirth = account.DateOfBirth,
+                    Gender = account.Gender,
+                    Description = teacher.Description,
+                    SchoolName = teacher.SchoolName,
+                    LocationName = teacher.Location.Name
+                }
             };
         }
 

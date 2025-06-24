@@ -36,5 +36,16 @@ namespace MathExamGenerator.API.Controllers
             var response = await _accountService.Register(request);
             return StatusCode(int.Parse(response.Status), response);
         }
+
+        [HttpPost(ApiEndPointConstant.Account.RegisterManager)]
+        [ProducesResponseType(typeof(BaseResponse<RegisterResponse>), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(BaseResponse<RegisterResponse>), StatusCodes.Status404NotFound)]
+        [ProducesResponseType(typeof(BaseResponse<RegisterResponse>), StatusCodes.Status400BadRequest)]
+        [ProducesErrorResponseType(typeof(ProblemDetails))]
+        public async Task<IActionResult> RegisterManager([FromForm] RegisterManagerRequest request)
+        {
+            var response = await _accountService.RegisterManager(request);
+            return StatusCode(int.Parse(response.Status), response);
+        }
     }
 }

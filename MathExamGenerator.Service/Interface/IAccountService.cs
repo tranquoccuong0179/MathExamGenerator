@@ -12,6 +12,9 @@ namespace MathExamGenerator.Service.Interface
     public interface IAccountService
     {
         Task<BaseResponse<RegisterResponse>> Register(RegisterRequest request);
+
+        Task<BaseResponse<RegisterResponse>> RegisterManager(RegisterManagerRequest request);
+
         Task<BaseResponse<bool>> SendOtp(string email);
     }
 }

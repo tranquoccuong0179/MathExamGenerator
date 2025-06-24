@@ -50,6 +50,16 @@ namespace MathExamGenerator.API.Controllers
             return StatusCode(int.Parse(response.Status), response);
         }
         
+        [HttpGet(ApiEndPointConstant.Teacher.GetTeacherProfile)]
+        [ProducesResponseType(typeof(BaseResponse<GetTeacherResponse>), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(BaseResponse<GetTeacherResponse>), StatusCodes.Status404NotFound)]
+        [ProducesErrorResponseType(typeof(ProblemDetails))]
+        public async Task<IActionResult> GetTeacherProfile()
+        {
+            var response = await _teacherService.GetTeacherProfile();
+            return StatusCode(int.Parse(response.Status), response);
+        }
+        
         [HttpPut(ApiEndPointConstant.Teacher.UpdateTeacher)]
         [ProducesResponseType(typeof(BaseResponse<GetTeacherResponse>), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(BaseResponse<GetTeacherResponse>), StatusCodes.Status404NotFound)]

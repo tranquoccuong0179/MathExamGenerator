@@ -38,10 +38,15 @@ namespace MathExamGenerator.Model.Utils
                 claims.Add(new Claim(guidClaim.Item1, guidClaim.Item2.ToString()));
             }
 
-            var expires = (account.Role.Equals(RoleEnum.USER.GetDescriptionFromEnum()) ||
-                           account.Role.Equals(RoleEnum.TEACHER.GetDescriptionFromEnum()))
-                ? DateTime.Now.AddDays(15)
-                : DateTime.Now.AddDays(30);
+            //var expires = (account.Role.Equals(RoleEnum.USER.GetDescriptionFromEnum()) ||
+            //               account.Role.Equals(RoleEnum.TEACHER.GetDescriptionFromEnum()) ||
+            //               account.Role.Equals(RoleEnum.MANAGER.GetDescriptionFromEnum()) ||
+            //               account.Role.Equals(RoleEnum.ADMIN.GetDescriptionFromEnum()))
+            //    ? DateTime.Now.AddDays(15)
+            //    : DateTime.Now.AddDays(30);
+
+            var expires = DateTime.Now.AddDays(30);
+
 
             var token = new JwtSecurityToken(
                 issuer: "MATHGENERATOR",
