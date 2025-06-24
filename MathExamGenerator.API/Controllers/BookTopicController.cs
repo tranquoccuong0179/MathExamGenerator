@@ -6,6 +6,8 @@ using Microsoft.AspNetCore.Mvc;
 using MathExamGenerator.Model.Paginate;
 using MathExamGenerator.Model.Payload.Response.BookTopic;
 using MathExamGenerator.Model.Payload.Request.BookTopic;
+using MathExamGenerator.Model.Payload.Response.Question;
+using MathExamGenerator.Service.Implement;
 
 namespace MathExamGenerator.API.Controllers
 {
@@ -13,11 +15,13 @@ namespace MathExamGenerator.API.Controllers
     {
         private readonly IBookTopicService _bookTopicService;
         private readonly IUploadService _uploadService;
+        private readonly IQuestionService _questionService;
 
-        public BookTopicController(ILogger<BookTopicController> logger, IBookTopicService bookTopicService, IUploadService uploadService) : base(logger)
+        public BookTopicController(ILogger<BookTopicController> logger, IBookTopicService bookTopicService, IUploadService uploadService, IQuestionService questionService) : base(logger)
         {
             _bookTopicService = bookTopicService;
             _uploadService = uploadService;
+            _questionService = questionService; 
         }
 
         [HttpPost(ApiEndPointConstant.BookTopic.CreateBookTopic)]
@@ -68,6 +72,18 @@ namespace MathExamGenerator.API.Controllers
         public async Task<IActionResult> DeleteBookTopic([FromRoute] Guid id)
         {
             var response = await _bookTopicService.DeleteBookTopic(id);
+            return StatusCode(int.Parse(response.Status), response);
+        }
+
+        [HttpGet(ApiEndPointConstant.BookTopic.GetAllQuestionByBookTopic)]
+        [ProducesResponseType(typeof(BaseResponse<IPaginate<QuestionResponse>>), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(BaseResponse<IPaginate<QuestionResponse>>), StatusCodes.Status404NotFound)]
+        [ProducesErrorResponseType(typeof(ProblemDetails))]
+        public async Task<IActionResult> GetQuestionsByTopic([FromRoute] Guid id, [FromQuery] int? page, [FromQuery] int? size)
+        {
+            int pageNumber = page ?? 1;
+            int pageSize = size ?? 10;
+            var response = await _questionService.GetQuestionsByTopic(id, pageNumber, pageSize);
             return StatusCode(int.Parse(response.Status), response);
         }
     }

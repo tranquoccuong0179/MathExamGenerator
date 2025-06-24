@@ -168,6 +168,7 @@ public partial class MathExamGeneratorContext : DbContext
             entity.Property(e => e.Id).ValueGeneratedNever();
             entity.Property(e => e.CreateAt).HasColumnType("datetime");
             entity.Property(e => e.DeleteAt).HasColumnType("datetime");
+            entity.Property(e => e.Grade).HasMaxLength(50);
             entity.Property(e => e.UpdateAt).HasColumnType("datetime");
         });
 
@@ -408,7 +409,7 @@ public partial class MathExamGeneratorContext : DbContext
 
         modelBuilder.Entity<Quiz>(entity =>
         {
-            entity.HasKey(e => e.Id).HasName("PK__Quiz__3214EC073ACA40A5");
+            entity.HasKey(e => e.Id).HasName("PK__tmp_ms_x__3214EC07C8687CCD");
 
             entity.ToTable("Quiz");
 
@@ -416,6 +417,14 @@ public partial class MathExamGeneratorContext : DbContext
             entity.Property(e => e.CreateAt).HasColumnType("datetime");
             entity.Property(e => e.DeleteAt).HasColumnType("datetime");
             entity.Property(e => e.UpdateAt).HasColumnType("datetime");
+
+            entity.HasOne(d => d.BookChapter).WithMany(p => p.Quizzes)
+                .HasForeignKey(d => d.BookChapterId)
+                .HasConstraintName("FK_Quiz_BookChapter");
+
+            entity.HasOne(d => d.BookTopic).WithMany(p => p.Quizzes)
+                .HasForeignKey(d => d.BookTopicId)
+                .HasConstraintName("FK_Quiz_BookTopic");
         });
 
         modelBuilder.Entity<QuizQuestion>(entity =>

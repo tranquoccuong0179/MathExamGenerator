@@ -127,6 +127,35 @@ namespace MathExamGenerator.Service.Implement
             };
         }
 
+        public async Task<BaseResponse<GetUserResponse>> GetUserProfile()
+        {
+            Guid? accountId = UserUtil.GetAccountId(_httpContextAccessor.HttpContext);
+
+            var account = await _unitOfWork.GetRepository<Account>().SingleOrDefaultAsync(
+                predicate: a => a.Id.Equals(accountId) && a.IsActive == true) ?? throw new NotFoundException("Không tìm thấy tài khoản");
+
+            var user = await _unitOfWork.GetRepository<UserInfo>().SingleOrDefaultAsync(
+                predicate: u => u.AccountId.Equals(accountId) && u.IsActive == true) ?? throw new NotFoundException("Không tìm thấy thông tin người dùng");
+
+            return new BaseResponse<GetUserResponse>
+            {
+                Status = StatusCodes.Status200OK.ToString(),
+                Message = "Lấy thông tin người dùng thành công",
+                Data = new GetUserResponse
+                {
+                    AccountId = accountId,
+                    UserId = user.Id,
+                    FullName = account.FullName,
+                    Email = account.Email,
+                    Phone = account.Phone,
+                    DateOfBirth = account.DateOfBirth,
+                    Gender = account.Gender,
+                    QuizFree = account.QuizFree,
+                    Point = user.Point,
+                }
+            };
+        }
+
         public async Task<BaseResponse<GetUserResponse>> UpdateUser(UpdateUserRequest request)
         {
             Guid? accountId = UserUtil.GetAccountId(_httpContextAccessor.HttpContext);

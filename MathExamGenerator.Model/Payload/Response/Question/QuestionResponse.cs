@@ -3,11 +3,14 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using MathExamGenerator.Model.Payload.Response.ExamExchange;
+using MathExamGenerator.Model.Payload.Response.Answer;
 
-namespace MathExamGenerator.Model.Payload.Response.ExamExchange
+namespace MathExamGenerator.Model.Payload.Response.Question
 {
     public class QuestionResponse
     {
+        public Guid Id { get; set; }
         public Guid? BookTopicId { get; set; }   
         public string Level { get; set; } = default!;
         public string Content { get; set; } = default!;

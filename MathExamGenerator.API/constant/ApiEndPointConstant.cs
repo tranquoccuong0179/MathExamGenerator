@@ -15,6 +15,7 @@
             public const string AccountEndPoint = ApiEndpoint + "/account";
             public const string Otp = AccountEndPoint + "/otp";
             public const string Register = AccountEndPoint + "/register";
+            public const string RegisterManager = AccountEndPoint + "/manager";
         }
 
         public static class Authentication
@@ -29,6 +30,7 @@
             public const string RegisterTeacher = TeacherEndPoint;
             public const string GetAllTeacher = TeacherEndPoint;
             public const string GetTeacher = TeacherEndPoint + "/{id}";
+            public const string GetTeacherProfile = TeacherEndPoint + "/profile";
             public const string UpdateTeacher = TeacherEndPoint;
             public const string DeleteTeacher = TeacherEndPoint + "/{id}";
         }
@@ -41,6 +43,7 @@
             public const string GetBookTopic = BookTopicEndPoint + "/{id}";
             public const string UpdateBookTopic = BookTopicEndPoint + "/{id}";
             public const string DeleteBookTopic = BookTopicEndPoint + "/{id}";
+            public const string GetAllQuestionByBookTopic = BookTopicEndPoint + "/{id}/questions";
         }
 
         public static class SubjectBook
@@ -121,6 +124,7 @@
         {
             public const string UserEndPoint = ApiEndpoint + "/user";
             public const string GetAllUsers = UserEndPoint;
+            public const string GetUserProfile = UserEndPoint + "/profile";
             public const string GetUser = UserEndPoint + "/{id}";
             public const string UpdateUser = UserEndPoint;
             public const string DeleteUser = UserEndPoint + "/{id}";
@@ -148,6 +152,12 @@
             public const string DeleteSubject = SubjectEndPoint + "/{id}";
         }
 
+        public static class Payment
+        {
+            public const string PaymentEndPoint = ApiEndpoint + "/payment";
+            public const string CreatePayment = PaymentEndPoint;
+            public const string HandleWebhook = PaymentEndPoint + "/webhook";
+        }
         public static class Comment
         {
             public const string CommentEndPoint = ApiEndpoint + "/comment";
@@ -163,6 +173,8 @@
         {
             public const string QuestionEndPoint = ApiEndpoint + "/question";
             public const string GetAllCommentByQuestion = QuestionEndPoint + "/{id}/comments";
+            public const string GetAllQuestion = QuestionEndPoint;
+            public const string DeleteQuestionById = QuestionEndPoint + "/{id}";
         }
 
         public static class TestHistory
@@ -201,6 +213,27 @@
             public const string Create = TestStorageEndpoint;
             public const string Update = TestStorageEndpoint + "/{id}";
             public const string Delete = TestStorageEndpoint + "/{id}";
+        }
+
+        public static class Quiz
+        {
+            public const string QuizEndPoint = ApiEndpoint + "/quiz";
+            public const string CreateQuiz = QuizEndPoint;
+            public const string GetAllQuiz = QuizEndPoint;
+            public const string GetQuiz = QuizEndPoint + "/{id}";
+        }
+
+        public static class Transaction
+        {
+            public const string TransactionEndPoint = ApiEndpoint + "/transaction";
+            public const string GetTransaction = TransactionEndPoint;
+        }
+
+        public static class Wallet
+        {
+            public const string WalletEndPoint = ApiEndpoint + "/wallet";
+            public const string GetWalletByAccount = WalletEndPoint;
+            
         }
     }
 }

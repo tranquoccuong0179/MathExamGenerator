@@ -33,6 +33,7 @@ namespace MathExamGenerator.Service.Implement
                   p.Password.Equals(PasswordUtil.HashPassword(request.Password)) &&
                   (p.Role == RoleEnum.ADMIN.GetDescriptionFromEnum() ||
                   p.Role == RoleEnum.TEACHER.GetDescriptionFromEnum() ||
+                  p.Role == RoleEnum.MANAGER.GetDescriptionFromEnum() ||
                   p.Role == RoleEnum.USER.GetDescriptionFromEnum()) &&
                   p.IsActive == true;
             Account account = await _unitOfWork.GetRepository<Account>().SingleOrDefaultAsync(predicate: searchFilter);

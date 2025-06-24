@@ -46,6 +46,8 @@ namespace MathExamGenerator.API
             services.AddScoped<IUserService, UserService>();
             services.AddScoped<ISubjectService, SubjectService>();
             services.AddScoped<ISubjectBookService, SubjectBookService>();
+            services.AddScoped<IWalletService, WalletService>();
+            services.AddScoped<IPaymentService, PaymentService>();
             services.AddScoped<IExamMatrixService, ExamMatrixService>();
             services.AddScoped<IMatrixSectionService, MatrixSectionService>();
             services.AddScoped<IMatrixSectionDetailService, MatrixSectionDetailService>();
@@ -55,6 +57,9 @@ namespace MathExamGenerator.API
             services.AddScoped<IReplyService, ReplyService>();
             services.AddScoped<IQuestionHistoryService, QuestionHistoryService>();
             services.AddScoped<ITestStorageService, TestStorageService>();
+            services.AddScoped<IQuizService, QuizService>();
+            services.AddScoped<IQuestionService, QuestionService>();
+            services.AddScoped<ITransactionService, TransactionService>();
 
             return services;
         }

@@ -1,7 +1,8 @@
-using MathExamGenerator.API;
+﻿using MathExamGenerator.API;
 using MathExamGenerator.API.constant;
 using MathExamGenerator.API.Middlewares;
 using MathExamGenerator.Model.Enum;
+using MathExamGenerator.Model.Payload.Response.Payment;
 using MathExamGenerator.Model.Payload.Settings;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
@@ -32,6 +33,7 @@ builder.Services.AddHttpClientServices();
 builder.Services.AddCloudinary(builder.Configuration);
 builder.Services.AddRedis(builder.Configuration);
 builder.Services.AddGoogleDrive(builder.Configuration);
+builder.Services.Configure<PayOSSettings>(builder.Configuration.GetSection("PayOS"));
 builder.Services.Configure<ApiBehaviorOptions>(options =>
 {
     options.SuppressModelStateInvalidFilter = true;

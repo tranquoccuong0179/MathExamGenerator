@@ -25,5 +25,7 @@ public partial class BookChapter
 
     public virtual ICollection<MatrixSectionDetail> MatrixSectionDetails { get; set; } = new List<MatrixSectionDetail>();
 
+    public virtual ICollection<Quiz> Quizzes { get; set; } = new List<Quiz>();
+
     public virtual SubjectBook? SubjectBook { get; set; }
 }

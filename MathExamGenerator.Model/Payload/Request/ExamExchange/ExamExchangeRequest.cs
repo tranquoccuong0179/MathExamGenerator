@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using MathExamGenerator.Model.Payload.Request.Question;
 
 namespace MathExamGenerator.Model.Payload.Request.ExamExchange
 {
