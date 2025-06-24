@@ -40,6 +40,7 @@ namespace MathExamGenerator.Service.Implement
                 Content = request.Content,
                 AccountId = accountId,
                 CommentId = comment.Id,
+                IsActive = true,
                 CreateAt = TimeUtil.GetCurrentSEATime(),
                 UpdateAt = TimeUtil.GetCurrentSEATime(),
             };
