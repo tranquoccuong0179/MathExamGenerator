@@ -39,17 +39,7 @@ namespace MathExamGenerator.API.Controllers
             var response = await _questionService.GetAllQuestion(pageNumber, pageSize);
             return StatusCode(int.Parse(response.Status), response);
         }
-        [HttpGet(ApiEndPointConstant.Question.GetQuestionsByTopic)]
-        [ProducesResponseType(typeof(BaseResponse<IPaginate<QuestionResponse>>), StatusCodes.Status200OK)]
-        [ProducesResponseType(typeof(BaseResponse<IPaginate<QuestionResponse>>), StatusCodes.Status404NotFound)]
-        [ProducesErrorResponseType(typeof(ProblemDetails))]
-        public async Task<IActionResult> GetQuestionsByTopic([FromRoute] Guid id, [FromQuery] int? page, [FromQuery] int? size)
-        {
-            int pageNumber = page ?? 1;
-            int pageSize = size ?? 10;
-            var response = await _questionService.GetQuestionsByTopic(id, pageNumber, pageSize);
-            return StatusCode(int.Parse(response.Status), response);
-        }
+
         [HttpDelete(ApiEndPointConstant.Question.DeleteQuestionById)]
         [ProducesResponseType(typeof(BaseResponse<string>), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(BaseResponse<string>), StatusCodes.Status404NotFound)]

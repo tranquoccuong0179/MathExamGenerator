@@ -43,6 +43,7 @@
             public const string GetBookTopic = BookTopicEndPoint + "/{id}";
             public const string UpdateBookTopic = BookTopicEndPoint + "/{id}";
             public const string DeleteBookTopic = BookTopicEndPoint + "/{id}";
+            public const string GetAllQuestionByBookTopic = BookTopicEndPoint + "/{id}/questions";
         }
 
         public static class SubjectBook
@@ -173,7 +174,6 @@
             public const string QuestionEndPoint = ApiEndpoint + "/question";
             public const string GetAllCommentByQuestion = QuestionEndPoint + "/{id}/comments";
             public const string GetAllQuestion = QuestionEndPoint;
-            public const string GetQuestionsByTopic = QuestionEndPoint + "/bookTopic/{id}";
             public const string DeleteQuestionById = QuestionEndPoint + "/{id}";
         }
 
