@@ -169,6 +169,9 @@
         {
             public const string QuestionEndPoint = ApiEndpoint + "/question";
             public const string GetAllCommentByQuestion = QuestionEndPoint + "/{id}/comments";
+            public const string GetAllQuestion = QuestionEndPoint;
+            public const string GetQuestionsByTopic = QuestionEndPoint + "/bookTopic/{id}";
+            public const string DeleteQuestionById = QuestionEndPoint + "/{id}";
         }
 
         public static class TestHistory
@@ -215,6 +218,19 @@
             public const string CreateQuiz = QuizEndPoint;
             public const string GetAllQuiz = QuizEndPoint;
             public const string GetQuiz = QuizEndPoint + "/{id}";
+        }
+
+        public static class Transaction
+        {
+            public const string TransactionEndPoint = ApiEndpoint + "/transaction";
+            public const string GetTransaction = TransactionEndPoint;
+        }
+
+        public static class Wallet
+        {
+            public const string WalletEndPoint = ApiEndpoint + "/wallet";
+            public const string GetWalletByAccount = WalletEndPoint;
+            
         }
     }
 }

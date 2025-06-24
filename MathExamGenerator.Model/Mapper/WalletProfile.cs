@@ -16,7 +16,7 @@ namespace MathExamGenerator.Model.Mapper
         public WalletProfile() {
 
             //respone
-            CreateMap<Wallet, WalletRespone>();
+            CreateMap<Wallet, WalletResponse>();
             CreateMap<Transaction, TransactionRespone>();
         }
     }

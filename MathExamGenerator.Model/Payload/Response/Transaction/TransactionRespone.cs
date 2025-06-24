@@ -8,9 +8,10 @@ namespace MathExamGenerator.Model.Payload.Response.Transaction
 {
     public class TransactionRespone
     {
-        public Guid Id { get; set; }              // Mã giao dịch
-        public decimal Amount { get; set; }       // Số tiền giao dịch
-        public DateTime CreateAt { get; set; }    // Ngày giao dịch
-        public Guid DepositId { get; set; }       // Mã deposit liên quan (nạp tiền)
+        public Guid Id { get; set; }             
+        public decimal Amount { get; set; }      
+        public DateTime CreateAt { get; set; }    
+        public Guid DepositId { get; set; }     
+        public string DepositDescription { get; set; }
     }
 }
