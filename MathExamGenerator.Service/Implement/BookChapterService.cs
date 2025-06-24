@@ -48,6 +48,8 @@ namespace MathExamGenerator.Service.Implement
                 CreateAt = TimeUtil.GetCurrentSEATime()
             };
 
+            await _unitOfWork.GetRepository<BookChapter>().InsertAsync(chapter);
+
             var isSuccess = await _unitOfWork.CommitAsync() > 0;
 
             if (!isSuccess)

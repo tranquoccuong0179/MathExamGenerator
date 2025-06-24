@@ -77,7 +77,7 @@ namespace MathExamGenerator.Service.Implement
             var comment = await _unitOfWork.GetRepository<Comment>().SingleOrDefaultAsync(
                 predicate: c => c.Id.Equals(id) && c.IsActive == true) ?? throw new NotFoundException("Không tìm thấy comment");
 
-            if (comment.AccountId.Equals(account.Id))
+            if (!comment.AccountId.Equals(account.Id))
             {
                 throw new BadHttpRequestException("Bình luận không phải của người dùng");
             }
@@ -137,7 +137,7 @@ namespace MathExamGenerator.Service.Implement
             var comment = await _unitOfWork.GetRepository<Comment>().SingleOrDefaultAsync(
                 predicate: c => c.Id.Equals(id) && c.IsActive == true) ?? throw new NotFoundException("Không tìm thấy comment");
 
-            if (comment.AccountId.Equals(account.Id))
+            if (!comment.AccountId.Equals(account.Id))
             {
                 throw new BadHttpRequestException("Bình luận không phải của người dùng");
             }
