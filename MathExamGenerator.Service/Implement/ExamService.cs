@@ -298,7 +298,7 @@ namespace MathExamGenerator.Service.Implement
             exam.StartDate = request.StartDate ?? exam.StartDate;
             exam.EndDate = request.EndDate ?? exam.EndDate;
             exam.Minigame = request.Minigame ?? exam.Minigame;
-            exam.IsActive = request.IsActive ?? exam.IsActive;
+            exam.IsActive = true;
             exam.UpdateAt = TimeUtil.GetCurrentSEATime();
 
             _unitOfWork.GetRepository<Exam>().UpdateAsync(exam);

@@ -23,7 +23,8 @@ namespace MathExamGenerator.Model.Mapper
                 .ForMember(dest => dest.CreateAt, opt => opt.MapFrom(src => TimeUtil.GetCurrentSEATime()))
                 .ForMember(dest => dest.UpdateAt, opt => opt.MapFrom(src => TimeUtil.GetCurrentSEATime()));
 
-            CreateMap<UpdateExamMatrixWithStructureRequest, ExamMatrix>();
+            CreateMap<UpdateExamMatrixWithStructureRequest, ExamMatrix>()
+                .ForMember(dest => dest.IsActive, opt => opt.MapFrom(src => true));
 
             CreateMap<ExamMatrix, GetExamMatrixResponse>();
 

@@ -12,7 +12,6 @@ namespace MathExamGenerator.Model.Payload.Request.ExamMatrix
         public string? Name { get; set; }
         public string? Grade { get; set; }
         public string? Description { get; set; }
-        public bool? IsActive { get; set; }
         public Guid SubjectId { get; set; }
 
         public List<UpdateMatrixSectionWithDetailRequest> Sections { get; set; } = new();
