@@ -148,6 +148,11 @@ namespace MathExamGenerator.Service.Implement
 
         public async Task<BaseResponse<IPaginate<GetQuizResponse>>> GetAllQuiz(int page, int size)
         {
+            if (page < 1 || size < 1)
+            {
+                throw new BadHttpRequestException("Số trang và số lượng trong trang phải lớn hơn hoặc bằng 1");
+            }
+
             var quizzes = await _unitOfWork.GetRepository<Quiz>().GetPagingListAsync(
                 selector: q => new GetQuizResponse
                 {

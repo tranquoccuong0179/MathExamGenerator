@@ -68,6 +68,11 @@ namespace MathExamGenerator.Service.Implement
 
         public async Task<BaseResponse<IPaginate<GetUserResponse>>> GetAllUsers(int page, int size)
         {
+            if (page < 1 || size < 1)
+            {
+                throw new BadHttpRequestException("Số trang và số lượng trong trang phải lớn hơn hoặc bằng 1");
+            }
+
             var users = await _unitOfWork.GetRepository<UserInfo>().GetPagingListAsync(
                 selector: u => new GetUserResponse
                 {
