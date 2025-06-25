@@ -120,6 +120,11 @@ namespace MathExamGenerator.Service.Implement
 
         public async Task<BaseResponse<IPaginate<GetBookTopicResponse>>> GetAllBookTopicByChapter(Guid id, int page, int size)
         {
+            if (page < 1 || size < 1)
+            {
+                throw new BadHttpRequestException("Số trang và số lượng trong trang phải lớn hơn hoặc bằng 1");
+            }
+
             var bookChapter = await _unitOfWork.GetRepository<BookChapter>().SingleOrDefaultAsync(
                 predicate: bc => bc.Id.Equals(id) && bc.IsActive == true) ?? throw new NotFoundException("Không tìm thấy chương sách này");
 
