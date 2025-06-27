@@ -29,6 +29,10 @@ public partial class Exam
 
     public Guid? ExamMatrixId { get; set; }
 
+    public Guid? AccountId { get; set; }
+
+    public virtual Account? Account { get; set; }
+
     public virtual ExamMatrix? ExamMatrix { get; set; }
 
     public virtual ICollection<ExamQuestion> ExamQuestions { get; set; } = new List<ExamQuestion>();
