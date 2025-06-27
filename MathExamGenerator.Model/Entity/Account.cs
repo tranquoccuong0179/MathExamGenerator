@@ -39,6 +39,8 @@ public partial class Account
 
     public virtual ICollection<Deposit> Deposits { get; set; } = new List<Deposit>();
 
+    public virtual ICollection<Exam> Exams { get; set; } = new List<Exam>();
+
     public virtual ICollection<LikeComment> LikeComments { get; set; } = new List<LikeComment>();
 
     public virtual ICollection<Reply> Replies { get; set; } = new List<Reply>();
