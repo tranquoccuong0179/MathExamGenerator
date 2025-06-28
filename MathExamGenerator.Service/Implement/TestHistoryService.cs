@@ -64,10 +64,9 @@ namespace MathExamGenerator.Service.Implement
                 };
             }
 
-            double grade = 0;
-
             var testHistory = _mapper.Map<TestHistory>(request);
             testHistory.AccountId = accountId;
+            testHistory.Grade = 0;
 
             List<Guid> questionIds = new();
 
