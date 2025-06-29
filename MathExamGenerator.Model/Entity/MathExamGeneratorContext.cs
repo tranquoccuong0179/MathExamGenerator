@@ -201,7 +201,7 @@ public partial class MathExamGeneratorContext : DbContext
             entity.Property(e => e.Id).ValueGeneratedNever();
             entity.Property(e => e.Amount).HasColumnType("decimal(18, 2)");
             entity.Property(e => e.Code)
-                .HasMaxLength(50)
+                .HasMaxLength(100)
                 .IsUnicode(false);
             entity.Property(e => e.CreateAt).HasColumnType("datetime");
             entity.Property(e => e.DeleteAt).HasColumnType("datetime");
@@ -225,6 +225,10 @@ public partial class MathExamGeneratorContext : DbContext
             entity.Property(e => e.EndDate).HasColumnType("datetime");
             entity.Property(e => e.StartDate).HasColumnType("datetime");
             entity.Property(e => e.UpdateAt).HasColumnType("datetime");
+
+            entity.HasOne(d => d.Account).WithMany(p => p.Exams)
+                .HasForeignKey(d => d.AccountId)
+                .HasConstraintName("FK_Exam_Account");
 
             entity.HasOne(d => d.ExamMatrix).WithMany(p => p.Exams)
                 .HasForeignKey(d => d.ExamMatrixId)
