@@ -6,6 +6,7 @@ using MathExamGenerator.Model.Paginate;
 using MathExamGenerator.Model.Payload.Request.Exam;
 using MathExamGenerator.Model.Payload.Response;
 using MathExamGenerator.Model.Payload.Response.Exam;
+using MathExamGenerator.Model.Payload.Response.TestHistory;
 using MathExamGenerator.Model.Utils;
 using MathExamGenerator.Repository.Interface;
 using MathExamGenerator.Service.Interface;
@@ -29,6 +30,29 @@ namespace MathExamGenerator.Service.Implement
 
         public async Task<BaseResponse<CreateExamResponse>> CreateExam(CreateExamRequest request)
         {
+            Guid? accountId = UserUtil.GetAccountId(_httpContextAccessor.HttpContext);
+
+            var account = await _unitOfWork.GetRepository<Account>().SingleOrDefaultAsync(
+                predicate: a => a.Id.Equals(accountId) && a.IsActive == true);
+
+            if (account == null)
+            {
+                return new BaseResponse<CreateExamResponse>
+                {
+                    Status = StatusCodes.Status404NotFound.ToString(),
+                    Message = "Không tìm thấy tài khoản.",
+                };
+            }
+
+            if (account.QuizFree <= 0)
+            {
+                return new BaseResponse<CreateExamResponse>
+                {
+                    Status = StatusCodes.Status404NotFound.ToString(),
+                    Message = "Bạn không đủ lượt free để tạo quiz.",
+                };
+            }
+
             if (request == null || request.ExamMatrixId == null || request.Quantity < 0)
             {
                 return new BaseResponse<CreateExamResponse>
@@ -55,7 +79,12 @@ namespace MathExamGenerator.Service.Implement
             }
 
             var exam = _mapper.Map<Exam>(request);
+            exam.AccountId = account.Id;
             await _unitOfWork.GetRepository<Exam>().InsertAsync(exam);
+
+            account.QuizFree -= 1;
+            account.UpdateAt = TimeUtil.GetCurrentSEATime();
+            _unitOfWork.GetRepository<Account>().UpdateAsync(account);
 
             var sections = await _unitOfWork.GetRepository<MatrixSection>().GetListAsync(
                 predicate: s => s.ExamMatrixId == examMatrix.Id && s.IsActive == true);
@@ -76,14 +105,31 @@ namespace MathExamGenerator.Service.Implement
             
                 foreach (var detail in details)
                 {
-                    var questionsQuery = await questionRepo.GetListAsync(
-                        predicate: q => q.IsActive == true && 
-                                        q.Level == detail.Difficulty && 
-                                        q.BookTopicId == detail.BookTopicId && 
-                                        q.BookTopic.BookChapterId == detail.BookChapterId &&
-                                        !selectedQuestionIds.Contains(q.Id));
+                    IEnumerable<Question> questionsQuery = new List<Question>();
 
-                    if (questionsQuery.Count < detail.QuestionCount)
+                    if (detail.BookTopicId.HasValue)
+                    {
+                        questionsQuery = await questionRepo.GetListAsync(
+                            predicate: q => q.IsActive == true &&
+                                            q.Level == detail.Difficulty &&
+                                            q.BookTopicId == detail.BookTopicId &&
+                                            !selectedQuestionIds.Contains(q.Id));
+                    }
+                    else if (detail.BookChapterId.HasValue)
+                    {
+                        questionsQuery = await questionRepo.GetListAsync(
+                            predicate: q => q.IsActive == true &&
+                                            q.Level == detail.Difficulty &&
+                                            q.BookTopic != null &&
+                                            q.BookTopic.BookChapterId == detail.BookChapterId &&
+                                            !selectedQuestionIds.Contains(q.Id));
+                    }
+                    else
+                    {
+                        throw new Exception($"Thiếu thông tin BookTopicId hoặc BookChapterId ở section {section.SectionName}");
+                    }
+
+                    if (questionsQuery.Count() < detail.QuestionCount)
                     {
                         throw new Exception($"Không đủ câu hỏi cho section {section.SectionName} – độ khó {detail.Difficulty}.");
                     }

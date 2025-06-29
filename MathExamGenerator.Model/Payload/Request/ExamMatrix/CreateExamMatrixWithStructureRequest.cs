@@ -9,7 +9,6 @@ namespace MathExamGenerator.Model.Payload.Request.ExamMatrix
 {
     public class CreateExamMatrixWithStructureRequest
     {
-        public Guid SubjectId { get; set; }
         public string Name { get; set; }
         public string Grade { get; set; }
         public string Description { get; set; }
