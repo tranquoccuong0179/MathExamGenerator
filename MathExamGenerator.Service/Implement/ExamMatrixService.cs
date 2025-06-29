@@ -78,6 +78,24 @@ namespace MathExamGenerator.Service.Implement
 
                 foreach (var detail in sectionReq.Details)
                 {
+                    if(detail.BookChapterId.HasValue && detail.BookTopicId.HasValue)
+                    {
+                        return new BaseResponse<GetExamMatrixResponse>
+                        {
+                            Status = StatusCodes.Status400BadRequest.ToString(),
+                            Message = $"Chi tiết trong section '{sectionReq.SectionName}' có cùng lúc cả BookChapterId và BookTopicId. Chỉ chọn 1 trong 2."
+                        };
+                    }
+
+                    if (!detail.BookChapterId.HasValue && !detail.BookTopicId.HasValue)
+                    {
+                        return new BaseResponse<GetExamMatrixResponse>
+                        {
+                            Status = StatusCodes.Status400BadRequest.ToString(),
+                            Message = $"Chi tiết trong section '{sectionReq.SectionName}' không có BookChapterId hoặc BookTopicId. Phải có 1 trong 2."
+                        };
+                    }
+
                     if (detail.QuestionCount <= 0 || detail.ScorePerQuestion <= 0)
                     {
                         return new BaseResponse<GetExamMatrixResponse>
@@ -86,48 +104,23 @@ namespace MathExamGenerator.Service.Implement
                             Message = $"Chi tiết trong section '{sectionReq.SectionName}' có giá trị QuestionCount hoặc ScorePerQuestion không hợp lệ."
                         };
                     }
-
-                    var topic = await _unitOfWork.GetRepository<BookTopic>().SingleOrDefaultAsync(
-                        predicate: t => t.Id == detail.BookTopicId && t.BookChapterId == detail.BookChapterId && t.IsActive == true);
-
-                    if (topic == null)
-                    {
-                        return new BaseResponse<GetExamMatrixResponse>
-                        {
-                            Status = StatusCodes.Status400BadRequest.ToString(),
-                            Message = $"Topic không hợp lệ hoặc không thuộc chapter trong section '{sectionReq.SectionName}'."
-                        };
-                    }
-
-                    var bookChapter = await _unitOfWork.GetRepository<BookChapter>().SingleOrDefaultAsync(
-                        predicate: c => c.Id == detail.BookChapterId && c.IsActive == true,
-                        include: c => c.Include(bc => bc.SubjectBook)
-                    );
-
-                    if (bookChapter == null || bookChapter.SubjectBook?.SubjectId != request.SubjectId)
-                    {
-                        return new BaseResponse<GetExamMatrixResponse>
-                        {
-                            Status = StatusCodes.Status400BadRequest.ToString(),
-                            Message = $"Chapter không thuộc đúng môn học trong section '{sectionReq.SectionName}'."
-                        };
-                    }
                 }
             }
 
             var subject = await _unitOfWork.GetRepository<Subject>().SingleOrDefaultAsync(
-                predicate: x => x.Id == request.SubjectId && x.IsActive == true);
+                predicate: x => x.IsActive == true);
 
             if (subject == null)
             {
                 return new BaseResponse<GetExamMatrixResponse>
                 {
                     Status = StatusCodes.Status404NotFound.ToString(),
-                    Message = "Không tìm thấy môn học.",
+                    Message = "Không có môn học được lưu trữ cả.",
                 };
             }
 
             var matrix = _mapper.Map<ExamMatrix>(request);
+            matrix.SubjectId = subject.Id;
             await _unitOfWork.GetRepository<ExamMatrix>().InsertAsync(matrix);
 
             foreach (var sectionReq in request.Sections)
@@ -138,6 +131,36 @@ namespace MathExamGenerator.Service.Implement
 
                 foreach (var detailReq in sectionReq.Details)
                 {
+                    if (detailReq.BookChapterId.HasValue)
+                    {
+                        var bookChapter = await _unitOfWork.GetRepository<BookChapter>().SingleOrDefaultAsync(
+                            predicate: x => x.Id == detailReq.BookChapterId && x.IsActive == true);
+
+                        if (bookChapter == null)
+                        {
+                            return new BaseResponse<GetExamMatrixResponse>
+                            {
+                                Status = StatusCodes.Status404NotFound.ToString(),
+                                Message = $"Không tìm thấy BookChapter trong 1 Detail của section '{sectionReq.SectionName}'.",
+                            };
+                        }
+                    }
+
+                    if (detailReq.BookTopicId.HasValue)
+                    {
+                        var bookTopic = await _unitOfWork.GetRepository<BookTopic>().SingleOrDefaultAsync(
+                            predicate: x => x.Id == detailReq.BookTopicId && x.IsActive == true);
+
+                        if (bookTopic == null)
+                        {
+                            return new BaseResponse<GetExamMatrixResponse>
+                            {
+                                Status = StatusCodes.Status404NotFound.ToString(),
+                                Message = $"Không tìm thấy BookTopic trong 1 Detail của section '{sectionReq.SectionName}'.",
+                            };
+                        }
+                    }
+
                     var detail = _mapper.Map<MatrixSectionDetail>(detailReq);
                     detail.MatrixSectionId = section.Id;
                     await _unitOfWork.GetRepository<MatrixSectionDetail>().InsertAsync(detail);
