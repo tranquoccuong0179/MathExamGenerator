@@ -140,7 +140,7 @@ namespace MathExamGenerator.Service.Implement
             };
         }
 
-        public async Task<BaseResponse<bool>> Update(Guid id, UpdateQuestionHistoryRequest request)
+        public async Task<BaseResponse<bool>> Update(Guid id, UpdateQuestionHistoryNotIdRequest request)
         {
             var entity = await _unitOfWork.GetRepository<QuestionHistory>().SingleOrDefaultAsync(
             predicate: x => x.Id == id && x.IsActive == true);

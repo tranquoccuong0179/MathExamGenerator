@@ -56,9 +56,8 @@ namespace MathExamGenerator.API.Controllers
         [ProducesResponseType(typeof(BaseResponse<bool>), StatusCodes.Status404NotFound)]
         [ProducesResponseType(typeof(BaseResponse<bool>), StatusCodes.Status500InternalServerError)]
         [ProducesErrorResponseType(typeof(ProblemDetails))]
-        public async Task<IActionResult> Update([FromRoute] Guid id, [FromBody] UpdateQuestionHistoryRequest request)
+        public async Task<IActionResult> Update([FromRoute] Guid id, [FromBody] UpdateQuestionHistoryNotIdRequest request)
         {
-            request.Id = id;
             var result = await _questionHistoryService.Update(id, request);
             return StatusCode(int.Parse(result.Status), result);
         }
