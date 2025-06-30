@@ -15,7 +15,7 @@ namespace MathExamGenerator.Service.Interface
         Task<BaseResponse<IPaginate<GetQuestionHistoryResponse>>> GetAll(int page, int size);
         Task<BaseResponse<GetQuestionHistoryResponse>> GetById(Guid id);
         Task<BaseResponse<CreateQuestionHistoryResponse>> Create(CreateQuestionHistoryRequest request);
-        Task<BaseResponse<bool>> Update(Guid id, UpdateQuestionHistoryRequest request);
+        Task<BaseResponse<bool>> Update(Guid id, UpdateQuestionHistoryNotIdRequest request);
         Task<BaseResponse<bool>> Delete(Guid id);
     }
 }
