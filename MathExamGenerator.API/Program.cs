@@ -1,4 +1,5 @@
-﻿using MathExamGenerator.API;
+﻿using System.Text.Json.Serialization;
+using MathExamGenerator.API;
 using MathExamGenerator.API.constant;
 using MathExamGenerator.API.Middlewares;
 using MathExamGenerator.Model.Enum;
@@ -21,7 +22,10 @@ builder.Services.AddCors(options =>
                 .AllowAnyHeader().AllowAnyMethod();
         });
 });
-builder.Services.AddControllers();
+builder.Services.AddControllers().AddJsonOptions(options =>
+{
+    options.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter());
+});
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
