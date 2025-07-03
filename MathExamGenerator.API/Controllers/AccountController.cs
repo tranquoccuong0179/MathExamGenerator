@@ -47,5 +47,16 @@ namespace MathExamGenerator.API.Controllers
             var response = await _accountService.RegisterManager(request);
             return StatusCode(int.Parse(response.Status), response);
         }
+
+        [HttpPut(ApiEndPointConstant.Account.ChangePassword)]
+        [ProducesResponseType(typeof(BaseResponse<bool>), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(BaseResponse<bool>), StatusCodes.Status404NotFound)]
+        [ProducesResponseType(typeof(BaseResponse<bool>), StatusCodes.Status400BadRequest)]
+        [ProducesErrorResponseType(typeof(ProblemDetails))]
+        public async Task<IActionResult> ChangePassword([FromBody] ChangePasswordRequest request)
+        {
+            var response = await _accountService.ChangePassword(request);
+            return StatusCode(int.Parse(response.Status), response);
+        }
     }
 }

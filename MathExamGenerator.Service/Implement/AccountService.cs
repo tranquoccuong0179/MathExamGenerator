@@ -210,5 +210,41 @@ namespace MathExamGenerator.Service.Implement
                 Data = _mapper.Map<RegisterResponse>(account)
             };
         }
+
+        public async Task<BaseResponse<bool>> ChangePassword(ChangePasswordRequest request)
+        {
+            Guid? accountId = UserUtil.GetAccountId(_httpContextAccessor.HttpContext);
+
+            var account = await _unitOfWork.GetRepository<Account>().SingleOrDefaultAsync(
+                predicate: a => a.Id.Equals(accountId) && a.IsActive == true) ?? throw new NotFoundException("Không tìm thấy tài khoản");
+
+            if (!account.Password.Equals(PasswordUtil.HashPassword(request.OldPassword)))
+            {
+                throw new BadHttpRequestException("Mật khẩu cũ không trùng khớp");
+            }
+
+            if (!request.NewPassword.Equals(request.ConfirmPassword))
+            {
+                throw new BadHttpRequestException("Mật khẩu mới và xác nhận mật khẩu không trùng khớp");
+            }
+
+            account.Password = PasswordUtil.HashPassword(request.NewPassword);
+            account.UpdateAt = TimeUtil.GetCurrentSEATime();
+
+            _unitOfWork.GetRepository<Account>().UpdateAsync(account);
+            var isSuccess = await _unitOfWork.CommitAsync() > 0;
+
+            if (!isSuccess)
+            {
+                throw new Exception("Một lỗi đã xảy ra trong quá trình đổi mật khẩu");
+            }
+
+            return new BaseResponse<bool>
+            {
+                Status = StatusCodes.Status200OK.ToString(),
+                Message = "Thay đổi mật khẩu thành công",
+                Data = true
+            };
+        }
     }
 }

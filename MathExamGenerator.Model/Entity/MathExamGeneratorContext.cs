@@ -102,8 +102,10 @@ public partial class MathExamGeneratorContext : DbContext
             entity.Property(e => e.Email).HasMaxLength(100);
             entity.Property(e => e.FullName).HasMaxLength(100);
             entity.Property(e => e.Gender).HasMaxLength(15);
+            entity.Property(e => e.IsPremium).HasDefaultValue(false);
             entity.Property(e => e.Password).HasMaxLength(50);
             entity.Property(e => e.Phone).HasMaxLength(15);
+            entity.Property(e => e.PremiumExpireAt).HasColumnType("datetime");
             entity.Property(e => e.Role).HasMaxLength(15);
             entity.Property(e => e.UpdateAt).HasColumnType("datetime");
             entity.Property(e => e.UserName).HasMaxLength(50);
@@ -421,6 +423,10 @@ public partial class MathExamGeneratorContext : DbContext
             entity.Property(e => e.CreateAt).HasColumnType("datetime");
             entity.Property(e => e.DeleteAt).HasColumnType("datetime");
             entity.Property(e => e.UpdateAt).HasColumnType("datetime");
+
+            entity.HasOne(d => d.Account).WithMany(p => p.Quizzes)
+                .HasForeignKey(d => d.AccountId)
+                .HasConstraintName("FK_Quiz_Account");
 
             entity.HasOne(d => d.BookChapter).WithMany(p => p.Quizzes)
                 .HasForeignKey(d => d.BookChapterId)

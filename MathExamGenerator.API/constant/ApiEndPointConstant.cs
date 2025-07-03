@@ -16,6 +16,7 @@
             public const string Otp = AccountEndPoint + "/otp";
             public const string Register = AccountEndPoint + "/register";
             public const string RegisterManager = AccountEndPoint + "/manager";
+            public const string ChangePassword = AccountEndPoint + "/change-password";
         }
 
         public static class Authentication
