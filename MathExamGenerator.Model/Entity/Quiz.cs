@@ -25,6 +25,10 @@ public partial class Quiz
 
     public DateTime? DeleteAt { get; set; }
 
+    public Guid? AccountId { get; set; }
+
+    public virtual Account? Account { get; set; }
+
     public virtual BookChapter? BookChapter { get; set; }
 
     public virtual BookTopic? BookTopic { get; set; }

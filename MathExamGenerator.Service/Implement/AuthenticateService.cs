@@ -36,7 +36,8 @@ namespace MathExamGenerator.Service.Implement
                   p.Role == RoleEnum.TEACHER.GetDescriptionFromEnum() ||
                   p.Role == RoleEnum.MANAGER.GetDescriptionFromEnum() ||
                   p.Role == RoleEnum.USER.GetDescriptionFromEnum()) &&
-                  p.IsActive == true;
+                  p.IsActive == true &&
+                  p.DeleteAt == null;
             Account account = await _unitOfWork.GetRepository<Account>().SingleOrDefaultAsync(predicate: searchFilter);
 
             if (account == null)

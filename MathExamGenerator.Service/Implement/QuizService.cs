@@ -97,6 +97,7 @@ namespace MathExamGenerator.Service.Implement
                 Name = request.Name,
                 Quantity = request.Quantity,
                 Time = request.Time,
+                AccountId = account.Id,
                 BookTopicId = request.BookTopicId,
                 BookChapterId = request.BookChapterId,
                 IsActive = true,
@@ -153,6 +154,11 @@ namespace MathExamGenerator.Service.Implement
                 throw new BadHttpRequestException("Số trang và số lượng trong trang phải lớn hơn hoặc bằng 1");
             }
 
+            Guid? accountId = UserUtil.GetAccountId(_httpContextAccessor.HttpContext);
+
+            var account = await _unitOfWork.GetRepository<Account>().SingleOrDefaultAsync(
+                predicate: a => a.Id.Equals(accountId) && a.IsActive == true) ?? throw new NotFoundException("Không tìm thấy tài khoản");
+
             var quizzes = await _unitOfWork.GetRepository<Quiz>().GetPagingListAsync(
                 selector: q => new GetQuizResponse
                 {
@@ -162,7 +168,7 @@ namespace MathExamGenerator.Service.Implement
                     Time = q.Time,
                     CreateAt = q.CreateAt
                 },
-                predicate: q => q.IsActive == true,
+                predicate: q => q.IsActive == true && q.AccountId.Equals(accountId),
                 page: page,
                 size: size);
 
@@ -176,6 +182,11 @@ namespace MathExamGenerator.Service.Implement
 
         public async Task<BaseResponse<GetQuizDetailResponse>> GetQuizDetail(Guid id)
         {
+            Guid? accountId = UserUtil.GetAccountId(_httpContextAccessor.HttpContext);
+
+            var account = await _unitOfWork.GetRepository<Account>().SingleOrDefaultAsync(
+                predicate: a => a.Id.Equals(accountId) && a.IsActive == true) ?? throw new NotFoundException("Không tìm thấy tài khoản");
+
             var quiz = await _unitOfWork.GetRepository<Quiz>().SingleOrDefaultAsync(
                 selector: q => new GetQuizDetailResponse
                 {
@@ -205,7 +216,7 @@ namespace MathExamGenerator.Service.Implement
                             }).ToList(),
                     }).ToList()
                 },
-                predicate: q => q.Id.Equals(id) && q.IsActive == true,
+                predicate: q => q.Id.Equals(id) && q.AccountId.Equals(accountId) && q.IsActive == true,
                 include: q => q.Include(q => q.QuizQuestions)
                                .ThenInclude(qq => qq.Question)
                                .ThenInclude(q => q.Category)
