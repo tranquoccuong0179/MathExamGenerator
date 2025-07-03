@@ -246,5 +246,30 @@ namespace MathExamGenerator.Service.Implement
                 Data = true
             };
         }
+
+        public async Task<BaseResponse<bool>> ForgotPassword(string email)
+        {
+            var account = await _unitOfWork.GetRepository<Account>().SingleOrDefaultAsync(
+                predicate: a => a.Email.Equals(email) && a.IsActive == true && a.DeleteAt == null) ?? throw new NotFoundException("Không tìm thấy tài khoản");
+
+            var otpResult = await SendOtp(email);
+
+            if (otpResult.Data == false)
+            {
+                return new BaseResponse<bool>
+                {
+                    Status = otpResult.Status,
+                    Message = otpResult.Message,
+                    Data = false
+                };
+            }
+
+            return new BaseResponse<bool>
+            {
+                Status = StatusCodes.Status200OK.ToString(),
+                Message = "Gửi mã xác nhận quên mật khẩu thành công",
+                Data = true
+            };
+        }
     }
 }

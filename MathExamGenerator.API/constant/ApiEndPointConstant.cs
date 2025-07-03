@@ -17,6 +17,7 @@
             public const string Register = AccountEndPoint + "/register";
             public const string RegisterManager = AccountEndPoint + "/manager";
             public const string ChangePassword = AccountEndPoint + "/change-password";
+            public const string ForgotPassword = AccountEndPoint + "/forgot-password";
         }
 
         public static class Authentication
