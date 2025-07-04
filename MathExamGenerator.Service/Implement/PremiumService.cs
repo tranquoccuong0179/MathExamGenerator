@@ -65,7 +65,7 @@ namespace MathExamGenerator.Service.Implement
                 Id = Guid.NewGuid(),
                 WalletId = wallet.Id,
                 DepositId = null,
-                Amount = -price,
+                Amount = price,
                 Description = $"Mua gói Premium {request.Days} ngày",
                 Type= "Thanh Toán",
                 Status = "Success",
