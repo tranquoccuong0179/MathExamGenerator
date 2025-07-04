@@ -67,6 +67,7 @@
         {
             public const string ExamEndPoint = ApiEndpoint + "/exam";
             public const string GetAllExam = ExamEndPoint;
+            public const string GetExamsOfCurrentUser = ExamEndPoint + "/my";
             public const string GetExam = ExamEndPoint + "/{id}";
             public const string GetAllQuestionByExam = ExamEndPoint + "/{id}/questions";
             public const string CreateExam = ExamEndPoint;

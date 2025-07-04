@@ -313,6 +313,48 @@ namespace MathExamGenerator.Service.Implement
             };
         }
 
+        public async Task<BaseResponse<IPaginate<GetExamResponse>>> GetExamsOfCurrentUser(int page, int size)
+        {
+            if (page < 1 || size < 1)
+            {
+                return new BaseResponse<IPaginate<GetExamResponse>>
+                {
+                    Status = StatusCodes.Status400BadRequest.ToString(),
+                    Message = "Trang hoặc kích thước không hợp lệ.",
+                    Data = null
+                };
+            }
+
+            Guid? accountId = UserUtil.GetAccountId(_httpContextAccessor.HttpContext);
+
+            var account = await _unitOfWork.GetRepository<Account>().SingleOrDefaultAsync(
+                predicate: a => a.Id.Equals(accountId) && a.IsActive == true);
+
+            if (account == null)
+            {
+                return new BaseResponse<IPaginate<GetExamResponse>>
+                {
+                    Status = StatusCodes.Status404NotFound.ToString(),
+                    Message = "Không tìm thấy tài khoản.",
+                };
+            }
+
+            var exams = await _unitOfWork.GetRepository<Exam>().GetPagingListAsync(
+                selector: x => _mapper.Map<GetExamResponse>(x),
+                page: page,
+                size: size,
+                orderBy: o => o.OrderByDescending(x => x.CreateAt),
+                predicate: x => x.IsActive == true && x.AccountId == account.Id,
+                include: x => x.Include(e => e.ExamMatrix));
+
+            return new BaseResponse<IPaginate<GetExamResponse>>
+            {
+                Status = StatusCodes.Status200OK.ToString(),
+                Message = "Lấy danh sách đề thi thành công.",
+                Data = exams
+            };
+        }
+
         public async Task<BaseResponse<bool>> UpdateExam(Guid id, UpdateExamRequest request)
         {
             var exam = await _unitOfWork.GetRepository<Exam>().SingleOrDefaultAsync(
