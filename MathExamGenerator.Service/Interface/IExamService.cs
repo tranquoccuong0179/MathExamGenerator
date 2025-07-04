@@ -13,6 +13,7 @@ namespace MathExamGenerator.Service.Interface
     public interface IExamService
     {
         Task<BaseResponse<IPaginate<GetExamResponse>>> GetAllExam(int page, int size);
+        Task<BaseResponse<IPaginate<GetExamResponse>>> GetExamsOfCurrentUser(int page, int size);
         Task<BaseResponse<GetExamResponse>> GetById(Guid id);
         Task<BaseResponse<CreateExamResponse>> CreateExam(CreateExamRequest request);
         Task<BaseResponse<bool>> UpdateExam(Guid id, UpdateExamRequest request);

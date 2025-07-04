@@ -62,6 +62,19 @@ namespace MathExamGenerator.API.Controllers
             return StatusCode(int.Parse(response.Status), response);
         }
 
+        [HttpGet(ApiEndPointConstant.Exam.GetExamsOfCurrentUser)]
+        [ProducesResponseType(typeof(BaseResponse<IPaginate<GetExamResponse>>), StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(typeof(BaseResponse<IPaginate<GetExamResponse>>), StatusCodes.Status404NotFound)]
+        [ProducesResponseType(typeof(BaseResponse<IPaginate<GetExamResponse>>), StatusCodes.Status200OK)]
+        [ProducesErrorResponseType(typeof(ProblemDetails))]
+        public async Task<IActionResult> GetExamsOfCurrentUser([FromQuery] int? page, [FromQuery] int? size)
+        {
+            int pageNumber = page ?? 1;
+            int pageSize = size ?? 10;
+            var response = await _examService.GetExamsOfCurrentUser(pageNumber, pageSize);
+            return StatusCode(int.Parse(response.Status), response);
+        }
+
         [HttpGet(ApiEndPointConstant.Exam.GetExam)]
         [ProducesResponseType(typeof(BaseResponse<GetExamResponse>), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(BaseResponse<GetExamResponse>), StatusCodes.Status404NotFound)]
