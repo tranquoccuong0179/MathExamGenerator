@@ -34,15 +34,16 @@ namespace MathExamGenerator.Service.Implement
             var transactions = await _unitOfWork.GetRepository<Transaction>()
                 .GetPagingListAsync(
               predicate: t => t.IsActive == true
-                         && t.Deposit != null && t.Deposit.IsActive == true
-                        && t.Deposit.AccountId == accountId,
+                         && (t.Deposit == null || t.Deposit.AccountId == accountId && t.Deposit.IsActive == true),
               include: t => t.Include(x => x.Deposit),
               selector: t => new TransactionRespone
               {
                   Id = t.Id,
                   Amount = t.Amount.Value,
                   CreateAt = t.CreateAt.Value,
-                  DepositId = t.DepositId.Value,
+                  Type = t.Type.ToString(),
+                  Status = t.Status.ToString(),
+                  Description = t.Description,
                   DepositDescription = t.Deposit.Description,
               },
               orderBy: t => t.OrderByDescending(x => x.CreateAt),

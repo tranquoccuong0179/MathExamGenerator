@@ -21,6 +21,12 @@ public partial class Transaction
 
     public DateTime? DeleteAt { get; set; }
 
+    public string? Description { get; set; }
+
+    public string? Type { get; set; }
+
+    public string? Status { get; set; }
+
     public virtual Deposit? Deposit { get; set; }
 
     public virtual Wallet? Wallet { get; set; }

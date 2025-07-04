@@ -235,5 +235,12 @@
             public const string GetWalletByAccount = WalletEndPoint;
             
         }
+
+        public static class Premium
+        {
+            public const string PremiumEndPoint = ApiEndpoint + "/premium";
+            public const string BuyPremium = PremiumEndPoint + "/buy";
+            public const string GetPremiumStatus = PremiumEndPoint + "/status";
+        }
     }
 }
