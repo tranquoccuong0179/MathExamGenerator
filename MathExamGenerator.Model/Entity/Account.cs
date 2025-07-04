@@ -35,6 +35,12 @@ public partial class Account
 
     public DateTime? DeleteAt { get; set; }
 
+    public DateOnly? DailyLoginRewardedAt { get; set; }
+
+    public bool? IsPremium { get; set; }
+
+    public DateTime? PremiumExpireAt { get; set; }
+
     public virtual ICollection<Comment> Comments { get; set; } = new List<Comment>();
 
     public virtual ICollection<Deposit> Deposits { get; set; } = new List<Deposit>();
@@ -42,6 +48,8 @@ public partial class Account
     public virtual ICollection<Exam> Exams { get; set; } = new List<Exam>();
 
     public virtual ICollection<LikeComment> LikeComments { get; set; } = new List<LikeComment>();
+
+    public virtual ICollection<Quiz> Quizzes { get; set; } = new List<Quiz>();
 
     public virtual ICollection<Reply> Replies { get; set; } = new List<Reply>();
 

@@ -16,5 +16,9 @@ namespace MathExamGenerator.Service.Interface
         Task<BaseResponse<RegisterResponse>> RegisterManager(RegisterManagerRequest request);
 
         Task<BaseResponse<bool>> SendOtp(string email);
+
+        Task<BaseResponse<bool>> ChangePassword(ChangePasswordRequest request);
+
+        Task<BaseResponse<bool>> ForgotPassword(string email);
     }
 }

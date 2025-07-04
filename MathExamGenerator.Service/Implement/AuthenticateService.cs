@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 using AutoMapper;
 using MathExamGenerator.Model.Entity;
 using MathExamGenerator.Model.Enum;
+using MathExamGenerator.Model.Exceptions;
 using MathExamGenerator.Model.Payload.Request.Authentication;
 using MathExamGenerator.Model.Payload.Response;
 using MathExamGenerator.Model.Payload.Response.Authentication;
@@ -35,7 +36,8 @@ namespace MathExamGenerator.Service.Implement
                   p.Role == RoleEnum.TEACHER.GetDescriptionFromEnum() ||
                   p.Role == RoleEnum.MANAGER.GetDescriptionFromEnum() ||
                   p.Role == RoleEnum.USER.GetDescriptionFromEnum()) &&
-                  p.IsActive == true;
+                  p.IsActive == true &&
+                  p.DeleteAt == null;
             Account account = await _unitOfWork.GetRepository<Account>().SingleOrDefaultAsync(predicate: searchFilter);
 
             if (account == null)
@@ -43,11 +45,31 @@ namespace MathExamGenerator.Service.Implement
                 throw new BadHttpRequestException("Tài khoản hoặc mật khẩu không đúng");
             }
 
+            if (account.Role.Equals(RoleEnum.USER.GetDescriptionFromEnum()))
+            {
+                var today = DateOnly.FromDateTime(TimeUtil.GetCurrentSEATime());
+
+                var user = await _unitOfWork.GetRepository<UserInfo>().SingleOrDefaultAsync(
+                    predicate: u => u.AccountId.Equals(account.Id) && u.IsActive == true) ?? throw new NotFoundException("Không tìm thấy thông tin người dùng");
+
+                if (account.DailyLoginRewardedAt == null || account.DailyLoginRewardedAt.Value < today)
+                {
+                    account.DailyLoginRewardedAt = today;
+
+                    _unitOfWork.GetRepository<Account>().UpdateAsync(account);
+
+                    user.Point += 10;
+
+                    _unitOfWork.GetRepository<UserInfo>().UpdateAsync(user);
+                    await _unitOfWork.CommitAsync();
+                }
+            }
+
             RoleEnum role = EnumUtil.ParseEnum<RoleEnum>(account.Role);
             Tuple<string, Guid> guildClaim = new Tuple<string, Guid>("accountId", account.Id);
             var token = JwtUtil.GenerateJwtToken(account, guildClaim);
 
-            var response = new AuthenticateResponse
+                var response = new AuthenticateResponse
             {
                 AccessToken = token,
                 AccountId = account.Id,

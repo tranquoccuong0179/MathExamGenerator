@@ -16,6 +16,8 @@
             public const string Otp = AccountEndPoint + "/otp";
             public const string Register = AccountEndPoint + "/register";
             public const string RegisterManager = AccountEndPoint + "/manager";
+            public const string ChangePassword = AccountEndPoint + "/change-password";
+            public const string ForgotPassword = AccountEndPoint + "/forgot-password";
         }
 
         public static class Authentication
@@ -235,6 +237,13 @@
             public const string WalletEndPoint = ApiEndpoint + "/wallet";
             public const string GetWalletByAccount = WalletEndPoint;
             
+        }
+
+        public static class Premium
+        {
+            public const string PremiumEndPoint = ApiEndpoint + "/premium";
+            public const string BuyPremium = PremiumEndPoint + "/buy";
+            public const string GetPremiumStatus = PremiumEndPoint + "/status";
         }
     }
 }

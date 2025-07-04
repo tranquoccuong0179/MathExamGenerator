@@ -47,6 +47,7 @@ namespace MathExamGenerator.Service.Implement
             var questionRepo = _unitOfWork.GetRepository<Question>();
 
             var examEntity = _mapper.Map<ExamExchange>(request);
+            if(examEntity.TeacherId == null) throw new NotFoundException("Gửi yêu cầu bị sai!");
             examEntity.TeacherId = teacher.Id;
             examEntity.Status = ExamExchangeEnum.Pending.ToString();
             var category = await categoryRepo.SingleOrDefaultAsync(
