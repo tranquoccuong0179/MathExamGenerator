@@ -60,6 +60,7 @@ namespace MathExamGenerator.API
             services.AddScoped<IQuizService, QuizService>();
             services.AddScoped<IQuestionService, QuestionService>();
             services.AddScoped<ITransactionService, TransactionService>();
+            services.AddScoped<IPremiumService, PremiumService>();
 
             return services;
         }
