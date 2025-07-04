@@ -158,7 +158,7 @@ namespace MathExamGenerator.Service.Implement
                         WalletId = wallet.Id,
                         DepositId = deposit.Id,
                         Type = "Nạp Tiền",
-                        Description = "Nạp ví thành công",
+                        Description = "Nạp tiền vào ví",
                         Status = "Success",
                         Amount = amount,
                         IsActive = true,
