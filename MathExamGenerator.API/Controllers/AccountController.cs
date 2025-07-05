@@ -3,6 +3,7 @@ using MathExamGenerator.API.constant;
 using MathExamGenerator.Model.Payload.Request.Account;
 using MathExamGenerator.Model.Payload.Response;
 using MathExamGenerator.Model.Payload.Response.Account;
+using MathExamGenerator.Model.Payload.Response.User;
 using MathExamGenerator.Service.Interface;
 using Microsoft.AspNetCore.Mvc;
 
@@ -66,6 +67,16 @@ namespace MathExamGenerator.API.Controllers
         public async Task<IActionResult> ForgotPassword([FromBody] string email)
         {
             var response = await _accountService.ForgotPassword(email);
+            return StatusCode(int.Parse(response.Status), response);
+        }
+
+        [HttpPut(ApiEndPointConstant.Account.ChangeAvatar)]
+        [ProducesResponseType(typeof(BaseResponse<GetUserResponse>), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(BaseResponse<GetUserResponse>), StatusCodes.Status404NotFound)]
+        [ProducesErrorResponseType(typeof(ProblemDetails))]
+        public async Task<IActionResult> ChangeAvatar(IFormFile file)
+        {
+            var response = await _accountService.ChangeAvatar(file);
             return StatusCode(int.Parse(response.Status), response);
         }
     }

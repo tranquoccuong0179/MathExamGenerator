@@ -6,6 +6,8 @@ using System.Threading.Tasks;
 using MathExamGenerator.Model.Payload.Response.Account;
 using MathExamGenerator.Model.Payload.Response;
 using MathExamGenerator.Model.Payload.Request.Account;
+using Microsoft.AspNetCore.Http;
+using MathExamGenerator.Model.Payload.Response.User;
 
 namespace MathExamGenerator.Service.Interface
 {
@@ -20,5 +22,7 @@ namespace MathExamGenerator.Service.Interface
         Task<BaseResponse<bool>> ChangePassword(ChangePasswordRequest request);
 
         Task<BaseResponse<bool>> ForgotPassword(string email);
+
+        Task<BaseResponse<GetUserResponse>> ChangeAvatar(IFormFile file);
     }
 }

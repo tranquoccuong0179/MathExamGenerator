@@ -84,7 +84,8 @@ namespace MathExamGenerator.Service.Implement
                     DateOfBirth = u.Account.DateOfBirth,
                     Gender = u.Account.Gender,
                     QuizFree = u.Account.QuizFree,
-                    Point = u.Point
+                    Point = u.Point,
+                    IsPremium = u.Account.IsPremium,
                 },
                 predicate: u => u.IsActive == true,
                 include: u => u.Include(u => u.Account),
@@ -113,7 +114,8 @@ namespace MathExamGenerator.Service.Implement
                     DateOfBirth = u.Account.DateOfBirth,
                     Gender = u.Account.Gender,
                     QuizFree = u.Account.QuizFree,
-                    Point = u.Point
+                    Point = u.Point,
+                    IsPremium = u.Account.IsPremium
                 },
                 predicate: u => u.IsActive == true && u.Id.Equals(id),
                 include: u => u.Include(u => u.Account));
@@ -157,6 +159,7 @@ namespace MathExamGenerator.Service.Implement
                     Gender = account.Gender,
                     QuizFree = account.QuizFree,
                     Point = user.Point,
+                    IsPremium = account.IsPremium,
                 }
             };
         }
@@ -199,7 +202,8 @@ namespace MathExamGenerator.Service.Implement
                     DateOfBirth = account.DateOfBirth,
                     Gender = account.Gender,
                     QuizFree = account.QuizFree,
-                    Point = user.Point
+                    Point = user.Point,
+                    IsPremium = account.IsPremium,
                 }
             };
         }

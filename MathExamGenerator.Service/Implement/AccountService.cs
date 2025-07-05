@@ -10,12 +10,14 @@ using MathExamGenerator.Model.Exceptions;
 using MathExamGenerator.Model.Payload.Request.Account;
 using MathExamGenerator.Model.Payload.Response;
 using MathExamGenerator.Model.Payload.Response.Account;
+using MathExamGenerator.Model.Payload.Response.User;
 using MathExamGenerator.Model.Payload.Settings;
 using MathExamGenerator.Model.Utils;
 using MathExamGenerator.Repository.Interface;
 using MathExamGenerator.Service.Interface;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Http.HttpResults;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using StackExchange.Redis;
 
@@ -269,6 +271,47 @@ namespace MathExamGenerator.Service.Implement
                 Status = StatusCodes.Status200OK.ToString(),
                 Message = "Gửi mã xác nhận quên mật khẩu thành công",
                 Data = true
+            };
+        }
+
+        public async Task<BaseResponse<GetUserResponse>> ChangeAvatar(IFormFile file)
+        {
+            Guid? accountId = UserUtil.GetAccountId(_httpContextAccessor.HttpContext);
+
+            var account = await _unitOfWork.GetRepository<Account>().SingleOrDefaultAsync(
+                predicate: a => a.Id.Equals(accountId) && a.IsActive == true) ?? throw new NotFoundException("Không tìm thấy tài khoản");
+
+            var user = await _unitOfWork.GetRepository<UserInfo>().SingleOrDefaultAsync(
+                predicate: u => u.AccountId.Equals(accountId) && u.IsActive == true) ?? throw new NotFoundException("Không tìm thấy thông tin người dùng");
+
+            account.AvatarUrl = await _uploadService.UploadImage(file);
+
+            _unitOfWork.GetRepository<Account>().UpdateAsync(account);
+
+            var isSuccess = await _unitOfWork.CommitAsync() > 0;
+
+            if (!isSuccess)
+            {
+                throw new Exception("Một lỗi đã xảy ra trong quá trình thay đổi hình nền");
+            }
+
+            return new BaseResponse<GetUserResponse>
+            {
+                Status = StatusCodes.Status200OK.ToString(),
+                Message = "Thay đổi hình nền thành công",
+                Data = new GetUserResponse
+                {
+                    AccountId = account.Id,
+                    UserId = user.Id,
+                    FullName = account.FullName,
+                    Email = account.Email,
+                    Phone = account.Phone,
+                    DateOfBirth = account.DateOfBirth,
+                    Gender = account.Gender,
+                    QuizFree = account.QuizFree,
+                    Point = user.Point,
+                    IsPremium = account.IsPremium,
+                }
             };
         }
     }

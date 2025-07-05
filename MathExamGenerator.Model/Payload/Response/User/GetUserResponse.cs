@@ -25,5 +25,7 @@ namespace MathExamGenerator.Model.Payload.Response.User
         public int? QuizFree { get; set; }
 
         public double? Point { get; set; }
+
+        public bool? IsPremium { get; set; }
     }
 }
