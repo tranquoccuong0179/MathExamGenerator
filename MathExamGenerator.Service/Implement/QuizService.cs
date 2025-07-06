@@ -35,7 +35,7 @@ namespace MathExamGenerator.Service.Implement
             var account = await _unitOfWork.GetRepository<Account>().SingleOrDefaultAsync(
                 predicate: a => a.Id.Equals(accountId) && a.IsActive == true) ?? throw new NotFoundException("Không tìm thấy tài khoản");
 
-            if (account.QuizFree <= 0)
+            if (account.IsPremium == false && account.QuizFree <= 0)
             {
                 throw new BadHttpRequestException("Bạn không lượt free để tạo quiz");
             }
@@ -122,10 +122,13 @@ namespace MathExamGenerator.Service.Implement
 
             await _unitOfWork.GetRepository<QuizQuestion>().InsertRangeAsync(quizQuestions);
 
-            account.QuizFree -= 1;
-            account.UpdateAt = TimeUtil.GetCurrentSEATime();
-            _unitOfWork.GetRepository<Account>().UpdateAsync(account);
-
+            if (account.IsPremium == false)
+            {
+                account.QuizFree -= 1;
+                account.UpdateAt = TimeUtil.GetCurrentSEATime();
+                _unitOfWork.GetRepository<Account>().UpdateAsync(account);
+            }
+            
             var isSuccess = await _unitOfWork.CommitAsync() > 0;
 
             if (!isSuccess)
