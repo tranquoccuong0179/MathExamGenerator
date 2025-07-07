@@ -37,5 +37,7 @@ public partial class Exam
 
     public virtual ICollection<ExamQuestion> ExamQuestions { get; set; } = new List<ExamQuestion>();
 
+    public virtual ICollection<TestHistory> TestHistories { get; set; } = new List<TestHistory>();
+
     public virtual ICollection<TestStorage> TestStorages { get; set; } = new List<TestStorage>();
 }

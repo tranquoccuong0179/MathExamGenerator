@@ -26,7 +26,9 @@ namespace MathExamGenerator.Model.Mapper
             CreateMap<TestHistory, GetTestHistoryResponse>()
                 .ForMember(dest => dest.QuestionHistories, opt => opt.MapFrom(src => src.QuestionHistories));
 
-            CreateMap<TestHistory, TestHistoryOverviewResponse>();
+            CreateMap<TestHistory, TestHistoryOverviewResponse>()
+                .ForMember(dest => dest.Name, opt => opt.MapFrom(src => src.Exam != null ? src.Exam.Name : src.Quiz != null ? src.Quiz.Name : null));
+
         }
     }
 }
