@@ -309,6 +309,7 @@ namespace MathExamGenerator.Service.Implement
                     DateOfBirth = account.DateOfBirth,
                     Gender = account.Gender,
                     QuizFree = account.QuizFree,
+                    AvatarUrl = account.AvatarUrl,
                     Point = user.Point,
                     IsPremium = account.IsPremium,
                 }
