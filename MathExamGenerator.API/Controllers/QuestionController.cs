@@ -49,5 +49,14 @@ namespace MathExamGenerator.API.Controllers
             var response = await _questionService.DeleteQuestionById(id);
             return StatusCode(int.Parse(response.Status), response);
         }
+        [HttpGet(ApiEndPointConstant.Question.GetQuestionById)]
+        [ProducesResponseType(typeof(BaseResponse<IPaginate<QuestionResponse>>), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(BaseResponse<IPaginate<QuestionResponse>>), StatusCodes.Status404NotFound)]
+        [ProducesErrorResponseType(typeof(ProblemDetails))]
+        public async Task<IActionResult> GetQuestionById([FromRoute] Guid id)
+        {
+            var response = await _questionService.GetQuestion(id);
+            return StatusCode(int.Parse(response.Status), response);
+        }
     }
 }

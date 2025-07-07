@@ -138,5 +138,50 @@ namespace MathExamGenerator.Service.Implement
             };
         }
 
+        public async Task<BaseResponse<QuestionResponse>> GetQuestion(Guid id)
+        {
+            var question = await _unitOfWork.GetRepository<Question>().SingleOrDefaultAsync(
+                predicate: q => q.Id == id && q.IsActive == true && q.DeleteAt == null,
+                include: q => q.Include(x => x.Category).Include(x => x.Answers)
+            );
+
+            if (question == null)
+            {
+                return new BaseResponse<QuestionResponse>
+                {
+                    Status = StatusCodes.Status404NotFound.ToString(),
+                    Message = "Không tìm thấy câu hỏi",
+                    Data = null
+                };
+            }
+
+            var response = new QuestionResponse
+            {
+                Id = question.Id,
+                BookTopicId = question.BookTopicId,
+                Level = question.Level,
+                Content = question.Content,
+                Solution = question.Solution,
+                Image = question.Image,
+                CategoryId = question.CategoryId.Value,
+                CategoryName = question.Category?.ToString(),
+                CategoryGrade = question.Category?.Name.ToString(),
+                Answers = question.Answers.Select(a => new AnswerResponse
+                {
+                    Id = a.Id,
+                    Content = a.Content,
+                    IsTrue = a.IsTrue.Value
+                }).ToList()
+            };
+
+            return new BaseResponse<QuestionResponse>
+            {
+                Status = StatusCodes.Status200OK.ToString(),
+                Message = "Lấy câu hỏi thành công",
+                Data = response
+            };
+        }
+
+     
     }
 }

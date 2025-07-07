@@ -12,8 +12,11 @@ namespace MathExamGenerator.Service.Interface
     public interface IQuestionService
     {
         Task<BaseResponse<IPaginate<QuestionResponse>>> GetAllQuestion(int page, int size);
+        Task<BaseResponse<QuestionResponse>> GetQuestion(Guid id);
+
         Task<BaseResponse<IPaginate<QuestionResponse>>> GetQuestionsByTopic(Guid id, int page, int size);
         Task<BaseResponse<string>> DeleteQuestionById(Guid id);
+        
 
 
     }
