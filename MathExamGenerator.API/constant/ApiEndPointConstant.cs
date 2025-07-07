@@ -179,6 +179,7 @@
             public const string GetAllCommentByQuestion = QuestionEndPoint + "/{id}/comments";
             public const string GetAllQuestion = QuestionEndPoint;
             public const string DeleteQuestionById = QuestionEndPoint + "/{id}";
+            public const string GetQuestionById = QuestionEndPoint + "/{id}";
         }
 
         public static class TestHistory
