@@ -29,6 +29,8 @@ public partial class TestHistory
 
     public virtual Account? Account { get; set; }
 
+    public virtual Exam? Exam { get; set; }
+
     public virtual ICollection<QuestionHistory> QuestionHistories { get; set; } = new List<QuestionHistory>();
 
     public virtual Quiz? Quiz { get; set; }

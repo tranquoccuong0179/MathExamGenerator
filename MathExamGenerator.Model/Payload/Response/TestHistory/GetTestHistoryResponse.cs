@@ -13,10 +13,10 @@ namespace MathExamGenerator.Model.Payload.Response.TestHistory
         public Guid? AccountId { get; set; }
         public Guid? ExamId { get; set; }
         public Guid? QuizId { get; set; }
+        public string? Name { get; set; }
         public double? Grade { get; set; }
         public string? Status { get; set; }
         public TimeOnly? StartAt { get; set; }
-        public bool? IsActive { get; set; }
         public DateTime? CreateAt { get; set; }
         public DateTime? UpdateAt { get; set; }
         public List<GetQuestionHistoryResponse> QuestionHistories { get; set; }

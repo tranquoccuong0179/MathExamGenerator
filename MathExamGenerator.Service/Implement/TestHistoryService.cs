@@ -243,7 +243,8 @@ namespace MathExamGenerator.Service.Implement
                 page: page,
                 size: size,
                 orderBy: q => q.OrderByDescending(x => x.CreateAt),
-                predicate: x => x.IsActive == true && x.AccountId == account.Id);
+                predicate: x => x.IsActive == true && x.AccountId == account.Id,
+                include: q => q.Include(x => x.Exam).Include(x => x.Quiz));
 
             return new BaseResponse<IPaginate<TestHistoryOverviewResponse>>
             {
@@ -257,7 +258,10 @@ namespace MathExamGenerator.Service.Implement
         {
             var entity = await _unitOfWork.GetRepository<TestHistory>().SingleOrDefaultAsync(
                 predicate: x => x.Id == id && x.IsActive == true,
-                include: q => q.Include(x => x.QuestionHistories));
+                include: q => q
+                    .Include(x => x.QuestionHistories)
+                    .Include(x => x.Exam)
+                    .Include(x => x.Quiz));
 
             if (entity == null)
             {
@@ -269,11 +273,14 @@ namespace MathExamGenerator.Service.Implement
                 };
             }
 
+            var response = _mapper.Map<GetTestHistoryResponse>(entity);
+            response.Name = entity.Exam?.Name ?? entity.Quiz?.Name;
+
             return new BaseResponse<GetTestHistoryResponse>
             {
                 Status = StatusCodes.Status200OK.ToString(),
                 Message = "Lấy lịch sử thi thành công.",
-                Data = _mapper.Map<GetTestHistoryResponse>(entity)
+                Data = response
             };
         }
 

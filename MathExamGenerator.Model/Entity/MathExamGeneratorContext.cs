@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Configuration;
 
 namespace MathExamGenerator.Model.Entity;
 
@@ -74,19 +73,9 @@ public partial class MathExamGeneratorContext : DbContext
 
     public virtual DbSet<Wallet> Wallets { get; set; }
 
-    public static string GetConnectionString(string connectionStringName)
-    {
-        var config = new ConfigurationBuilder()
-            .SetBasePath(AppDomain.CurrentDomain.BaseDirectory)
-            .AddJsonFile("appsettings.json")
-            .Build();
-
-        string connectionString = config.GetConnectionString(connectionStringName);
-        return connectionString;
-    }
-
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
-        => optionsBuilder.UseSqlServer(GetConnectionString("DefautDB")).UseQueryTrackingBehavior(QueryTrackingBehavior.NoTracking);
+#warning To protect potentially sensitive information in your connection string, you should move it out of source code. You can avoid scaffolding the connection string by using the Name= syntax to read it from configuration - see https://go.microsoft.com/fwlink/?linkid=2131148. For more guidance on storing connection strings, see https://go.microsoft.com/fwlink/?LinkId=723263.
+        => optionsBuilder.UseSqlServer("Server=14.225.253.29;Database=MathExamGenerator;User Id=sa;Password=winnertech123@;TrustServerCertificate=True;Encrypt=True;");
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -567,6 +556,10 @@ public partial class MathExamGeneratorContext : DbContext
             entity.HasOne(d => d.Account).WithMany(p => p.TestHistories)
                 .HasForeignKey(d => d.AccountId)
                 .HasConstraintName("FK_TestHistory.AccountId");
+
+            entity.HasOne(d => d.Exam).WithMany(p => p.TestHistories)
+                .HasForeignKey(d => d.ExamId)
+                .HasConstraintName("FK_TestHistory_Exam");
 
             entity.HasOne(d => d.Quiz).WithMany(p => p.TestHistories)
                 .HasForeignKey(d => d.QuizId)
