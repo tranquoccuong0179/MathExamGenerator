@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using MathExamGenerator.Model.Entity;
+using MathExamGenerator.Model.Enum;
 using MathExamGenerator.Model.Paginate;
 using MathExamGenerator.Model.Payload.Request.TestHistory;
 using MathExamGenerator.Model.Payload.Response;
@@ -67,6 +68,7 @@ namespace MathExamGenerator.Service.Implement
             var testHistory = _mapper.Map<TestHistory>(request);
             testHistory.AccountId = accountId;
             testHistory.Grade = 0;
+            testHistory.Status = TestHistoryEnum.Processing.ToString();
 
             List<Guid> questionIds = new();
 
@@ -246,6 +248,26 @@ namespace MathExamGenerator.Service.Implement
                 predicate: x => x.IsActive == true && x.AccountId == account.Id,
                 include: q => q.Include(x => x.Exam).Include(x => x.Quiz));
 
+            if (result?.Items != null && result.Items.Any())
+            {
+                var testHistoryIds = result.Items.Select(x => x.Id).ToList();
+
+                var questionHistories = await _unitOfWork.GetRepository<QuestionHistory>()
+                    .GetListAsync(predicate: q => testHistoryIds.Contains(q.HistoryTestId.Value));
+
+                foreach (var item in result.Items)
+                {
+                    var questions = questionHistories.Where(x => x.HistoryTestId == item.Id);
+
+                    int total = questions.Count();
+
+                    int done = questions.Count(x => x.YourAnswer != null);
+
+                    item.TotalQuestion = $"{done}/{total}";
+                }
+            }
+
+
             return new BaseResponse<IPaginate<TestHistoryOverviewResponse>>
             {
                 Status = StatusCodes.Status200OK.ToString(),
@@ -273,8 +295,13 @@ namespace MathExamGenerator.Service.Implement
                 };
             }
 
+            int total = entity.QuestionHistories.Count();
+
+            int done = entity.QuestionHistories.Count(x => x.YourAnswer != null);
+
             var response = _mapper.Map<GetTestHistoryResponse>(entity);
             response.Name = entity.Exam?.Name ?? entity.Quiz?.Name;
+            response.TotalQuestion = $"{done}/{total}";
 
             return new BaseResponse<GetTestHistoryResponse>
             {
@@ -316,7 +343,7 @@ namespace MathExamGenerator.Service.Implement
             };
         }
 
-        public async Task<BaseResponse<bool>> Update(Guid id, UpdateTestHistoryRequest request)
+        public async Task<BaseResponse<bool>> Update(Guid id, UpdateTestHistoryRequest request, TestHistoryEnum? status)
         {
             var testHistory = await _unitOfWork.GetRepository<TestHistory>().SingleOrDefaultAsync(
                 predicate: x => x.Id == id && x.IsActive == true,
@@ -335,7 +362,10 @@ namespace MathExamGenerator.Service.Implement
             testHistory.ExamId = request.ExamId ?? testHistory.ExamId;
             testHistory.QuizId = request.QuizId ?? testHistory.QuizId;
             testHistory.Grade = request.Grade ?? testHistory.Grade;
-            testHistory.Status = request.Status ?? testHistory.Status;
+            if (status.HasValue)
+            {
+                testHistory.Status = status.ToString();
+            }
             testHistory.StartAt = request.StartAt ?? testHistory.StartAt;
             testHistory.UpdateAt = TimeUtil.GetCurrentSEATime();
 
@@ -352,6 +382,11 @@ namespace MathExamGenerator.Service.Implement
                         _unitOfWork.GetRepository<QuestionHistory>().UpdateAsync(qh);
                     }
                 }
+            }
+
+            if (testHistory.Status == TestHistoryEnum.Finish.ToString())
+            {
+                testHistory.Grade = 10/testHistory.QuestionHistories.Count()*testHistory.QuestionHistories.Count(x => x.Answer==x.YourAnswer);
             }
 
             _unitOfWork.GetRepository<TestHistory>().UpdateAsync(testHistory);

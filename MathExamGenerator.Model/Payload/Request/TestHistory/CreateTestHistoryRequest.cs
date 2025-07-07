@@ -12,10 +12,6 @@ namespace MathExamGenerator.Model.Payload.Request.TestHistory
     {
         public Guid? ExamId { get; set; }
         public Guid? QuizId { get; set; }
-
-        [Required(ErrorMessage = "Trạng thái không được để trống.")]
-        public string Status { get; set; }
-
         [Required(ErrorMessage = "Thời gian bắt đầu không được để trống.")]
         public TimeSpan StartAt { get; set; }
     }
