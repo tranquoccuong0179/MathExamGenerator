@@ -23,6 +23,8 @@ namespace MathExamGenerator.Model.Payload.Response.Teacher
         public string? Gender { get; set; }
 
         public string? Description { get; set; }
+        
+        public string? AvatarUrl { get; set; }
 
         public string? SchoolName { get; set; }
 

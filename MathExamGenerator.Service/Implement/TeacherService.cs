@@ -87,6 +87,7 @@ namespace MathExamGenerator.Service.Implement
                     DateOfBirth = t.Account.DateOfBirth,
                     Gender = t.Account.Gender,
                     Description = t.Description,
+                    AvatarUrl = t.Account.AvatarUrl,
                     SchoolName = t.SchoolName,
                     LocationName = t.Location.Name
                 },
@@ -117,6 +118,7 @@ namespace MathExamGenerator.Service.Implement
                     DateOfBirth = t.Account.DateOfBirth,
                     Gender = t.Account.Gender,
                     Description = t.Description,
+                    AvatarUrl = t.Account.AvatarUrl,
                     SchoolName = t.SchoolName,
                     LocationName = t.Location.Name
                 },
@@ -162,6 +164,7 @@ namespace MathExamGenerator.Service.Implement
                     DateOfBirth = account.DateOfBirth,
                     Gender = account.Gender,
                     Description = teacher.Description,
+                    AvatarUrl = account.AvatarUrl,
                     SchoolName = teacher.SchoolName,
                     LocationName = teacher.Location.Name
                 }
@@ -312,6 +315,7 @@ namespace MathExamGenerator.Service.Implement
                     Phone = account.Phone,
                     DateOfBirth = account.DateOfBirth,
                     Gender = account.Gender,
+                    AvatarUrl = account.AvatarUrl,
                     Description = teacher.Description,
                     SchoolName = teacher.SchoolName,
                     LocationName = teacher.Location.Name
