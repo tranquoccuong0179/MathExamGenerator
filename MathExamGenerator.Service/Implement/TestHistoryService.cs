@@ -354,6 +354,8 @@ namespace MathExamGenerator.Service.Implement
                 }
             }
 
+            _unitOfWork.GetRepository<TestHistory>().UpdateAsync(testHistory);
+
             bool isSuccessfully = await _unitOfWork.CommitAsync() > 0;
 
             if (!isSuccessfully)

@@ -17,6 +17,6 @@ namespace MathExamGenerator.Model.Payload.Request.TestHistory
         public string Status { get; set; }
 
         [Required(ErrorMessage = "Thời gian bắt đầu không được để trống.")]
-        public TimeOnly StartAt { get; set; }
+        public TimeSpan StartAt { get; set; }
     }
 }

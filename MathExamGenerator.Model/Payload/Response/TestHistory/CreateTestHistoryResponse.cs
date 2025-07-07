@@ -15,7 +15,7 @@ namespace MathExamGenerator.Model.Payload.Response.TestHistory
         public Guid? QuizId { get; set; }
         public double? Grade { get; set; }
         public string? Status { get; set; }
-        public TimeOnly? StartAt { get; set; }
+        public TimeSpan? StartAt { get; set; }
         public List<CreateQuestionHistoryResponse> QuestionHistories { get; set; }
 
     }

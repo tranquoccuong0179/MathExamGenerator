@@ -13,7 +13,7 @@ namespace MathExamGenerator.Model.Payload.Request.TestHistory
         public Guid? QuizId { get; set; }
         public double? Grade { get; set; }
         public string? Status { get; set; }
-        public TimeOnly? StartAt { get; set; }
+        public TimeSpan? StartAt { get; set; }
         public List<UpdateQuestionHistoryRequest> QuestionHistories { get; set; }
     }
 }

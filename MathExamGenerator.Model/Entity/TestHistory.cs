@@ -17,7 +17,7 @@ public partial class TestHistory
 
     public string? Status { get; set; }
 
-    public TimeOnly? StartAt { get; set; }
+    public TimeSpan? StartAt { get; set; }
 
     public bool? IsActive { get; set; }
 
