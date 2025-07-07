@@ -6,6 +6,7 @@ using MathExamGenerator.Service.Interface;
 using Microsoft.AspNetCore.Mvc;
 using MathExamGenerator.Model.Payload.Request.TestHistory;
 using MathExamGenerator.Model.Payload.Response.QuestionHistory;
+using MathExamGenerator.Model.Enum;
 
 namespace MathExamGenerator.API.Controllers
 {
@@ -60,9 +61,9 @@ namespace MathExamGenerator.API.Controllers
         [ProducesResponseType(typeof(BaseResponse<bool>), StatusCodes.Status404NotFound)]
         [ProducesResponseType(typeof(BaseResponse<bool>), StatusCodes.Status500InternalServerError)]
         [ProducesErrorResponseType(typeof(ProblemDetails))]
-        public async Task<IActionResult> Update([FromRoute] Guid id, [FromBody] UpdateTestHistoryRequest request)
+        public async Task<IActionResult> Update([FromRoute] Guid id, [FromBody] UpdateTestHistoryRequest request, [FromQuery] TestHistoryEnum? status)
         {
-            var result = await _testHistoryService.Update(id, request);
+            var result = await _testHistoryService.Update(id, request, status);
             return StatusCode(int.Parse(result.Status), result);
         }
 

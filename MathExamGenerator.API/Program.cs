@@ -29,7 +29,6 @@ builder.Services.AddControllers().AddJsonOptions(options =>
 });
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen();
 builder.Services.AddDatabase();
 builder.Services.AddUnitOfWork();
 builder.Services.AddCustomServices();
@@ -80,6 +79,14 @@ builder.Services.AddSwaggerGen(c =>
         Enum = Enum.GetNames(typeof(GenderEnum))
                .Select(name => new OpenApiString(name) as IOpenApiAny)
                .ToList()
+    });
+
+    c.MapType<TestHistoryEnum>(() => new OpenApiSchema
+    {
+        Type = "string",
+        Enum = Enum.GetNames(typeof(TestHistoryEnum))
+           .Select(name => new OpenApiString(name) as IOpenApiAny)
+           .ToList()
     });
 });
 builder.Services.Configure<SMTPSettings>(builder.Configuration.GetSection("SmtpSettings"));

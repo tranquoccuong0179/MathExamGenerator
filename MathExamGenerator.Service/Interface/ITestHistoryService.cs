@@ -8,6 +8,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using MathExamGenerator.Model.Enum;
 
 namespace MathExamGenerator.Service.Interface
 {
@@ -16,7 +17,7 @@ namespace MathExamGenerator.Service.Interface
         Task<BaseResponse<IPaginate<TestHistoryOverviewResponse>>> GetAll(int page, int size);
         Task<BaseResponse<GetTestHistoryResponse>> GetById(Guid id);
         Task<BaseResponse<CreateTestHistoryResponse>> Create(CreateTestHistoryRequest request);
-        Task<BaseResponse<bool>> Update(Guid id, UpdateTestHistoryRequest request);
+        Task<BaseResponse<bool>> Update(Guid id, UpdateTestHistoryRequest request, TestHistoryEnum? status);
         Task<BaseResponse<bool>> Delete(Guid id);
         Task<BaseResponse<List<GetQuestionHistoryResponse>>> GetQuestionHistoriesByTestId(Guid id);
     }
