@@ -11,7 +11,6 @@ namespace MathExamGenerator.Model.Payload.Request.MatrixSection
     {
         public string SectionName { get; set; } = string.Empty;
         public int TotalQuestions { get; set; }
-        public double TotalScore { get; set; }
 
         public List<UpdateMatrixSectionDetailRequest> Details { get; set; } = new();
     }
