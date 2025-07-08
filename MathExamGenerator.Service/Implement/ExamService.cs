@@ -53,7 +53,7 @@ namespace MathExamGenerator.Service.Implement
                 };
             }
 
-            if (request == null || request.ExamMatrixId == null || request.Quantity < 0)
+            if (request == null || request.ExamMatrixId == null)
             {
                 return new BaseResponse<CreateExamResponse>
                 {
@@ -382,10 +382,8 @@ namespace MathExamGenerator.Service.Implement
 
             exam.Name = request.Name ?? exam.Name;
             exam.Time = request.Time ?? exam.Time;
-            exam.Quantity = request.Quantity ?? exam.Quantity;
             exam.StartDate = request.StartDate ?? exam.StartDate;
             exam.EndDate = request.EndDate ?? exam.EndDate;
-            exam.Minigame = request.Minigame ?? exam.Minigame;
             exam.IsActive = true;
             exam.UpdateAt = TimeUtil.GetCurrentSEATime();
 

@@ -4,6 +4,7 @@ using MathExamGenerator.Model.Paginate;
 using MathExamGenerator.Model.Payload.Request.ExamMatrix;
 using MathExamGenerator.Model.Payload.Response;
 using MathExamGenerator.Model.Payload.Response.ExamMatrix;
+using MathExamGenerator.Model.Payload.Response.TestHistory;
 using MathExamGenerator.Model.Utils;
 using MathExamGenerator.Repository.Interface;
 using MathExamGenerator.Service.Interface;
@@ -26,6 +27,21 @@ namespace MathExamGenerator.Service.Implement
 
         public async Task<BaseResponse<GetExamMatrixResponse>> CreateExamMatrix(CreateExamMatrixWithStructureRequest request)
         {
+            Guid? accountId = UserUtil.GetAccountId(_httpContextAccessor.HttpContext);
+
+            var account = await _unitOfWork.GetRepository<Account>().SingleOrDefaultAsync(
+                predicate: a => a.Id.Equals(accountId) && a.IsActive == true);
+
+            if (account == null)
+            {
+                return new BaseResponse<GetExamMatrixResponse>
+                {
+                    Status = StatusCodes.Status404NotFound.ToString(),
+                    Message = "Không tìm thấy tài khoản.",
+                    Data = null
+                };
+            }
+
             const double examTotalScore = 10.0;
 
             if (request == null || request.Sections == null || !request.Sections.Any())
@@ -122,6 +138,7 @@ namespace MathExamGenerator.Service.Implement
 
             var matrix = _mapper.Map<ExamMatrix>(request);
             matrix.SubjectId = subject.Id;
+            matrix.AccountId = account.Id;
             await _unitOfWork.GetRepository<ExamMatrix>().InsertAsync(matrix);
 
             double scorePerQuestion = request.TotalQuestions > 0 ? examTotalScore / request.TotalQuestions : 0;
@@ -202,8 +219,23 @@ namespace MathExamGenerator.Service.Implement
 
         public async Task<BaseResponse<bool>> DeleteExamMatrix(Guid id)
         {
+            Guid? accountId = UserUtil.GetAccountId(_httpContextAccessor.HttpContext);
+
+            var account = await _unitOfWork.GetRepository<Account>().SingleOrDefaultAsync(
+                predicate: a => a.Id.Equals(accountId) && a.IsActive == true);
+
+            if (account == null)
+            {
+                return new BaseResponse<bool>
+                {
+                    Status = StatusCodes.Status404NotFound.ToString(),
+                    Message = "Không tìm thấy tài khoản.",
+                    Data = false
+                };
+            }
+
             var matrix = await _unitOfWork.GetRepository<ExamMatrix>().SingleOrDefaultAsync(
-                predicate: em => em.Id == id && em.IsActive == true);
+                predicate: em => em.Id == id && em.IsActive == true && em.AccountId == account.Id);
 
             if (matrix == null)
             {
@@ -277,6 +309,21 @@ namespace MathExamGenerator.Service.Implement
 
         public async Task<BaseResponse<IPaginate<GetExamMatrixResponse>>> GetAllExamMatrix(int page, int size)
         {
+            Guid? accountId = UserUtil.GetAccountId(_httpContextAccessor.HttpContext);
+
+            var account = await _unitOfWork.GetRepository<Account>().SingleOrDefaultAsync(
+                predicate: a => a.Id.Equals(accountId) && a.IsActive == true);
+
+            if (account == null)
+            {
+                return new BaseResponse<IPaginate<GetExamMatrixResponse>>
+                {
+                    Status = StatusCodes.Status404NotFound.ToString(),
+                    Message = "Không tìm thấy tài khoản.",
+                    Data = null
+                };
+            }
+
             if (page < 1 || size < 1)
             {
                 return new BaseResponse<IPaginate<GetExamMatrixResponse>>
@@ -292,7 +339,7 @@ namespace MathExamGenerator.Service.Implement
                 page: page,
                 size: size,
                 orderBy: o => o.OrderByDescending(x => x.CreateAt),
-                predicate: x => x.IsActive == true,
+                predicate: x => x.IsActive == true && x.AccountId == account.Id,
                 include: x => x.Include(e => e.Subject));
 
             return new BaseResponse<IPaginate<GetExamMatrixResponse>>
@@ -305,8 +352,23 @@ namespace MathExamGenerator.Service.Implement
 
         public async Task<BaseResponse<GetExamMatrixResponse>> GetById(Guid id)
         {
+            Guid? accountId = UserUtil.GetAccountId(_httpContextAccessor.HttpContext);
+
+            var account = await _unitOfWork.GetRepository<Account>().SingleOrDefaultAsync(
+                predicate: a => a.Id.Equals(accountId) && a.IsActive == true);
+
+            if (account == null)
+            {
+                return new BaseResponse<GetExamMatrixResponse>
+                {
+                    Status = StatusCodes.Status404NotFound.ToString(),
+                    Message = "Không tìm thấy tài khoản.",
+                    Data = null
+                };
+            }
+
             var result = await _unitOfWork.GetRepository<ExamMatrix>().SingleOrDefaultAsync(
-                predicate: x => x.IsActive == true && x.Id == id,
+                predicate: x => x.IsActive == true && x.Id == id && x.AccountId == account.Id,
                 include: x => x.Include(e => e.Subject));
 
             if (result == null)
@@ -328,8 +390,23 @@ namespace MathExamGenerator.Service.Implement
 
         public async Task<BaseResponse<ExamMatrixStructureResponse>> GetMatrixStructure(Guid id)
         {
+            Guid? accountId = UserUtil.GetAccountId(_httpContextAccessor.HttpContext);
+
+            var account = await _unitOfWork.GetRepository<Account>().SingleOrDefaultAsync(
+                predicate: a => a.Id.Equals(accountId) && a.IsActive == true);
+
+            if (account == null)
+            {
+                return new BaseResponse<ExamMatrixStructureResponse>
+                {
+                    Status = StatusCodes.Status404NotFound.ToString(),
+                    Message = "Không tìm thấy tài khoản.",
+                    Data = null
+                };
+            }
+
             var matrix = await _unitOfWork.GetRepository<ExamMatrix>().SingleOrDefaultAsync(
-                predicate: x => x.Id == id && x.IsActive == true,
+                predicate: x => x.Id == id && x.IsActive == true && x.AccountId == account.Id,
                 include: m => m.Include(x => x.MatrixSections)
                                .ThenInclude(s => s.MatrixSectionDetails));
 
@@ -353,11 +430,26 @@ namespace MathExamGenerator.Service.Implement
 
         public async Task<BaseResponse<bool>> UpdateExamMatrix(Guid id, UpdateExamMatrixWithStructureRequest request)
         {
+            Guid? accountId = UserUtil.GetAccountId(_httpContextAccessor.HttpContext);
+
+            var account = await _unitOfWork.GetRepository<Account>().SingleOrDefaultAsync(
+                predicate: a => a.Id.Equals(accountId) && a.IsActive == true);
+
+            if (account == null)
+            {
+                return new BaseResponse<bool>
+                {
+                    Status = StatusCodes.Status404NotFound.ToString(),
+                    Message = "Không tìm thấy tài khoản.",
+                    Data = false
+                };
+            }
+
             const double examTotalScore = 10.0;
 
             var matrixRepo = _unitOfWork.GetRepository<ExamMatrix>();
             var matrix = await matrixRepo.SingleOrDefaultAsync(
-                predicate: x => x.Id == id && x.IsActive == true);
+                predicate: x => x.Id == id && x.IsActive == true && x.AccountId == account.Id);
 
             if (matrix == null)
             {
