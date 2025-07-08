@@ -142,6 +142,7 @@ namespace MathExamGenerator.Service.Implement
                 Message = "Tạo quiz thành công",
                 Data = new CreateQuizResponse
                 {
+                    Id = quiz.Id,
                     Name = quiz.Name,
                     Time = quiz.Time,
                     Quantity = quiz.Quantity,

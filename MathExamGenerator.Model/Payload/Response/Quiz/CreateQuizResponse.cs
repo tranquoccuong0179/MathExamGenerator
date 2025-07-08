@@ -8,6 +8,8 @@ namespace MathExamGenerator.Model.Payload.Response.Quiz
 {
     public class CreateQuizResponse
     {
+        public Guid Id { get; set; }
+        
         public string? Name { get; set; }
 
         public long? Time { get; set; }
