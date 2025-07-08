@@ -11,6 +11,7 @@ namespace MathExamGenerator.Model.Payload.Response.TestStorage
         public Guid Id { get; set; }
         public Guid? ExamId { get; set; }
         public Guid? QuizId { get; set; }
+        public string? Name { get; set; }
         public bool? Liked { get; set; }
         public bool? Seen { get; set; }
         public DateTime? CreateAt { get; set; }
