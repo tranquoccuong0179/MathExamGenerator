@@ -87,6 +87,19 @@ namespace MathExamGenerator.Service.Implement
                     };
                 }
 
+                if (exam.StartDate.HasValue && exam.EndDate.HasValue)
+                {
+                    if (exam.StartDate < DateTime.Now || exam.EndDate > DateTime.Now)
+                    {
+                        return new BaseResponse<CreateTestHistoryResponse>
+                        {
+                            Status = StatusCodes.Status400BadRequest.ToString(),
+                            Message = "Exam này đã hết hạn làm bài.",
+                            Data = null
+                        };
+                    }
+                }
+
                 var examQuestions = await _unitOfWork.GetRepository<ExamQuestion>().GetListAsync(
                     predicate: x => x.ExamId == request.ExamId);
 
