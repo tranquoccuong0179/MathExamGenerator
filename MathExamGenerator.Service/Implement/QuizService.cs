@@ -202,6 +202,7 @@ namespace MathExamGenerator.Service.Implement
                     .Where(qq => qq.IsActive == true && qq.Question != null)
                     .Select(qq => new QuestionResponse
                         {
+                            Id = qq.Id,
                             BookTopicId = qq.Question.BookTopicId,
                             Level = qq.Question.Level,
                             Content = qq.Question.Content,

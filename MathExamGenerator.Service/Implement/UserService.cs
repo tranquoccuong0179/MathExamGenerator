@@ -5,10 +5,13 @@ using System.Text;
 using System.Threading.Tasks;
 using AutoMapper;
 using MathExamGenerator.Model.Entity;
+using MathExamGenerator.Model.Enum;
 using MathExamGenerator.Model.Exceptions;
 using MathExamGenerator.Model.Paginate;
 using MathExamGenerator.Model.Payload.Request.User;
 using MathExamGenerator.Model.Payload.Response;
+using MathExamGenerator.Model.Payload.Response.Authentication;
+using MathExamGenerator.Model.Payload.Response.GoogleAuthentication;
 using MathExamGenerator.Model.Payload.Response.User;
 using MathExamGenerator.Model.Utils;
 using MathExamGenerator.Repository.Interface;
@@ -209,6 +212,151 @@ namespace MathExamGenerator.Service.Implement
                     Point = user.Point,
                     IsPremium = account.IsPremium,
                 }
+            };
+        }
+
+        public async Task<bool> GetAccountByEmail(string email)
+        {
+            if (email == null) throw new BadHttpRequestException("Email cannot be null");
+
+            var account = await _unitOfWork.GetRepository<Account>().SingleOrDefaultAsync(
+                predicate: p => p.Email.Equals(email)
+            );
+            return account != null;
+        }
+
+        public async Task<BaseResponse<GetUserResponse>> CreateNewUserAccountByGoogle(GoogleAuthResponse googleAuthResponse)
+        {
+            var existingUser = await _unitOfWork.GetRepository<Account>().SingleOrDefaultAsync(
+                predicate: u => u.Email.Equals(googleAuthResponse.Email) &&
+                                                        u.IsActive == true,
+                include: u => u.Include(u => u.UserInfos));
+
+            if (existingUser != null)
+            {
+                return new BaseResponse<GetUserResponse>
+                {
+                    Status = StatusCodes.Status400BadRequest.ToString(),
+                    Message = "User account already exists.",
+                    Data = new GetUserResponse()
+                    {
+                        AccountId = existingUser.Id,
+                        UserId = existingUser.UserInfos.FirstOrDefault().Id,
+                        Email = existingUser.Email,
+                        FullName = existingUser.FullName,
+                        Phone = existingUser.Phone,
+                        AvatarUrl = existingUser.AvatarUrl,
+                        DateOfBirth = existingUser.DateOfBirth,
+                        Gender = existingUser.Gender,
+                        QuizFree = existingUser.QuizFree,
+                        Point = existingUser.UserInfos.FirstOrDefault().Point,
+                        IsPremium = existingUser.IsPremium
+                    }
+                };
+            }
+
+            var account = new Account()
+            {
+                Id = Guid.NewGuid(),
+                Email = googleAuthResponse.Email,
+                FullName = googleAuthResponse.FullName,
+                UserName = googleAuthResponse.Email.Split("@")[0],
+                Role = RoleEnum.USER.GetDescriptionFromEnum(),
+                IsActive = true,
+                Password = PasswordUtil.HashPassword("12345678"),
+                Phone = "0000000000",
+                DateOfBirth = DateOnly.FromDateTime(TimeUtil.GetCurrentSEATime()),
+                Gender = GenderEnum.Male.GetDescriptionFromEnum(),
+                AvatarUrl = googleAuthResponse.Avatar,
+                QuizFree = 0,
+                CreateAt = TimeUtil.GetCurrentSEATime(),
+                UpdateAt = TimeUtil.GetCurrentSEATime(),
+            };
+            
+            await _unitOfWork.GetRepository<Account>().InsertAsync(account);
+            
+            var userInfo = new UserInfo()
+            {
+                Id = Guid.NewGuid(),
+                Point = 0,
+                AccountId = account.Id,
+                IsActive = true,
+                CreateAt = TimeUtil.GetCurrentSEATime(),
+                UpdateAt = TimeUtil.GetCurrentSEATime(),
+            };
+
+            await _unitOfWork.GetRepository<UserInfo>().InsertAsync(userInfo);
+
+            var wallet = new Wallet()
+            {
+                Id = Guid.NewGuid(),
+                AccountId = account.Id,
+                Point = 0,
+                IsActive = true,
+                CreateAt = TimeUtil.GetCurrentSEATime(),
+                UpdateAt = TimeUtil.GetCurrentSEATime(),
+            };
+
+            await _unitOfWork.GetRepository<Wallet>().InsertAsync(wallet);
+
+            var isSuccess = await _unitOfWork.CommitAsync() > 0;
+            
+            if (!isSuccess)
+            {
+                throw new Exception("Một lỗi đã xảy ra trong quá trình đăng nhập google");
+            }
+
+            return new BaseResponse<GetUserResponse>
+            {
+                Status = StatusCodes.Status200OK.ToString(),
+                Message = "Tạo tài khoản thành công",
+                Data = new GetUserResponse()
+                {
+                    AccountId = account.Id,
+                    UserId = userInfo.Id,
+                    Email = account.Email,
+                    FullName = account.FullName,
+                    Phone = account.Phone,
+                    AvatarUrl = account.AvatarUrl,
+                    DateOfBirth = account.DateOfBirth,
+                    Gender = account.Gender,
+                    QuizFree = account.QuizFree,
+                    Point = userInfo.Point,
+                    IsPremium = account.IsPremium
+                }
+            };
+        }
+
+        public async Task<BaseResponse<AuthenticateResponse>> CreateTokenByEmail(string email)
+        {
+            if (string.IsNullOrEmpty(email))
+            {
+                throw new ArgumentException("Username cannot be null or empty", nameof(email));
+            }
+            var account = await _unitOfWork.GetRepository<Account>().SingleOrDefaultAsync(
+                predicate: p => p.Email.Equals(email)
+            );
+            if (account == null) throw new BadHttpRequestException("Account not found");
+            Tuple<string, Guid> guildClaim = new Tuple<string, Guid>("accountId", account.Id);
+            var token = JwtUtil.GenerateJwtToken(account, guildClaim);
+
+            var response = new AuthenticateResponse()
+            {
+                AccountId = account.Id,
+                Email = account.Email,
+                Username = account.FullName,
+                Phone = account.Phone,
+                Role = account.Role,
+                FullName = account.FullName,
+                AccessToken = token,
+                AvatarUrl = account.AvatarUrl,
+            };
+
+            return new BaseResponse<AuthenticateResponse>()
+            {
+                Status = StatusCodes.Status200OK.ToString(), 
+                Message = "Login successful",
+                Data = response
             };
         }
     }
