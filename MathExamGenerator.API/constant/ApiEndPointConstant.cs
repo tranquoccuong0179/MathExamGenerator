@@ -20,6 +20,13 @@
             public const string ForgotPassword = AccountEndPoint + "/forgot-password";
             public const string ChangeAvatar = AccountEndPoint + "/avatar";
         }
+        
+        public static class GoogleAuthentication
+        {
+            public const string GoogleAuthEndPoint = ApiEndpoint + "/google-auth";
+            public const string GoogleAuthLogin = GoogleAuthEndPoint + "/login";
+            public const string GoogleAuthSignIn = GoogleAuthEndPoint + "/sign-in";
+        }
 
         public static class Authentication
         {

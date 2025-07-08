@@ -61,6 +61,7 @@ namespace MathExamGenerator.API
             services.AddScoped<IQuestionService, QuestionService>();
             services.AddScoped<ITransactionService, TransactionService>();
             services.AddScoped<IPremiumService, PremiumService>();
+            services.AddScoped<IGoogleAuthenticationService, GoogleAuthenticateService>();
 
             return services;
         }
@@ -91,6 +92,20 @@ namespace MathExamGenerator.API
             services.AddSingleton<IConnectionMultiplexer>(
                 _ => ConnectionMultiplexer.Connect(redisConn));               
             return services;
+        }
+        
+        private static string CreateClientId(IConfiguration configuration)
+        {
+            var clientId = Environment.GetEnvironmentVariable("GOOGLE_OAUTH_CLIENT_ID")
+                           ?? configuration.GetValue<string>("Oauth:ClientId");
+            return clientId;
+        }
+
+        private static string CreateClientSecret(IConfiguration configuration)
+        {
+            var clientSecret = Environment.GetEnvironmentVariable("GOOGLE_OAUTH_CLIENT_SECRET")
+                               ?? configuration.GetValue<string>("Oauth:ClientSecret");
+            return clientSecret;
         }
 
         public static IServiceCollection AddJwtValidation(this IServiceCollection services)
