@@ -11,6 +11,7 @@ using MathExamGenerator.Model.Utils;
 using MathExamGenerator.Repository.Interface;
 using MathExamGenerator.Service.Interface;
 using Microsoft.AspNetCore.Http;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
@@ -191,7 +192,8 @@ namespace MathExamGenerator.Service.Implement
                 page: page,
                 size: size,
                 orderBy: q => q.OrderByDescending(x => x.CreateAt),
-                predicate: x => x.IsActive == true && x.AccountId == account.Id);
+                predicate: x => x.IsActive == true && x.AccountId == account.Id,
+                include: x => x.Include(x => x.Exam).Include(x => x.Quiz));
 
             return new BaseResponse<IPaginate<GetTestStorageResponse>>
             {
@@ -204,7 +206,8 @@ namespace MathExamGenerator.Service.Implement
         public async Task<BaseResponse<GetTestStorageResponse>> GetById(Guid id)
         {
             var entity = await _unitOfWork.GetRepository<TestStorage>().SingleOrDefaultAsync(
-                predicate: x => x.Id == id && x.IsActive == true);
+                predicate: x => x.Id == id && x.IsActive == true,
+                include: x => x.Include(x => x.Exam).Include(x => x.Quiz));
 
             if (entity == null)
             {
