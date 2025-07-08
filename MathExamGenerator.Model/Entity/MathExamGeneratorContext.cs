@@ -255,7 +255,7 @@ public partial class MathExamGeneratorContext : DbContext
 
         modelBuilder.Entity<ExamMatrix>(entity =>
         {
-            entity.HasKey(e => e.Id).HasName("PK__ExamMatr__3214EC07FDDE59D3");
+            entity.HasKey(e => e.Id).HasName("PK__tmp_ms_x__3214EC0753331762");
 
             entity.ToTable("ExamMatrix");
 
@@ -266,6 +266,10 @@ public partial class MathExamGeneratorContext : DbContext
             entity.Property(e => e.Name).HasMaxLength(200);
             entity.Property(e => e.UpdateAt).HasColumnType("datetime");
 
+            entity.HasOne(d => d.Account).WithMany(p => p.ExamMatrices)
+                .HasForeignKey(d => d.AccountId)
+                .HasConstraintName("FK_ExamMatrix_Account");
+
             entity.HasOne(d => d.Subject).WithMany(p => p.ExamMatrices)
                 .HasForeignKey(d => d.SubjectId)
                 .HasConstraintName("FK_ExamMatrix.SubjectId");
@@ -273,7 +277,7 @@ public partial class MathExamGeneratorContext : DbContext
 
         modelBuilder.Entity<ExamQuestion>(entity =>
         {
-            entity.HasKey(e => e.Id).HasName("PK__ExamQues__3214EC0759C4D116");
+            entity.HasKey(e => e.Id).HasName("PK__tmp_ms_x__3214EC07184801BF");
 
             entity.ToTable("ExamQuestion");
 

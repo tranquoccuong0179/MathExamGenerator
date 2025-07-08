@@ -45,6 +45,8 @@ public partial class Account
 
     public virtual ICollection<Deposit> Deposits { get; set; } = new List<Deposit>();
 
+    public virtual ICollection<ExamMatrix> ExamMatrices { get; set; } = new List<ExamMatrix>();
+
     public virtual ICollection<Exam> Exams { get; set; } = new List<Exam>();
 
     public virtual ICollection<LikeComment> LikeComments { get; set; } = new List<LikeComment>();

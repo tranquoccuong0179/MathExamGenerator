@@ -11,13 +11,9 @@ public partial class Exam
 
     public long? Time { get; set; }
 
-    public int? Quantity { get; set; }
-
     public DateTime? StartDate { get; set; }
 
     public DateTime? EndDate { get; set; }
-
-    public bool? Minigame { get; set; }
 
     public bool? IsActive { get; set; }
 

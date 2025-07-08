@@ -7,6 +7,8 @@ public partial class ExamMatrix
 {
     public Guid Id { get; set; }
 
+    public Guid? AccountId { get; set; }
+
     public Guid? SubjectId { get; set; }
 
     public string? Name { get; set; }
@@ -22,6 +24,8 @@ public partial class ExamMatrix
     public DateTime? UpdateAt { get; set; }
 
     public DateTime? DeleteAt { get; set; }
+
+    public virtual Account? Account { get; set; }
 
     public virtual ICollection<Exam> Exams { get; set; } = new List<Exam>();
 
