@@ -361,7 +361,6 @@ namespace MathExamGenerator.Service.Implement
 
             testHistory.ExamId = request.ExamId ?? testHistory.ExamId;
             testHistory.QuizId = request.QuizId ?? testHistory.QuizId;
-            testHistory.Grade = request.Grade ?? testHistory.Grade;
             if (status.HasValue)
             {
                 testHistory.Status = status.ToString();
