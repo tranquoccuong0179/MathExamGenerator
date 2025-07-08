@@ -12,7 +12,7 @@ namespace MathExamGenerator.Model.Payload.Response.MatrixSectionDetail
         public string Difficulty { get; set; }
         public int QuestionCount { get; set; }
         public double ScorePerQuestion { get; set; }
-        public Guid BookChapterId { get; set; }
-        public Guid BookTopicId { get; set; }
+        public Guid? BookChapterId { get; set; }
+        public Guid? BookTopicId { get; set; }
     }
 }

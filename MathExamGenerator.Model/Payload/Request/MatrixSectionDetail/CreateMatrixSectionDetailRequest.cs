@@ -13,8 +13,6 @@ namespace MathExamGenerator.Model.Payload.Request.MatrixSectionDetail
         public Guid? BookTopicId { get; set; }
         public string Difficulty { get; set; }
         [Range(1, 1000, ErrorMessage = "Số lượng câu hỏi phải từ 1 đến 1000.")]
-        public int QuestionCount { get; set; }
-        [Range(0.1, 100, ErrorMessage = "Điểm mỗi câu phải từ 0.1 đến 100.")]
-        public double ScorePerQuestion { get; set; }
+        public int TotalQuestionsDetail { get; set; }
     }
 }
