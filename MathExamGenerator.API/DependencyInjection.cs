@@ -9,6 +9,8 @@ using MathExamGenerator.Repository.Implement;
 using MathExamGenerator.Repository.Interface;
 using MathExamGenerator.Service.Implement;
 using MathExamGenerator.Service.Interface;
+using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
@@ -131,7 +133,29 @@ namespace MathExamGenerator.API
                     IssuerSigningKey =
                         new SymmetricSecurityKey(Convert.FromHexString("0102030405060708090A0B0C0D0E0F101112131415161718191A1B1C1D1E1F00"))
                 };
+            }).AddCookie(
+                options =>
+                {
+                    options.Cookie.HttpOnly = true;
+                    options.Cookie.SecurePolicy = CookieSecurePolicy.Always;
+                    options.Cookie.SameSite = SameSiteMode.None;
+                })
+            .AddGoogle(options =>
+            {
+                options.ClientId = CreateClientId(configuration);
+                options.ClientSecret = CreateClientSecret(configuration);
+                options.SaveTokens = true;
+                options.SignInScheme = CookieAuthenticationDefaults.AuthenticationScheme;
+                options.Scope.Add("profile");
+                options.ClaimActions.MapJsonKey("picture", "picture");
+
             });
+            services.Configure<CookiePolicyOptions>(options =>
+            {
+                options.MinimumSameSitePolicy = SameSiteMode.None;
+                options.Secure = CookieSecurePolicy.Always;
+            }); ;
+            ;
             return services;
         }
 

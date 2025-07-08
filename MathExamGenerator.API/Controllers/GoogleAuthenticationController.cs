@@ -19,7 +19,7 @@ public class GoogleAuthenticationController : BaseController<GoogleAuthenticatio
     [HttpGet(ApiEndPointConstant.GoogleAuthentication.GoogleAuthLogin)]
     public IActionResult Login()
     {
-        var props = new AuthenticationProperties() { RedirectUri = $"api/auth/google-auth/signin-google" };
+        var props = new AuthenticationProperties() { RedirectUri = $"api/v1/google-auth/signin-google" };
         return Challenge(props, GoogleDefaults.AuthenticationScheme);
     }
     

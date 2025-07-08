@@ -24,7 +24,10 @@ namespace MathExamGenerator.Service.Implement
 {
     public class UserService : BaseService<UserService>, IUserService
     {
-        public UserService(IUnitOfWork<MathExamGeneratorContext> unitOfWork, ILogger<UserService> logger, IMapper mapper, IHttpContextAccessor httpContextAccessor) : base(unitOfWork, logger, mapper, httpContextAccessor)
+        public UserService(IUnitOfWork<MathExamGeneratorContext> unitOfWork, 
+                           ILogger<UserService> logger, 
+                           IMapper mapper, 
+                           IHttpContextAccessor httpContextAccessor) : base(unitOfWork, logger, mapper, httpContextAccessor)
         {
         }
 
@@ -344,7 +347,7 @@ namespace MathExamGenerator.Service.Implement
             {
                 AccountId = account.Id,
                 Email = account.Email,
-                Username = account.FullName,
+                Username = account.UserName,
                 Phone = account.Phone,
                 Role = account.Role,
                 FullName = account.FullName,
