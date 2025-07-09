@@ -519,7 +519,7 @@ public partial class MathExamGeneratorContext : DbContext
 
         modelBuilder.Entity<SubjectBook>(entity =>
         {
-            entity.HasKey(e => e.Id).HasName("PK__SubjectB__3214EC07C26EE589");
+            entity.HasKey(e => e.Id).HasName("PK__tmp_ms_x__3214EC07CC5D7F54");
 
             entity.ToTable("SubjectBook");
 

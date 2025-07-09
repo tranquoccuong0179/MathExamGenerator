@@ -13,6 +13,8 @@ namespace MathExamGenerator.Model.Payload.Response.SubjectBook
         public string? Title { get; set; }
 
         public string? FileUrl { get; set; }
+        
+        public string? BookImage { get; set; }
 
         public string? Description { get; set; }
 

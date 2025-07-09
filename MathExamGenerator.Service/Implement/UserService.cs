@@ -337,9 +337,9 @@ namespace MathExamGenerator.Service.Implement
                 throw new ArgumentException("Username cannot be null or empty", nameof(email));
             }
             var account = await _unitOfWork.GetRepository<Account>().SingleOrDefaultAsync(
-                predicate: p => p.Email.Equals(email)
+                predicate: p => p.Email.Equals(email) && p.IsActive == true && p.DeleteAt == null
             );
-            if (account == null) throw new BadHttpRequestException("Account not found");
+            if (account == null) throw new NotFoundException("Account not found or has been banned.");
             Tuple<string, Guid> guildClaim = new Tuple<string, Guid>("accountId", account.Id);
             var token = JwtUtil.GenerateJwtToken(account, guildClaim);
 

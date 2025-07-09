@@ -12,9 +12,11 @@ namespace MathExamGenerator.Model.Payload.Request.SubjectBook
         public string Title { get; set; } = null!;
 
         public IFormFile FileUrl { get; set; } = null!;
+        
+        public IFormFile BookImage { get; set; } = null!;
 
         public string Description { get; set; } = null!;
-
+        
         public Guid SubjectId { get; set; }
 
     }
