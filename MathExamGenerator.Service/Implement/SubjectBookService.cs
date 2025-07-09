@@ -48,6 +48,7 @@ namespace MathExamGenerator.Service.Implement
                 Id = Guid.NewGuid(),
                 Title = request.Title,
                 FileUrl = await _uploadService.UploadToGoogleDriveAsync(request.FileUrl),
+                BookImage = await _uploadService.UploadImage(request.BookImage),
                 Description = request.Description,
                 SubjectId = request.SubjectId,
                 IsActive = true,
@@ -73,6 +74,7 @@ namespace MathExamGenerator.Service.Implement
                     Description = subjectBook.Description,
                     FileUrl = subjectBook.FileUrl,
                     SubjectId = subjectBook.SubjectId,
+                    BookImage = subjectBook.BookImage
                 }
             };
         }
@@ -114,7 +116,8 @@ namespace MathExamGenerator.Service.Implement
                     SubjectId = s.SubjectId,
                     Title = s.Title,
                     Description = s.Description,
-                    FileUrl = s.FileUrl
+                    FileUrl = s.FileUrl,
+                    BookImage = s.BookImage
                 },
                 predicate: s => s.SubjectId.Equals(id) && s.IsActive == true,
                 page: page,
@@ -142,7 +145,8 @@ namespace MathExamGenerator.Service.Implement
                     SubjectId = s.SubjectId,
                     Title = s.Title,
                     Description = s.Description,
-                    FileUrl = s.FileUrl
+                    FileUrl = s.FileUrl,
+                    BookImage = s.BookImage
                 },
                 predicate: s => s.IsActive == true,
                 page: page,
@@ -165,7 +169,8 @@ namespace MathExamGenerator.Service.Implement
                     SubjectId = s.SubjectId,
                     Title = s.Title,
                     Description = s.Description,
-                    FileUrl = s.FileUrl
+                    FileUrl = s.FileUrl,
+                    BookImage = s.BookImage
                 },
                 predicate: s => s.Id.Equals(id) && s.IsActive == true) ?? throw new NotFoundException("Không tìm thấy thông tin sách này");
 
@@ -212,6 +217,7 @@ namespace MathExamGenerator.Service.Implement
                     Title = subjectBook.Title,
                     Description = subjectBook.Description,
                     FileUrl = subjectBook.FileUrl,
+                    BookImage = subjectBook.BookImage,
                     SubjectId = subjectBook.SubjectId
                 }
             };
