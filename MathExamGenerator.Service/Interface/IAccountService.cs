@@ -22,6 +22,10 @@ namespace MathExamGenerator.Service.Interface
         Task<BaseResponse<bool>> ChangePassword(ChangePasswordRequest request);
 
         Task<BaseResponse<bool>> ForgotPassword(string email);
+        
+        Task<BaseResponse<GetUserResponse>> VerifyOtp(string email, string otp);
+
+        Task<BaseResponse<GetUserResponse>> ResetPassword(ResetPasswordRequest request);
 
         Task<BaseResponse<GetUserResponse>> ChangeAvatar(IFormFile file);
     }

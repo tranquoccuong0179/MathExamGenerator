@@ -101,6 +101,8 @@ namespace MathExamGenerator.Service.Implement
             await _unitOfWork.GetRepository<Wallet>().InsertAsync(wallet);
 
             var isSuccess = await _unitOfWork.CommitAsync() > 0;
+            
+            await redisDb.KeyDeleteAsync(key);
 
             if (!isSuccess)
             {
@@ -271,6 +273,90 @@ namespace MathExamGenerator.Service.Implement
                 Status = StatusCodes.Status200OK.ToString(),
                 Message = "Gửi mã xác nhận quên mật khẩu thành công",
                 Data = true
+            };
+        }
+
+        public async Task<BaseResponse<GetUserResponse>> VerifyOtp(string email, string otp)
+        {
+            var redisDb = _redis.GetDatabase();
+            if (redisDb == null) throw new RedisServerException("Không thể kết nối tới Redis");
+
+            var key = "emailOtp:" + email;
+            var storedOtp = await redisDb.StringGetAsync(key);
+
+            if (string.IsNullOrEmpty(storedOtp))
+                throw new NotFoundException("Không tìm thấy mã OTP");
+            if (!storedOtp.Equals(otp))
+                throw new BadHttpRequestException("Mã OTP không chính xác");
+
+            var account = await _unitOfWork.GetRepository<Account>().SingleOrDefaultAsync(
+                predicate: a => a.Email.Equals(email) && a.IsActive == true && a.DeleteAt == null,
+                include: a => a.Include(a => a.UserInfos)) ?? throw new NotFoundException("Không tìm thấy tài khoản");
+            
+                await redisDb.KeyDeleteAsync(key);
+
+            return new BaseResponse<GetUserResponse>()
+            {
+                Status = StatusCodes.Status200OK.ToString(),
+                Message = "Xác thực thành công",
+                Data = new GetUserResponse
+                {
+                    AccountId = account.Id,
+                    UserId = account.UserInfos.FirstOrDefault().Id,
+                    FullName = account.FullName,
+                    Email = account.Email,
+                    Phone = account.Phone,
+                    DateOfBirth = account.DateOfBirth,
+                    Gender = account.Gender,
+                    QuizFree = account.QuizFree,
+                    AvatarUrl = account.AvatarUrl,
+                    Point = account.UserInfos.FirstOrDefault().Point,
+                    IsPremium = account.IsPremium,
+                }
+            };
+        }
+
+        public async Task<BaseResponse<GetUserResponse>> ResetPassword(ResetPasswordRequest request)
+        {
+            var account = await _unitOfWork.GetRepository<Account>().SingleOrDefaultAsync(
+                predicate: a => a.Email.Equals(request.Email) && a.IsActive == true && a.DeleteAt == null,
+                include: a => a.Include(a => a.UserInfos)) ?? throw new NotFoundException("Không tìm thấy tài khoản");
+
+            if (!request.NewPassword.Equals(request.ConfirmPassword))
+            {
+                throw new BadHttpRequestException("Mật khẩu mới và xác nhận mật khẩu không khớp");
+            }
+            
+            account.Password = PasswordUtil.HashPassword(request.NewPassword);
+            account.UpdateAt = TimeUtil.GetCurrentSEATime();
+            
+            _unitOfWork.GetRepository<Account>().UpdateAsync(account);
+            
+            var isSuccess = await _unitOfWork.CommitAsync() > 0;
+            
+            if (!isSuccess)
+            {
+                throw new Exception("Một lỗi đã xảy ra trong quá trình đặt lại mật khẩu");
+            }
+
+            return new BaseResponse<GetUserResponse>()
+            {
+                Status = StatusCodes.Status200OK.ToString(),
+                Message = "Đặt lại mật khẩu thành công",
+                Data = new GetUserResponse()
+                {
+                    AccountId = account.Id,
+                    UserId = account.UserInfos.FirstOrDefault().Id,
+                    FullName = account.FullName,
+                    Email = account.Email,
+                    Phone = account.Phone,
+                    DateOfBirth = account.DateOfBirth,
+                    Gender = account.Gender,
+                    QuizFree = account.QuizFree,
+                    AvatarUrl = account.AvatarUrl,
+                    Point = account.UserInfos.FirstOrDefault().Point,
+                    IsPremium = account.IsPremium,
+                }
             };
         }
 

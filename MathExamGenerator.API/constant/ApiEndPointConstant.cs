@@ -18,6 +18,8 @@
             public const string RegisterManager = AccountEndPoint + "/manager";
             public const string ChangePassword = AccountEndPoint + "/change-password";
             public const string ForgotPassword = AccountEndPoint + "/forgot-password";
+            public const string VerifyOtp = AccountEndPoint + "/verify-otp";
+            public const string ResetPassword = AccountEndPoint + "/reset-password";
             public const string ChangeAvatar = AccountEndPoint + "/avatar";
         }
         
