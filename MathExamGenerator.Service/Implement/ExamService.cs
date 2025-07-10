@@ -75,7 +75,11 @@ namespace MathExamGenerator.Service.Implement
                 predicate: s => s.Id.Equals(request.ExamMatrixId) && s.IsActive == true);
             if (examMatrix == null)
             {
-                throw new NotFoundException("Không tìm thấy ma trận đề thi.");
+                return new BaseResponse<CreateExamResponse>
+                {
+                    Status = StatusCodes.Status404NotFound.ToString(),
+                    Message = "Không tìm thấy ma trận đề thi.",
+                };
             }
 
             var exam = _mapper.Map<Exam>(request);
@@ -90,7 +94,11 @@ namespace MathExamGenerator.Service.Implement
                 predicate: s => s.ExamMatrixId == examMatrix.Id && s.IsActive == true);
             if (!sections.Any())
             {
-                throw new NotFoundException("Không có section nào trong ma trận đề.");
+                return new BaseResponse<CreateExamResponse>
+                {
+                    Status = StatusCodes.Status400BadRequest.ToString(),
+                    Message = "Không có section nào trong ma trận đề.",
+                };
             }
 
             var examQuestionRepo = _unitOfWork.GetRepository<ExamQuestion>();
@@ -126,12 +134,20 @@ namespace MathExamGenerator.Service.Implement
                     }
                     else
                     {
-                        throw new Exception($"Thiếu thông tin BookTopicId hoặc BookChapterId ở section {section.SectionName}");
+                        return new BaseResponse<CreateExamResponse>
+                        {
+                            Status = StatusCodes.Status400BadRequest.ToString(),
+                            Message = $"Thiếu thông tin BookTopicId hoặc BookChapterId ở section {section.SectionName}",
+                        };
                     }
 
                     if (questionsQuery.Count() < detail.QuestionCount)
                     {
-                        throw new Exception($"Không đủ câu hỏi cho section {section.SectionName} – độ khó {detail.Difficulty}.");
+                        return new BaseResponse<CreateExamResponse>
+                        {
+                            Status = StatusCodes.Status400BadRequest.ToString(),
+                            Message = $"Không đủ câu hỏi cho section {section.SectionName} – độ khó {detail.Difficulty}.",
+                        };
                     }
 
                     var random = new Random();
