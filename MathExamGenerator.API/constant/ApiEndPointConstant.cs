@@ -189,6 +189,7 @@
             public const string GetAllQuestion = QuestionEndPoint;
             public const string DeleteQuestionById = QuestionEndPoint + "/{id}";
             public const string GetQuestionById = QuestionEndPoint + "/{id}";
+            public const string GetQuestionSolution = QuestionEndPoint + "/solution";
         }
 
         public static class TestHistory
