@@ -69,6 +69,26 @@ namespace MathExamGenerator.API.Controllers
             var response = await _accountService.ForgotPassword(email);
             return StatusCode(int.Parse(response.Status), response);
         }
+        
+        [HttpPost(ApiEndPointConstant.Account.VerifyOtp)]
+        [ProducesResponseType(typeof(BaseResponse<bool>), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(BaseResponse<bool>), StatusCodes.Status404NotFound)]
+        [ProducesErrorResponseType(typeof(ProblemDetails))]
+        public async Task<IActionResult> VerifyOtp([FromBody] VerifyOtpRequest request)
+        {
+            var response = await _accountService.VerifyOtp(request.Email, request.Otp);
+            return StatusCode(int.Parse(response.Status), response);
+        }
+        
+        [HttpPost(ApiEndPointConstant.Account.ResetPassword)]
+        [ProducesResponseType(typeof(BaseResponse<bool>), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(BaseResponse<bool>), StatusCodes.Status404NotFound)]
+        [ProducesErrorResponseType(typeof(ProblemDetails))]
+        public async Task<IActionResult> ResetPassword([FromBody] ResetPasswordRequest request)
+        {
+            var response = await _accountService.ResetPassword(request);
+            return StatusCode(int.Parse(response.Status), response);
+        }
 
         [HttpPut(ApiEndPointConstant.Account.ChangeAvatar)]
         [ProducesResponseType(typeof(BaseResponse<GetUserResponse>), StatusCodes.Status200OK)]
