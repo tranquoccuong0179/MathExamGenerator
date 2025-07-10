@@ -71,8 +71,8 @@ namespace MathExamGenerator.API.Controllers
         }
         
         [HttpPost(ApiEndPointConstant.Account.VerifyOtp)]
-        [ProducesResponseType(typeof(BaseResponse<bool>), StatusCodes.Status200OK)]
-        [ProducesResponseType(typeof(BaseResponse<bool>), StatusCodes.Status404NotFound)]
+        [ProducesResponseType(typeof(BaseResponse<GetUserResponse>), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(BaseResponse<GetUserResponse>), StatusCodes.Status404NotFound)]
         [ProducesErrorResponseType(typeof(ProblemDetails))]
         public async Task<IActionResult> VerifyOtp([FromBody] VerifyOtpRequest request)
         {
@@ -81,8 +81,8 @@ namespace MathExamGenerator.API.Controllers
         }
         
         [HttpPost(ApiEndPointConstant.Account.ResetPassword)]
-        [ProducesResponseType(typeof(BaseResponse<bool>), StatusCodes.Status200OK)]
-        [ProducesResponseType(typeof(BaseResponse<bool>), StatusCodes.Status404NotFound)]
+        [ProducesResponseType(typeof(BaseResponse<GetUserResponse>), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(BaseResponse<GetUserResponse>), StatusCodes.Status404NotFound)]
         [ProducesErrorResponseType(typeof(ProblemDetails))]
         public async Task<IActionResult> ResetPassword([FromBody] ResetPasswordRequest request)
         {
