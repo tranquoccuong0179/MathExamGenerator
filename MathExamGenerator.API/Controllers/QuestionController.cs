@@ -58,5 +58,16 @@ namespace MathExamGenerator.API.Controllers
             var response = await _questionService.GetQuestion(id);
             return StatusCode(int.Parse(response.Status), response);
         }
+
+        [HttpGet(ApiEndPointConstant.Question.GetQuestionSolution)]
+        [ProducesResponseType(typeof(BaseResponse<List<QuestionSolutionResponse>>), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(BaseResponse<List<QuestionSolutionResponse>>), StatusCodes.Status404NotFound)]
+        [ProducesErrorResponseType(typeof(ProblemDetails))]
+        public async Task<IActionResult> GetAllQuestionSolution()
+        {
+            var response = await _questionService.GetAllQuestionSolution();
+            return StatusCode(int.Parse(response.Status), response);
+        }
+
     }
 }

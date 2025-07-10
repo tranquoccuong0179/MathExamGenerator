@@ -182,6 +182,32 @@ namespace MathExamGenerator.Service.Implement
             };
         }
 
-     
+        public async Task<BaseResponse<List<QuestionSolutionResponse>>> GetAllQuestionSolution()
+        {
+            var questions = await _unitOfWork.GetRepository<Question>().GetListAsync(
+         selector: q => new QuestionSolutionResponse
+         {
+             QuestionId = q.Id.ToString(),
+             Question = q.Content,
+             Answer = q.Solution,
+             Topic = q.BookTopic.Name.ToString(),
+             Grade = q.Category.Grade.ToString(),
+             Chapter = q.BookTopic.BookChapter.Name.ToString()
+
+         },
+         predicate: q => q.IsActive == true && q.DeleteAt == null,
+         include: q => q
+             .Include(x => x.BookTopic)
+             .Include(x => x.Category),
+         orderBy: q => q.OrderBy(x => x.CreateAt)
+     );
+
+            return new BaseResponse<List<QuestionSolutionResponse>>
+            {
+                Status = StatusCodes.Status200OK.ToString(),
+                Message = "Lấy danh sách câu hỏi và lời giải thành công",
+                Data = questions.ToList()
+            };
+        }
     }
 }
