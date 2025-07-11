@@ -89,7 +89,7 @@ namespace MathExamGenerator.Service.Implement
 
                 if (exam.StartDate.HasValue && exam.EndDate.HasValue)
                 {
-                    if (exam.StartDate < DateTime.Now || exam.EndDate > DateTime.Now)
+                    if (exam.StartDate > TimeUtil.GetCurrentSEATime() || exam.EndDate < TimeUtil.GetCurrentSEATime())
                     {
                         return new BaseResponse<CreateTestHistoryResponse>
                         {
