@@ -7,6 +7,7 @@
   </PropertyGroup>
 
   <ItemGroup>
+	 <PackageReference Include="Google.Analytics.Data.V1Beta" Version="1.0.0-beta6" />
     <PackageReference Include="AutoMapper" Version="14.0.0" />
     <PackageReference Include="CloudinaryDotNet" Version="1.27.6" />
     <PackageReference Include="Google.Apis.Drive.v3" Version="1.69.0.3783" />

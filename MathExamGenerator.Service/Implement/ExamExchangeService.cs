@@ -473,23 +473,31 @@ namespace MathExamGenerator.Service.Implement
             };
         }
 
-        public async Task<BaseResponse<bool>> ApproveExamExchange(UpdateExamExchangeStatusRequest request)
+        public async Task<BaseResponse<bool>> ApproveExamExchange(Guid id, ExamExchangeEnum? status)
         {
+        
             var examRepo = _unitOfWork.GetRepository<ExamExchange>();
             var exam = await examRepo.SingleOrDefaultAsync(
-                predicate: e => e.Id == request.ExamExchangeId,
-                include: q => q.Include(e => e.Questions).ThenInclude(q => q.Answers))
+                predicate: e => e.Id == id,
+                include: q => q.Include(e => e.Questions)
+                               .ThenInclude(q => q.Answers))
                 ?? throw new NotFoundException("Không tìm thấy phiếu đề.");
 
-            if (exam.Status == request.NewStatus)
-                throw new Exception("Trạng thái mới trùng với trạng thái hiện tại.");
+            if (exam.Status == status.ToString())
+            {
+                return new BaseResponse<bool>
+                {
+                    Status = StatusCodes.Status400BadRequest.ToString(),
+                    Message = "Trạng thái mới trùng với trạng thái hiện tại.",
+                    Data = false
+                };
+            }
 
-            // Cập nhật status
-            exam.Status = request.NewStatus;
+            // Cập nhật trạng thái
+            exam.Status = status.ToString();
             exam.UpdateAt = TimeUtil.GetCurrentSEATime();
-            _unitOfWork.Context.Entry(exam).State = EntityState.Modified;
-
-            if (request.NewStatus == "Approved")
+            _unitOfWork.GetRepository<ExamExchange>().UpdateAsync(exam);
+            if (status == ExamExchangeEnum.Approved)
             {
                 foreach (var q in exam.Questions)
                 {
@@ -497,7 +505,8 @@ namespace MathExamGenerator.Service.Implement
                     {
                         q.IsActive = true;
                         q.UpdateAt = TimeUtil.GetCurrentSEATime();
-                        _unitOfWork.Context.Entry(q).State = EntityState.Modified;
+                        _unitOfWork.GetRepository<Question>().UpdateAsync(q);
+
                     }
 
                     foreach (var a in q.Answers)
@@ -506,15 +515,24 @@ namespace MathExamGenerator.Service.Implement
                         {
                             a.IsActive = true;
                             a.UpdateAt = TimeUtil.GetCurrentSEATime();
-                            _unitOfWork.Context.Entry(a).State = EntityState.Modified;
+                            _unitOfWork.GetRepository<Answer>().UpdateAsync(a);
                         }
                     }
                 }
             }
 
             var result = await _unitOfWork.CommitAsync();
+
             if (result == 0)
-                throw new Exception("Không có thay đổi nào được ghi nhận.");
+            {
+                return new BaseResponse<bool>
+                {
+                    Status = StatusCodes.Status500InternalServerError.ToString(),
+                    Message = "Không có thay đổi nào được ghi nhận.",
+                    Data = false
+                };
+            }
+
             return new BaseResponse<bool>
             {
                 Status = StatusCodes.Status200OK.ToString(),
@@ -522,5 +540,6 @@ namespace MathExamGenerator.Service.Implement
                 Data = true
             };
         }
+
     }
 }

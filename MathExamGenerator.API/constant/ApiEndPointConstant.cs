@@ -130,7 +130,7 @@
             public const string UpdateExamExchange = ExamExchangeEndPoint + "/{id}";
             public const string DeleteExamExchange = ExamExchangeEndPoint + "/{id}";
             public const string GetAllTeacher = ExamExchangeEndPoint;
-            public const string ApproveExamExchange = ExamExchangeEndPoint + "/status";
+            public const string ApproveExamExchange = ExamExchangeEndPoint + "/status" +"/{id}";
         }
 
         public static class User
@@ -257,5 +257,6 @@
             public const string BuyPremium = PremiumEndPoint + "/buy";
             public const string GetPremiumStatus = PremiumEndPoint + "/status";
         }
+
     }
 }
