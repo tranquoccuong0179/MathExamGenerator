@@ -1,4 +1,5 @@
-﻿using MathExamGenerator.Model.Paginate;
+﻿using MathExamGenerator.Model.Enum;
+using MathExamGenerator.Model.Paginate;
 using MathExamGenerator.Model.Payload.Request.ExamExchange;
 using MathExamGenerator.Model.Payload.Response;
 using MathExamGenerator.Model.Payload.Response.ExamExchange;
@@ -18,7 +19,7 @@ namespace MathExamGenerator.Service.Interface
         Task<BaseResponse<ExamExchangeResponse>> GetExamChange(Guid examchangeId);
         Task<BaseResponse<ExamExchangeResponse>> Update(Guid examchange, UpdateExamEchangeRequest request);
         Task<BaseResponse<IPaginate<GetExamExchangeTeacherResponse>>> GetAllTeacher(int page, int size);
-        Task<BaseResponse<bool>> ApproveExamExchange(UpdateExamExchangeStatusRequest request);
+        Task<BaseResponse<bool>> ApproveExamExchange(Guid id, ExamExchangeEnum? status);
 
     }
 

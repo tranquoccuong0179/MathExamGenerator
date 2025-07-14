@@ -1,4 +1,5 @@
 ﻿using MathExamGenerator.API.constant;
+using MathExamGenerator.Model.Enum;
 using MathExamGenerator.Model.Paginate;
 using MathExamGenerator.Model.Payload.Request.ExamExchange;
 using MathExamGenerator.Model.Payload.Response;
@@ -78,12 +79,12 @@ namespace MathExamGenerator.API.Controllers
             var response = await _service.GetAllTeacher(pageNumber, pageSize);
             return StatusCode(int.Parse(response.Status), response);
         }
-        [HttpPost(ApiEndPointConstant.ExamEchange.ApproveExamExchange)]
+        [HttpPut(ApiEndPointConstant.ExamEchange.ApproveExamExchange)]
         [ProducesResponseType(typeof(BaseResponse<bool>), StatusCodes.Status200OK)]
         [ProducesErrorResponseType(typeof(ProblemDetails))]
-        public async Task<IActionResult> ApproveExamExchange([FromBody] UpdateExamExchangeStatusRequest request)
+        public async Task<IActionResult> ApproveExamExchange([FromRoute] Guid id ,[FromQuery] ExamExchangeEnum? status)
         {
-            var response = await _service.ApproveExamExchange(request);
+            var response = await _service.ApproveExamExchange(id,status);
             return StatusCode(int.Parse(response.Status), response);
         }
     }
