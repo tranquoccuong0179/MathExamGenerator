@@ -257,6 +257,11 @@
             public const string BuyPremium = PremiumEndPoint + "/buy";
             public const string GetPremiumStatus = PremiumEndPoint + "/status";
         }
-
+        public static class Analytics
+        {
+            public const string AnalyticsEndPoint = ApiEndpoint + "/analytics";
+            public const string GetUsers = AnalyticsEndPoint + "/users";
+            public const string GetRealtimeUsers = AnalyticsEndPoint + "/realtime-users";
+        }
     }
 }
