@@ -362,5 +362,42 @@ namespace MathExamGenerator.Service.Implement
                 Data = response
             };
         }
+
+        public async Task<BaseResponse<bool>> ExchangePoint()
+        {
+            Guid? accountId = UserUtil.GetAccountId(_httpContextAccessor.HttpContext);
+
+            var account = await _unitOfWork.GetRepository<Account>().SingleOrDefaultAsync(
+                predicate: a => a.Id.Equals(accountId) && a.IsActive == true) ?? throw new NotFoundException("Không tìm thấy tài khoản");
+            
+            var user = await _unitOfWork.GetRepository<UserInfo>().SingleOrDefaultAsync(
+                predicate: u => u.AccountId.Equals(accountId) && u.IsActive == true) ?? throw new NotFoundException("Không tìm thấy thông tin người dùng");
+
+
+            if (user.Point < 50)
+            {
+                throw new BadHttpRequestException("Số điểm của bạn không đủ để đổi lượt kiểm tra miễn phí, tối thiểu phải 50 điểm");
+            }
+
+            account.QuizFree += 1;
+            _unitOfWork.GetRepository<Account>().UpdateAsync(account);
+            
+            user.Point -= 50;
+            _unitOfWork.GetRepository<UserInfo>().UpdateAsync(user);
+            
+            var isSuccess = await _unitOfWork.CommitAsync() > 0;
+            
+            if (!isSuccess)
+            {
+                throw new Exception("Một lỗi đã xảy ra trong quá trình thực hiện đổi điểm");
+            }
+
+            return new BaseResponse<bool>()
+            {
+                Status = StatusCodes.Status200OK.ToString(),
+                Message = "Đổi điểm sang lượt kiểm tra miễn phí thành công",
+                Data = isSuccess
+            };
+        }
     }
 }

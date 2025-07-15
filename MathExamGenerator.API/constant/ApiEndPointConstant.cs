@@ -141,6 +141,7 @@
             public const string GetUser = UserEndPoint + "/{id}";
             public const string UpdateUser = UserEndPoint;
             public const string DeleteUser = UserEndPoint + "/{id}";
+            public const string ExchangePoint = UserEndPoint + "/exchange-point";
         }
 
         public static class BookChapter

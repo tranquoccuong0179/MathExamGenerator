@@ -61,12 +61,12 @@ namespace MathExamGenerator.Service.Implement
 
             if (liked)
             {
-                userInfo.Point += 1;
+                userInfo.Point += 10;
                 userInfo.UpdateAt = TimeUtil.GetCurrentSEATime();
             }
             else
             {
-                userInfo.Point -= 1;
+                userInfo.Point -= 10;
                 userInfo.UpdateAt = TimeUtil.GetCurrentSEATime();
             }
 

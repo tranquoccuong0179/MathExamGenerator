@@ -67,5 +67,15 @@ namespace MathExamGenerator.API.Controllers
             var response = await _userService.DeleteUser(id);
             return StatusCode(int.Parse(response.Status), response);
         }
+        
+        [HttpPost(ApiEndPointConstant.User.ExchangePoint)]
+        [ProducesResponseType(typeof(BaseResponse<bool>), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(BaseResponse<bool>), StatusCodes.Status404NotFound)]
+        [ProducesErrorResponseType(typeof(ProblemDetails))]
+        public async Task<IActionResult> ExchangePoint()
+        {
+            var response = await _userService.ExchangePoint();
+            return StatusCode(int.Parse(response.Status), response);
+        }
     }
 }

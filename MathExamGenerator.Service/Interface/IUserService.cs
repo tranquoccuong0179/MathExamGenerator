@@ -29,5 +29,7 @@ namespace MathExamGenerator.Service.Interface
         Task<BaseResponse<GetUserResponse>> CreateNewUserAccountByGoogle(GoogleAuthResponse googleAuthResponse);
         
         Task<BaseResponse<AuthenticateResponse>> CreateTokenByEmail(string email);
+
+        Task<BaseResponse<bool>> ExchangePoint();
     }
 }
