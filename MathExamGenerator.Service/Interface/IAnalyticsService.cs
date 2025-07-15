@@ -12,6 +12,8 @@ namespace MathExamGenerator.Service.Interface
     {
         Task<BaseResponse<AnalyticsUsersResponse>> GetUsers();
         Task<BaseResponse<string>> GetRealtimeUsers();
+        Task<BaseResponse<List<AnalyticsUserDailyResponse>>> GetRegisteredUsersByDay();
+        Task<BaseResponse<List<AnalyticsRevenueDailyResponse>>> GetPremiumRevenueByDay(); 
 
     }
 }
