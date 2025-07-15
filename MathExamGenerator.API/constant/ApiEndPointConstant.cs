@@ -262,6 +262,8 @@
             public const string AnalyticsEndPoint = ApiEndpoint + "/analytics";
             public const string GetUsers = AnalyticsEndPoint + "/users";
             public const string GetRealtimeUsers = AnalyticsEndPoint + "/realtime-users";
+            public const string GetRegisteredUsersByDay = AnalyticsEndPoint + "/registered-users-by-day";
+            public const string GetPremiumRevenueByDay = AnalyticsEndPoint + "/premium-revenue-by-day";
         }
     }
 }

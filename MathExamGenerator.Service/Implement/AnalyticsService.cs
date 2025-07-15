@@ -13,6 +13,9 @@ using Microsoft.Identity.Client;
 using System;
 using System.IO;
 using System.Threading.Tasks;
+using Google.Apis.Drive.v3.Data;
+using MathExamGenerator.Model.Enum;
+using System.Transactions;
 
 namespace MathExamGenerator.Service.Implement
 {
@@ -116,6 +119,100 @@ namespace MathExamGenerator.Service.Implement
                 {
                     Status = StatusCodes.Status500InternalServerError.ToString(),
                     Message = "Lỗi khi lấy người dùng",
+                    Data = null
+                };
+            }
+        }
+
+        public async Task<BaseResponse<List<AnalyticsUserDailyResponse>>> GetRegisteredUsersByDay()
+        {
+            try
+            {
+                var rawList = await _unitOfWork.GetRepository<Account>()
+                    .GetListAsync(
+                        selector: g => new
+                        {
+                            Date = g.CreateAt!.Value.Date
+                        },
+                        predicate: u => u.CreateAt.HasValue &&
+                            (u.Role == RoleEnum.USER.ToString() || u.Role == RoleEnum.TEACHER.ToString())
+                    );
+
+                var grouped = rawList
+                    .GroupBy(x => x.Date)
+                    .Select(g => new AnalyticsUserDailyResponse
+                    {
+                        Date = g.Key,
+                        Count = g.Count()
+                    })
+                    .OrderBy(x => x.Date)
+                    .ToList();
+
+                return new BaseResponse<List<AnalyticsUserDailyResponse>>
+                {
+                    Status = StatusCodes.Status200OK.ToString(),
+                    Message = "Lấy thống kê đăng ký người dùng theo ngày thành công",
+                    Data = grouped
+                };
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "[Analytics] Lỗi khi thống kê đăng ký người dùng theo ngày");
+
+                return new BaseResponse<List<AnalyticsUserDailyResponse>>
+                {
+                    Status = StatusCodes.Status500InternalServerError.ToString(),
+                    Message = "Đã xảy ra lỗi khi xử lý dữ liệu",
+                    Data = null
+                };
+            }
+        }
+
+
+
+        public async Task<BaseResponse<List<AnalyticsRevenueDailyResponse>>> GetPremiumRevenueByDay()
+        {
+            try
+            {
+                var transactions = await _unitOfWork.GetRepository<Model.Entity.Transaction>()
+                    .GetListAsync(
+                        selector: t => new
+                        {
+                            Date = t.CreateAt.Value.Date,
+                            t.Amount,
+                            t.Type,
+                            t.Status
+                        },
+                        predicate: t => t.CreateAt.HasValue &&
+                                        t.Type == "Thanh Toán" &&
+                                        t.Status == "Success"
+                    );
+
+                var grouped = transactions
+                    .GroupBy(t => t.Date)
+                    .Select(g => new AnalyticsRevenueDailyResponse
+                    {
+                        Date = g.Key,
+                        TotalRevenue = (decimal)g.Sum(x => x.Amount),
+                        OrderCount = g.Count()
+                    })
+                    .OrderBy(x => x.Date)
+                    .ToList();
+
+                return new BaseResponse<List<AnalyticsRevenueDailyResponse>>
+                {
+                    Status = StatusCodes.Status200OK.ToString(),
+                    Message = "Thống kê doanh thu premium theo ngày thành công",
+                    Data = grouped
+                };
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "[Analytics] Lỗi khi thống kê doanh thu premium");
+                return new BaseResponse<List<AnalyticsRevenueDailyResponse>>
+                {
+                    Status = StatusCodes.Status500InternalServerError.ToString(),
+                    Message = "Lỗi hệ thống",
                     Data = null
                 };
             }
