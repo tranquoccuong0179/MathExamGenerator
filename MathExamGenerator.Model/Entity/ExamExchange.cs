@@ -7,7 +7,7 @@ public partial class ExamExchange
 {
     public Guid Id { get; set; }
 
-    public Guid? TeacherId { get; set; }
+    public Guid? AccountId { get; set; }
 
     public string? Status { get; set; }
 
@@ -19,7 +19,7 @@ public partial class ExamExchange
 
     public DateTime? DeleteAt { get; set; }
 
-    public virtual ICollection<Question> Questions { get; set; } = new List<Question>();
+    public virtual Account? Account { get; set; }
 
-    public virtual Teacher? Teacher { get; set; }
+    public virtual ICollection<Question> Questions { get; set; } = new List<Question>();
 }

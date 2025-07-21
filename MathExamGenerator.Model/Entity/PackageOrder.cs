@@ -3,17 +3,13 @@ using System.Collections.Generic;
 
 namespace MathExamGenerator.Model.Entity;
 
-public partial class TestStorage
+public partial class PackageOrder
 {
     public Guid Id { get; set; }
 
+    public Guid? PackageId { get; set; }
+
     public Guid? AccountId { get; set; }
-
-    public Guid? ExamId { get; set; }
-
-    public bool? Liked { get; set; }
-
-    public bool? Seen { get; set; }
 
     public bool? IsActive { get; set; }
 
@@ -25,5 +21,7 @@ public partial class TestStorage
 
     public virtual Account? Account { get; set; }
 
-    public virtual Exam? Exam { get; set; }
+    public virtual Package? Package { get; set; }
+
+    public virtual ICollection<Transaction> Transactions { get; set; } = new List<Transaction>();
 }

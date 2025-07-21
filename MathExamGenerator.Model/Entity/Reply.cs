@@ -11,9 +11,9 @@ public partial class Reply
 
     public Guid? AccountId { get; set; }
 
-    public bool? IsActive { get; set; }
-
     public string? Content { get; set; }
+
+    public bool? IsActive { get; set; }
 
     public DateTime? CreateAt { get; set; }
 
