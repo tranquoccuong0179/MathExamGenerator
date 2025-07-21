@@ -33,20 +33,9 @@ namespace MathExamGenerator.Service.Implement
 
         public async Task<BaseResponse<bool>> DeleteUser(Guid id)
         {
-            var user = await _unitOfWork.GetRepository<UserInfo>().SingleOrDefaultAsync(
-                predicate: u => u.Id.Equals(id) && u.IsActive == true);
-
-            if (user == null)
-            {
-                throw new NotFoundException("Không tìm thấy thông tin người dùng");
-            }
-
-            user.IsActive = false;
-            user.DeleteAt = TimeUtil.GetCurrentSEATime();
-            _unitOfWork.GetRepository<UserInfo>().UpdateAsync(user);
 
             var account = await _unitOfWork.GetRepository<Account>().SingleOrDefaultAsync(
-                predicate: a => a.Id.Equals(user.AccountId) && a.IsActive == true);
+                predicate: a => a.Id.Equals(id) && a.Role.Equals(RoleEnum.USER.GetDescriptionFromEnum()) && a.IsActive == true);
 
             if (account == null)
             {
@@ -79,23 +68,22 @@ namespace MathExamGenerator.Service.Implement
                 throw new BadHttpRequestException("Số trang và số lượng trong trang phải lớn hơn hoặc bằng 1");
             }
 
-            var users = await _unitOfWork.GetRepository<UserInfo>().GetPagingListAsync(
+            var users = await _unitOfWork.GetRepository<Account>().GetPagingListAsync(
                 selector: u => new GetUserResponse
                 {
-                    AccountId = u.AccountId,
-                    UserId = u.Id,
-                    FullName = u.Account.FullName,
-                    Email = u.Account.Email,
-                    Phone = u.Account.Phone,
-                    DateOfBirth = u.Account.DateOfBirth,
-                    AvatarUrl = u.Account.AvatarUrl,
-                    Gender = u.Account.Gender,
-                    QuizFree = u.Account.QuizFree,
-                    Point = u.Point,
-                    IsPremium = u.Account.IsPremium,
+                    AccountId = u.Id,
+                    FullName = u.FullName,
+                    Email = u.Email,
+                    Phone = u.Phone,
+                    DateOfBirth = u.DateOfBirth,
+                    AvatarUrl = u.AvatarUrl,
+                    Gender = u.Gender,
+                    FreeTries = u.FreeTries,
+                    Point = u.Wallets.FirstOrDefault().Point,
+                    IsPremium = u.IsPremium,
                 },
-                predicate: u => u.IsActive == true,
-                include: u => u.Include(u => u.Account),
+                predicate: u => u.IsActive == true && u.Role .Equals(RoleEnum.USER.GetDescriptionFromEnum()),
+                include: u => u.Include(u => u.Wallets),
                 orderBy: u => u.OrderByDescending(u => u.CreateAt),
                 page: page,
                 size: size);
@@ -110,23 +98,23 @@ namespace MathExamGenerator.Service.Implement
 
         public async Task<BaseResponse<GetUserResponse>> GetUser(Guid id)
         {
-            var user = await _unitOfWork.GetRepository<UserInfo>().SingleOrDefaultAsync(
+            var user = await _unitOfWork.GetRepository<Account>().SingleOrDefaultAsync(
                 selector: u => new GetUserResponse
                 {
-                    AccountId = u.AccountId,
+                    AccountId = u.Id,
                     UserId = u.Id,
-                    FullName = u.Account.FullName,
-                    Email = u.Account.Email,
-                    Phone = u.Account.Phone,
-                    DateOfBirth = u.Account.DateOfBirth,
-                    AvatarUrl = u.Account.AvatarUrl,
-                    Gender = u.Account.Gender,
-                    QuizFree = u.Account.QuizFree,
-                    Point = u.Point,
-                    IsPremium = u.Account.IsPremium
+                    FullName = u.FullName,
+                    Email = u.Email,
+                    Phone = u.Phone,
+                    DateOfBirth = u.DateOfBirth,
+                    AvatarUrl = u.AvatarUrl,
+                    Gender = u.Gender,
+                    FreeTries = u.FreeTries,
+                    Point = u.Wallets.FirstOrDefault().Point,
+                    IsPremium = u.IsPremium
                 },
-                predicate: u => u.IsActive == true && u.Id.Equals(id),
-                include: u => u.Include(u => u.Account));
+                predicate: u => u.IsActive == true && u.Id.Equals(id) && u.Role .Equals(RoleEnum.USER.GetDescriptionFromEnum()),
+                include: u => u.Include(u => u.Wallets));
 
 
             if (user == null)
@@ -147,10 +135,9 @@ namespace MathExamGenerator.Service.Implement
             Guid? accountId = UserUtil.GetAccountId(_httpContextAccessor.HttpContext);
 
             var account = await _unitOfWork.GetRepository<Account>().SingleOrDefaultAsync(
-                predicate: a => a.Id.Equals(accountId) && a.IsActive == true) ?? throw new NotFoundException("Không tìm thấy tài khoản");
-
-            var user = await _unitOfWork.GetRepository<UserInfo>().SingleOrDefaultAsync(
-                predicate: u => u.AccountId.Equals(accountId) && u.IsActive == true) ?? throw new NotFoundException("Không tìm thấy thông tin người dùng");
+                predicate: a => a.Id.Equals(accountId) && a.IsActive == true,
+                include: u => u.Include(u => u.Wallets))
+                              ?? throw new NotFoundException("Không tìm thấy tài khoản");
 
             return new BaseResponse<GetUserResponse>
             {
@@ -159,15 +146,14 @@ namespace MathExamGenerator.Service.Implement
                 Data = new GetUserResponse
                 {
                     AccountId = accountId,
-                    UserId = user.Id,
                     FullName = account.FullName,
                     Email = account.Email,
                     Phone = account.Phone,
                     AvatarUrl = account.AvatarUrl,
                     DateOfBirth = account.DateOfBirth,
                     Gender = account.Gender,
-                    QuizFree = account.QuizFree,
-                    Point = user.Point,
+                    FreeTries = account.FreeTries,
+                    Point = account.Wallets.FirstOrDefault().Point,
                     IsPremium = account.IsPremium,
                 }
             };
@@ -178,10 +164,9 @@ namespace MathExamGenerator.Service.Implement
             Guid? accountId = UserUtil.GetAccountId(_httpContextAccessor.HttpContext);
 
             var account = await _unitOfWork.GetRepository<Account>().SingleOrDefaultAsync(
-                predicate: a => a.Id.Equals(accountId) && a.IsActive == true) ?? throw new NotFoundException("Không tìm thấy tài khoản người dùng");
-
-            var user = await _unitOfWork.GetRepository<UserInfo>().SingleOrDefaultAsync(
-                predicate: u => u.AccountId.Equals(accountId) && u.IsActive == true) ?? throw new NotFoundException("Không tìm thấy người dùng");
+                predicate: a => a.Id.Equals(accountId) && a.IsActive == true,
+                include: u => u.Include(u => u.Wallets))
+                              ?? throw new NotFoundException("Không tìm thấy tài khoản người dùng");
 
             account.FullName = request.FullName ?? account.FullName;
             account.DateOfBirth = request.DateOfBirth ?? account.DateOfBirth;
@@ -204,15 +189,14 @@ namespace MathExamGenerator.Service.Implement
                 Data = new GetUserResponse
                 {
                     AccountId = account.Id,
-                    UserId = user.Id,
                     FullName = account.FullName,
                     Email = account.Email,
                     Phone = account.Phone,
                     AvatarUrl = account.AvatarUrl,
                     DateOfBirth = account.DateOfBirth,
                     Gender = account.Gender,
-                    QuizFree = account.QuizFree,
-                    Point = user.Point,
+                    FreeTries = account.FreeTries,
+                    Point = account.Wallets.FirstOrDefault().Point,
                     IsPremium = account.IsPremium,
                 }
             };
@@ -233,7 +217,7 @@ namespace MathExamGenerator.Service.Implement
             var existingUser = await _unitOfWork.GetRepository<Account>().SingleOrDefaultAsync(
                 predicate: u => u.Email.Equals(googleAuthResponse.Email) &&
                                                         u.IsActive == true,
-                include: u => u.Include(u => u.UserInfos));
+                include: u => u.Include(u => u.Wallets));
 
             if (existingUser != null)
             {
@@ -244,15 +228,14 @@ namespace MathExamGenerator.Service.Implement
                     Data = new GetUserResponse()
                     {
                         AccountId = existingUser.Id,
-                        UserId = existingUser.UserInfos.FirstOrDefault().Id,
                         Email = existingUser.Email,
                         FullName = existingUser.FullName,
                         Phone = existingUser.Phone,
                         AvatarUrl = existingUser.AvatarUrl,
                         DateOfBirth = existingUser.DateOfBirth,
                         Gender = existingUser.Gender,
-                        QuizFree = existingUser.QuizFree,
-                        Point = existingUser.UserInfos.FirstOrDefault().Point,
+                        FreeTries = existingUser.FreeTries,
+                        Point = existingUser.Wallets.FirstOrDefault().Point,
                         IsPremium = existingUser.IsPremium
                     }
                 };
@@ -271,25 +254,13 @@ namespace MathExamGenerator.Service.Implement
                 DateOfBirth = DateOnly.FromDateTime(TimeUtil.GetCurrentSEATime()),
                 Gender = GenderEnum.Male.GetDescriptionFromEnum(),
                 AvatarUrl = googleAuthResponse.Avatar,
-                QuizFree = 0,
+                FreeTries = 0,
                 CreateAt = TimeUtil.GetCurrentSEATime(),
                 UpdateAt = TimeUtil.GetCurrentSEATime(),
             };
             
             await _unitOfWork.GetRepository<Account>().InsertAsync(account);
             
-            var userInfo = new UserInfo()
-            {
-                Id = Guid.NewGuid(),
-                Point = 0,
-                AccountId = account.Id,
-                IsActive = true,
-                CreateAt = TimeUtil.GetCurrentSEATime(),
-                UpdateAt = TimeUtil.GetCurrentSEATime(),
-            };
-
-            await _unitOfWork.GetRepository<UserInfo>().InsertAsync(userInfo);
-
             var wallet = new Wallet()
             {
                 Id = Guid.NewGuid(),
@@ -316,15 +287,14 @@ namespace MathExamGenerator.Service.Implement
                 Data = new GetUserResponse()
                 {
                     AccountId = account.Id,
-                    UserId = userInfo.Id,
                     Email = account.Email,
                     FullName = account.FullName,
                     Phone = account.Phone,
                     AvatarUrl = account.AvatarUrl,
                     DateOfBirth = account.DateOfBirth,
                     Gender = account.Gender,
-                    QuizFree = account.QuizFree,
-                    Point = userInfo.Point,
+                    FreeTries = account.FreeTries,
+                    Point = wallet.Point,
                     IsPremium = account.IsPremium
                 }
             };
@@ -368,22 +338,19 @@ namespace MathExamGenerator.Service.Implement
             Guid? accountId = UserUtil.GetAccountId(_httpContextAccessor.HttpContext);
 
             var account = await _unitOfWork.GetRepository<Account>().SingleOrDefaultAsync(
-                predicate: a => a.Id.Equals(accountId) && a.IsActive == true) ?? throw new NotFoundException("Không tìm thấy tài khoản");
+                predicate: a => a.Id.Equals(accountId) && a.IsActive == true,
+                include: u => u.Include(u => u.Wallets)) 
+                              ?? throw new NotFoundException("Không tìm thấy tài khoản");
             
-            var user = await _unitOfWork.GetRepository<UserInfo>().SingleOrDefaultAsync(
-                predicate: u => u.AccountId.Equals(accountId) && u.IsActive == true) ?? throw new NotFoundException("Không tìm thấy thông tin người dùng");
-
-
-            if (user.Point < 50)
+            if (account.Wallets.FirstOrDefault().Point < 50)
             {
                 throw new BadHttpRequestException("Số điểm của bạn không đủ để đổi lượt kiểm tra miễn phí, tối thiểu phải 50 điểm");
             }
 
-            account.QuizFree += 1;
+            account.FreeTries += 1;
             _unitOfWork.GetRepository<Account>().UpdateAsync(account);
             
-            user.Point -= 50;
-            _unitOfWork.GetRepository<UserInfo>().UpdateAsync(user);
+            account.Wallets.FirstOrDefault().Point -= 50;
             
             var isSuccess = await _unitOfWork.CommitAsync() > 0;
             
