@@ -32,6 +32,8 @@ public partial class MathExamGeneratorContext : DbContext
 
     public virtual DbSet<Exam> Exams { get; set; }
 
+    public virtual DbSet<ExamDoing> ExamDoings { get; set; }
+
     public virtual DbSet<ExamExchange> ExamExchanges { get; set; }
 
     public virtual DbSet<ExamMatrix> ExamMatrices { get; set; }
@@ -40,19 +42,17 @@ public partial class MathExamGeneratorContext : DbContext
 
     public virtual DbSet<LikeComment> LikeComments { get; set; }
 
-    public virtual DbSet<Location> Locations { get; set; }
-
     public virtual DbSet<MatrixSection> MatrixSections { get; set; }
 
     public virtual DbSet<MatrixSectionDetail> MatrixSectionDetails { get; set; }
 
+    public virtual DbSet<Package> Packages { get; set; }
+
+    public virtual DbSet<PackageOrder> PackageOrders { get; set; }
+
     public virtual DbSet<Question> Questions { get; set; }
 
     public virtual DbSet<QuestionHistory> QuestionHistories { get; set; }
-
-    public virtual DbSet<Quiz> Quizzes { get; set; }
-
-    public virtual DbSet<QuizQuestion> QuizQuestions { get; set; }
 
     public virtual DbSet<Reply> Replies { get; set; }
 
@@ -62,15 +62,9 @@ public partial class MathExamGeneratorContext : DbContext
 
     public virtual DbSet<SubjectBook> SubjectBooks { get; set; }
 
-    public virtual DbSet<Teacher> Teachers { get; set; }
-
-    public virtual DbSet<TestHistory> TestHistories { get; set; }
-
     public virtual DbSet<TestStorage> TestStorages { get; set; }
 
     public virtual DbSet<Transaction> Transactions { get; set; }
-
-    public virtual DbSet<UserInfo> UserInfos { get; set; }
 
     public virtual DbSet<Wallet> Wallets { get; set; }
 
@@ -92,7 +86,7 @@ public partial class MathExamGeneratorContext : DbContext
     {
         modelBuilder.Entity<Account>(entity =>
         {
-            entity.HasKey(e => e.Id).HasName("PK__Account__3214EC074096ED73");
+            entity.HasKey(e => e.Id).HasName("PK__tmp_ms_x__3214EC077179EC24");
 
             entity.ToTable("Account");
 
@@ -203,7 +197,7 @@ public partial class MathExamGeneratorContext : DbContext
             entity.Property(e => e.Id).ValueGeneratedNever();
             entity.Property(e => e.Amount).HasColumnType("decimal(18, 2)");
             entity.Property(e => e.Code)
-                .HasMaxLength(100)
+                .HasMaxLength(50)
                 .IsUnicode(false);
             entity.Property(e => e.CreateAt).HasColumnType("datetime");
             entity.Property(e => e.DeleteAt).HasColumnType("datetime");
@@ -217,15 +211,14 @@ public partial class MathExamGeneratorContext : DbContext
 
         modelBuilder.Entity<Exam>(entity =>
         {
-            entity.HasKey(e => e.Id).HasName("PK__Exam__3214EC075E16BD22");
+            entity.HasKey(e => e.Id).HasName("PK__tmp_ms_x__3214EC07071A68FA");
 
             entity.ToTable("Exam");
 
             entity.Property(e => e.Id).ValueGeneratedNever();
             entity.Property(e => e.CreateAt).HasColumnType("datetime");
             entity.Property(e => e.DeleteAt).HasColumnType("datetime");
-            entity.Property(e => e.EndDate).HasColumnType("datetime");
-            entity.Property(e => e.StartDate).HasColumnType("datetime");
+            entity.Property(e => e.Status).HasMaxLength(50);
             entity.Property(e => e.UpdateAt).HasColumnType("datetime");
 
             entity.HasOne(d => d.Account).WithMany(p => p.Exams)
@@ -235,6 +228,27 @@ public partial class MathExamGeneratorContext : DbContext
             entity.HasOne(d => d.ExamMatrix).WithMany(p => p.Exams)
                 .HasForeignKey(d => d.ExamMatrixId)
                 .HasConstraintName("FK_Exam.ExamMatrixId");
+        });
+
+        modelBuilder.Entity<ExamDoing>(entity =>
+        {
+            entity.HasKey(e => e.Id).HasName("PK__TestHist__3214EC07CB43148D");
+
+            entity.ToTable("ExamDoing");
+
+            entity.Property(e => e.Id).ValueGeneratedNever();
+            entity.Property(e => e.CreateAt).HasColumnType("datetime");
+            entity.Property(e => e.DeleteAt).HasColumnType("datetime");
+            entity.Property(e => e.Status).HasMaxLength(50);
+            entity.Property(e => e.UpdateAt).HasColumnType("datetime");
+
+            entity.HasOne(d => d.Account).WithMany(p => p.ExamDoings)
+                .HasForeignKey(d => d.AccountId)
+                .HasConstraintName("FK_ExamDoing.AccountId");
+
+            entity.HasOne(d => d.Exam).WithMany(p => p.ExamDoings)
+                .HasForeignKey(d => d.ExamId)
+                .HasConstraintName("FK_ExamDoing_Exam");
         });
 
         modelBuilder.Entity<ExamExchange>(entity =>
@@ -248,14 +262,14 @@ public partial class MathExamGeneratorContext : DbContext
             entity.Property(e => e.DeleteAt).HasColumnType("datetime");
             entity.Property(e => e.UpdateAt).HasColumnType("datetime");
 
-            entity.HasOne(d => d.Teacher).WithMany(p => p.ExamExchanges)
-                .HasForeignKey(d => d.TeacherId)
-                .HasConstraintName("FK_ExamExchange.TeacherId");
+            entity.HasOne(d => d.Account).WithMany(p => p.ExamExchanges)
+                .HasForeignKey(d => d.AccountId)
+                .HasConstraintName("FK_ExamExchange_Account");
         });
 
         modelBuilder.Entity<ExamMatrix>(entity =>
         {
-            entity.HasKey(e => e.Id).HasName("PK__tmp_ms_x__3214EC0753331762");
+            entity.HasKey(e => e.Id).HasName("PK__tmp_ms_x__3214EC07B5283104");
 
             entity.ToTable("ExamMatrix");
 
@@ -263,6 +277,7 @@ public partial class MathExamGeneratorContext : DbContext
             entity.Property(e => e.CreateAt).HasColumnType("datetime");
             entity.Property(e => e.DeleteAt).HasColumnType("datetime");
             entity.Property(e => e.Grade).HasMaxLength(50);
+            entity.Property(e => e.Level).HasMaxLength(50);
             entity.Property(e => e.Name).HasMaxLength(200);
             entity.Property(e => e.UpdateAt).HasColumnType("datetime");
 
@@ -315,19 +330,6 @@ public partial class MathExamGeneratorContext : DbContext
                 .HasConstraintName("FK_LikeComment.CommentId");
         });
 
-        modelBuilder.Entity<Location>(entity =>
-        {
-            entity.HasKey(e => e.Id).HasName("PK__Location__3214EC07D521D7BB");
-
-            entity.ToTable("Location");
-
-            entity.Property(e => e.Id).ValueGeneratedNever();
-            entity.Property(e => e.CreateAt).HasColumnType("datetime");
-            entity.Property(e => e.DeleteAt).HasColumnType("datetime");
-            entity.Property(e => e.Status).HasMaxLength(50);
-            entity.Property(e => e.UpdateAt).HasColumnType("datetime");
-        });
-
         modelBuilder.Entity<MatrixSection>(entity =>
         {
             entity.HasKey(e => e.Id).HasName("PK__MatrixSe__3214EC07139DB572");
@@ -370,9 +372,39 @@ public partial class MathExamGeneratorContext : DbContext
                 .HasConstraintName("FK_MatrixSectionDetail.MatrixSectionId");
         });
 
+        modelBuilder.Entity<Package>(entity =>
+        {
+            entity.ToTable("Package");
+
+            entity.Property(e => e.Id).ValueGeneratedNever();
+            entity.Property(e => e.CreateAt).HasColumnType("datetime");
+            entity.Property(e => e.DeleteAt).HasColumnType("datetime");
+            entity.Property(e => e.Name).HasMaxLength(50);
+            entity.Property(e => e.Price).HasColumnType("decimal(18, 2)");
+            entity.Property(e => e.UpdateAt).HasColumnType("datetime");
+        });
+
+        modelBuilder.Entity<PackageOrder>(entity =>
+        {
+            entity.ToTable("PackageOrder");
+
+            entity.Property(e => e.Id).ValueGeneratedNever();
+            entity.Property(e => e.CreateAt).HasColumnType("datetime");
+            entity.Property(e => e.DeleteAt).HasColumnType("datetime");
+            entity.Property(e => e.UpdateAt).HasColumnType("datetime");
+
+            entity.HasOne(d => d.Account).WithMany(p => p.PackageOrders)
+                .HasForeignKey(d => d.AccountId)
+                .HasConstraintName("FK_PackageOrder_Account");
+
+            entity.HasOne(d => d.Package).WithMany(p => p.PackageOrders)
+                .HasForeignKey(d => d.PackageId)
+                .HasConstraintName("FK_PackageOrder_Package");
+        });
+
         modelBuilder.Entity<Question>(entity =>
         {
-            entity.HasKey(e => e.Id).HasName("PK__Question__3214EC07D803F53A");
+            entity.HasKey(e => e.Id).HasName("PK__tmp_ms_x__3214EC07AEE8AD88");
 
             entity.ToTable("Question");
 
@@ -408,62 +440,18 @@ public partial class MathExamGeneratorContext : DbContext
             entity.Property(e => e.UpdateAt).HasColumnType("datetime");
             entity.Property(e => e.YourAnswer).HasMaxLength(50);
 
-            entity.HasOne(d => d.HistoryTest).WithMany(p => p.QuestionHistories)
-                .HasForeignKey(d => d.HistoryTestId)
-                .HasConstraintName("FK_QuestionHistory.HistoryTestId");
+            entity.HasOne(d => d.ExamDoing).WithMany(p => p.QuestionHistories)
+                .HasForeignKey(d => d.ExamDoingId)
+                .HasConstraintName("FK_QuestionHistory.ExamDoingId");
 
             entity.HasOne(d => d.Question).WithMany(p => p.QuestionHistories)
                 .HasForeignKey(d => d.QuestionId)
                 .HasConstraintName("FK_QuestionHistory.QuestionId");
         });
 
-        modelBuilder.Entity<Quiz>(entity =>
-        {
-            entity.HasKey(e => e.Id).HasName("PK__tmp_ms_x__3214EC07C8687CCD");
-
-            entity.ToTable("Quiz");
-
-            entity.Property(e => e.Id).ValueGeneratedNever();
-            entity.Property(e => e.CreateAt).HasColumnType("datetime");
-            entity.Property(e => e.DeleteAt).HasColumnType("datetime");
-            entity.Property(e => e.UpdateAt).HasColumnType("datetime");
-
-            entity.HasOne(d => d.Account).WithMany(p => p.Quizzes)
-                .HasForeignKey(d => d.AccountId)
-                .HasConstraintName("FK_Quiz_Account");
-
-            entity.HasOne(d => d.BookChapter).WithMany(p => p.Quizzes)
-                .HasForeignKey(d => d.BookChapterId)
-                .HasConstraintName("FK_Quiz_BookChapter");
-
-            entity.HasOne(d => d.BookTopic).WithMany(p => p.Quizzes)
-                .HasForeignKey(d => d.BookTopicId)
-                .HasConstraintName("FK_Quiz_BookTopic");
-        });
-
-        modelBuilder.Entity<QuizQuestion>(entity =>
-        {
-            entity.HasKey(e => e.Id).HasName("PK__QuizQues__3214EC07A13964ED");
-
-            entity.ToTable("QuizQuestion");
-
-            entity.Property(e => e.Id).ValueGeneratedNever();
-            entity.Property(e => e.CreateAt).HasColumnType("datetime");
-            entity.Property(e => e.DeleteAt).HasColumnType("datetime");
-            entity.Property(e => e.UpdateAt).HasColumnType("datetime");
-
-            entity.HasOne(d => d.Question).WithMany(p => p.QuizQuestions)
-                .HasForeignKey(d => d.QuestionId)
-                .HasConstraintName("FK_QuizQuestion.QuestionId");
-
-            entity.HasOne(d => d.Quiz).WithMany(p => p.QuizQuestions)
-                .HasForeignKey(d => d.QuizId)
-                .HasConstraintName("FK_QuizQuestion.QuizId");
-        });
-
         modelBuilder.Entity<Reply>(entity =>
         {
-            entity.HasKey(e => e.Id).HasName("PK__Reply__3214EC077FECEAA1");
+            entity.HasKey(e => e.Id).HasName("PK__tmp_ms_x__3214EC071FCD3552");
 
             entity.ToTable("Reply");
 
@@ -534,53 +522,6 @@ public partial class MathExamGeneratorContext : DbContext
                 .HasConstraintName("FK_SubjectBook.SubjectId");
         });
 
-        modelBuilder.Entity<Teacher>(entity =>
-        {
-            entity.HasKey(e => e.Id).HasName("PK__Teacher__3214EC07A1BF5CE2");
-
-            entity.ToTable("Teacher");
-
-            entity.HasIndex(e => e.AccountId, "IX_Teacher_AccountId").IsUnique();
-
-            entity.Property(e => e.Id).ValueGeneratedNever();
-            entity.Property(e => e.CreateAt).HasColumnType("datetime");
-            entity.Property(e => e.DeleteAt).HasColumnType("datetime");
-            entity.Property(e => e.UpdateAt).HasColumnType("datetime");
-
-            entity.HasOne(d => d.Account).WithOne(p => p.Teacher)
-                .HasForeignKey<Teacher>(d => d.AccountId)
-                .HasConstraintName("FK_Teacher_Account");
-
-            entity.HasOne(d => d.Location).WithMany(p => p.Teachers)
-                .HasForeignKey(d => d.LocationId)
-                .HasConstraintName("FK_Teacher.LocationId");
-        });
-
-        modelBuilder.Entity<TestHistory>(entity =>
-        {
-            entity.HasKey(e => e.Id).HasName("PK__TestHist__3214EC07CB43148D");
-
-            entity.ToTable("TestHistory");
-
-            entity.Property(e => e.Id).ValueGeneratedNever();
-            entity.Property(e => e.CreateAt).HasColumnType("datetime");
-            entity.Property(e => e.DeleteAt).HasColumnType("datetime");
-            entity.Property(e => e.Status).HasMaxLength(50);
-            entity.Property(e => e.UpdateAt).HasColumnType("datetime");
-
-            entity.HasOne(d => d.Account).WithMany(p => p.TestHistories)
-                .HasForeignKey(d => d.AccountId)
-                .HasConstraintName("FK_TestHistory.AccountId");
-
-            entity.HasOne(d => d.Exam).WithMany(p => p.TestHistories)
-                .HasForeignKey(d => d.ExamId)
-                .HasConstraintName("FK_TestHistory_Exam");
-
-            entity.HasOne(d => d.Quiz).WithMany(p => p.TestHistories)
-                .HasForeignKey(d => d.QuizId)
-                .HasConstraintName("FK_TestHistory.QuizId");
-        });
-
         modelBuilder.Entity<TestStorage>(entity =>
         {
             entity.HasKey(e => e.Id).HasName("PK__TestStor__3214EC07B0E2ADC8");
@@ -599,15 +540,11 @@ public partial class MathExamGeneratorContext : DbContext
             entity.HasOne(d => d.Exam).WithMany(p => p.TestStorages)
                 .HasForeignKey(d => d.ExamId)
                 .HasConstraintName("FK_TestStorage.ExamId");
-
-            entity.HasOne(d => d.Quiz).WithMany(p => p.TestStorages)
-                .HasForeignKey(d => d.QuizId)
-                .HasConstraintName("FK_TestStorage.QuizId");
         });
 
         modelBuilder.Entity<Transaction>(entity =>
         {
-            entity.HasKey(e => e.Id).HasName("PK__Transact__3214EC0743F611D8");
+            entity.HasKey(e => e.Id).HasName("PK__tmp_ms_x__3214EC07DC162513");
 
             entity.ToTable("Transaction");
 
@@ -626,25 +563,17 @@ public partial class MathExamGeneratorContext : DbContext
                 .HasForeignKey(d => d.DepositId)
                 .HasConstraintName("FK_Transaction.DepositId");
 
+            entity.HasOne(d => d.ExamDoing).WithMany(p => p.Transactions)
+                .HasForeignKey(d => d.ExamDoingId)
+                .HasConstraintName("FK_Transaction_ExamDoingId");
+
+            entity.HasOne(d => d.PackageOrder).WithMany(p => p.Transactions)
+                .HasForeignKey(d => d.PackageOrderId)
+                .HasConstraintName("FK_Transaction_PackageOrder");
+
             entity.HasOne(d => d.Wallet).WithMany(p => p.Transactions)
                 .HasForeignKey(d => d.WalletId)
                 .HasConstraintName("FK_Transaction.WalletId");
-        });
-
-        modelBuilder.Entity<UserInfo>(entity =>
-        {
-            entity.HasKey(e => e.Id).HasName("PK__UserInfo__3214EC07B7F19D0F");
-
-            entity.ToTable("UserInfo");
-
-            entity.Property(e => e.Id).ValueGeneratedNever();
-            entity.Property(e => e.CreateAt).HasColumnType("datetime");
-            entity.Property(e => e.DeleteAt).HasColumnType("datetime");
-            entity.Property(e => e.UpdateAt).HasColumnType("datetime");
-
-            entity.HasOne(d => d.Account).WithMany(p => p.UserInfos)
-                .HasForeignKey(d => d.AccountId)
-                .HasConstraintName("FK_UserInfo.AccountId");
         });
 
         modelBuilder.Entity<Wallet>(entity =>
