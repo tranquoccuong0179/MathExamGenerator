@@ -75,18 +75,7 @@ namespace MathExamGenerator.Service.Implement
             account.AvatarUrl = await _uploadService.UploadImage(request.AvatarUrl);
 
             await _unitOfWork.GetRepository<Account>().InsertAsync(account);
-
-            var userInfo = new UserInfo()
-            {
-                Id = Guid.NewGuid(),
-                Point = 0,
-                AccountId = account.Id,
-                IsActive = true,
-                CreateAt = TimeUtil.GetCurrentSEATime(),
-                UpdateAt = TimeUtil.GetCurrentSEATime(),
-            };
-
-            await _unitOfWork.GetRepository<UserInfo>().InsertAsync(userInfo);
+            
 
             var wallet = new Wallet()
             {
@@ -252,7 +241,7 @@ namespace MathExamGenerator.Service.Implement
 
             var account = await _unitOfWork.GetRepository<Account>().SingleOrDefaultAsync(
                 predicate: a => a.Email.Equals(email) && a.IsActive == true && a.DeleteAt == null,
-                include: a => a.Include(a => a.UserInfos)) ?? throw new NotFoundException("Không tìm thấy tài khoản");
+                include: a => a.Include(a => a.Wallets)) ?? throw new NotFoundException("Không tìm thấy tài khoản");
             
                 await redisDb.KeyDeleteAsync(key);
 
@@ -263,15 +252,14 @@ namespace MathExamGenerator.Service.Implement
                 Data = new GetUserResponse
                 {
                     AccountId = account.Id,
-                    UserId = account.UserInfos.FirstOrDefault().Id,
                     FullName = account.FullName,
                     Email = account.Email,
                     Phone = account.Phone,
                     DateOfBirth = account.DateOfBirth,
                     Gender = account.Gender,
-                    QuizFree = account.QuizFree,
+                    FreeTries = account.FreeTries,
                     AvatarUrl = account.AvatarUrl,
-                    Point = account.UserInfos.FirstOrDefault().Point,
+                    Point = account.Wallets.FirstOrDefault().Point,
                     IsPremium = account.IsPremium,
                 }
             };
@@ -281,7 +269,7 @@ namespace MathExamGenerator.Service.Implement
         {
             var account = await _unitOfWork.GetRepository<Account>().SingleOrDefaultAsync(
                 predicate: a => a.Email.Equals(request.Email) && a.IsActive == true && a.DeleteAt == null,
-                include: a => a.Include(a => a.UserInfos)) ?? throw new NotFoundException("Không tìm thấy tài khoản");
+                include: a => a.Include(a => a.Wallets)) ?? throw new NotFoundException("Không tìm thấy tài khoản");
 
             if (!request.NewPassword.Equals(request.ConfirmPassword))
             {
@@ -307,15 +295,14 @@ namespace MathExamGenerator.Service.Implement
                 Data = new GetUserResponse()
                 {
                     AccountId = account.Id,
-                    UserId = account.UserInfos.FirstOrDefault().Id,
                     FullName = account.FullName,
                     Email = account.Email,
                     Phone = account.Phone,
                     DateOfBirth = account.DateOfBirth,
                     Gender = account.Gender,
-                    QuizFree = account.QuizFree,
+                    FreeTries = account.FreeTries,
                     AvatarUrl = account.AvatarUrl,
-                    Point = account.UserInfos.FirstOrDefault().Point,
+                    Point = account.Wallets.FirstOrDefault().Point,
                     IsPremium = account.IsPremium,
                 }
             };
@@ -326,10 +313,9 @@ namespace MathExamGenerator.Service.Implement
             Guid? accountId = UserUtil.GetAccountId(_httpContextAccessor.HttpContext);
 
             var account = await _unitOfWork.GetRepository<Account>().SingleOrDefaultAsync(
-                predicate: a => a.Id.Equals(accountId) && a.IsActive == true) ?? throw new NotFoundException("Không tìm thấy tài khoản");
-
-            var user = await _unitOfWork.GetRepository<UserInfo>().SingleOrDefaultAsync(
-                predicate: u => u.AccountId.Equals(accountId) && u.IsActive == true) ?? throw new NotFoundException("Không tìm thấy thông tin người dùng");
+                predicate: a => a.Id.Equals(accountId) && a.IsActive == true,
+                include: a => a.Include(a => a.Wallets)) 
+                          ?? throw new NotFoundException("Không tìm thấy tài khoản");
 
             account.AvatarUrl = await _uploadService.UploadImage(file);
 
@@ -349,15 +335,14 @@ namespace MathExamGenerator.Service.Implement
                 Data = new GetUserResponse
                 {
                     AccountId = account.Id,
-                    UserId = user.Id,
                     FullName = account.FullName,
                     Email = account.Email,
                     Phone = account.Phone,
                     DateOfBirth = account.DateOfBirth,
                     Gender = account.Gender,
-                    QuizFree = account.QuizFree,
+                    FreeTries = account.FreeTries,
                     AvatarUrl = account.AvatarUrl,
-                    Point = user.Point,
+                    Point = account.Wallets.FirstOrDefault().Point,
                     IsPremium = account.IsPremium,
                 }
             };

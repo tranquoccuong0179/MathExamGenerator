@@ -34,9 +34,6 @@ namespace MathExamGenerator.Service.Implement
             var comment = await _unitOfWork.GetRepository<Comment>().SingleOrDefaultAsync(
                 predicate: c => c.Id.Equals(id) && c.IsActive == true) ?? throw new NotFoundException("Không tìm thấy bình luận");
 
-            var userInfo = await _unitOfWork.GetRepository<UserInfo>().SingleOrDefaultAsync(
-                predicate: u => u.AccountId.Equals(comment.AccountId) && u.IsActive == true) ?? throw new NotFoundException("Không tìm thấy thông tin người dùng bình luận câu hỏi");
-
             var reply = new Reply
             {
                 Id = Guid.NewGuid(),
@@ -49,12 +46,7 @@ namespace MathExamGenerator.Service.Implement
             };
 
             await _unitOfWork.GetRepository<Reply>().InsertAsync(reply);
-
-            userInfo.Point += 1;
-            userInfo.UpdateAt = TimeUtil.GetCurrentSEATime();
-
-            _unitOfWork.GetRepository<UserInfo>().UpdateAsync(userInfo);
-
+            
             var isSuccess = await _unitOfWork.CommitAsync() > 0;
 
             if (!isSuccess)

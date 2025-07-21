@@ -24,7 +24,7 @@ namespace MathExamGenerator.Model.Payload.Response.User
 
         public string? Gender { get; set; }
 
-        public int? QuizFree { get; set; }
+        public int? FreeTries { get; set; }
 
         public double? Point { get; set; }
 
