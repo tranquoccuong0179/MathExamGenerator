@@ -176,45 +176,6 @@ namespace MathExamGenerator.Service.Implement
             return templateContent;
         }
 
-        public async Task<BaseResponse<RegisterResponse>> RegisterManager(RegisterManagerRequest request)
-        {
-            var accountList = await _unitOfWork.GetRepository<Account>().GetListAsync();
-            if (accountList.Any(a => a.UserName.Equals(request.UserName)))
-            {
-                throw new BadHttpRequestException("Tên đăng nhập đã tồn tại");
-            }
-
-            if (accountList.Any(a => a.Email.Equals(request.Email)))
-            {
-                throw new BadHttpRequestException("Email đã tồn tại");
-            }
-
-            if (accountList.Any(a => a.Phone.Equals(request.Phone)))
-            {
-                throw new BadHttpRequestException("Số điện thoại đã tồn tại");
-            }
-
-            var account = _mapper.Map<Account>(request);
-
-            account.AvatarUrl = await _uploadService.UploadImage(request.AvatarUrl);
-
-            await _unitOfWork.GetRepository<Account>().InsertAsync(account);
-
-            var isSuccess = await _unitOfWork.CommitAsync() > 0;
-
-            if (!isSuccess)
-            {
-                throw new Exception("Một lỗi đã xảy ra trong quá trình đăng ký tài khoản");
-            }
-
-            return new BaseResponse<RegisterResponse>
-            {
-                Status = StatusCodes.Status200OK.ToString(),
-                Message = "Tạo tài khoản thành công",
-                Data = _mapper.Map<RegisterResponse>(account)
-            };
-        }
-
         public async Task<BaseResponse<bool>> ChangePassword(ChangePasswordRequest request)
         {
             Guid? accountId = UserUtil.GetAccountId(_httpContextAccessor.HttpContext);

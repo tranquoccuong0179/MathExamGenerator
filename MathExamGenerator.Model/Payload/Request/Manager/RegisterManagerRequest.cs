@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 using MathExamGenerator.Model.Enum;
 using Microsoft.AspNetCore.Http;
 
-namespace MathExamGenerator.Model.Payload.Request.Account
+namespace MathExamGenerator.Model.Payload.Request.Manager
 {
     public class RegisterManagerRequest
     {

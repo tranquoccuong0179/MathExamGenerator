@@ -7,6 +7,7 @@ using AutoMapper;
 using MathExamGenerator.Model.Entity;
 using MathExamGenerator.Model.Enum;
 using MathExamGenerator.Model.Payload.Request.Account;
+using MathExamGenerator.Model.Payload.Request.Manager;
 using MathExamGenerator.Model.Payload.Request.Teacher;
 using MathExamGenerator.Model.Payload.Response.Account;
 using MathExamGenerator.Model.Utils;

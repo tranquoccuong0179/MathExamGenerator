@@ -15,7 +15,6 @@
             public const string AccountEndPoint = ApiEndpoint + "/account";
             public const string Otp = AccountEndPoint + "/otp";
             public const string Register = AccountEndPoint + "/register";
-            public const string RegisterManager = AccountEndPoint + "/manager";
             public const string ChangePassword = AccountEndPoint + "/change-password";
             public const string ForgotPassword = AccountEndPoint + "/forgot-password";
             public const string VerifyOtp = AccountEndPoint + "/verify-otp";
@@ -265,6 +264,15 @@
             public const string GetRealtimeUsers = AnalyticsEndPoint + "/realtime-users";
             public const string GetRegisteredUsersByDay = AnalyticsEndPoint + "/registered-users-by-day";
             public const string GetPremiumRevenueByDay = AnalyticsEndPoint + "/premium-revenue-by-day";
+        }
+        
+        public static class Manager
+        {
+            public const string ManagerEndPoint = ApiEndpoint + "/manager";
+            public const string RegisterManager = ManagerEndPoint;
+            public const string GetAllManager = ManagerEndPoint;
+            public const string GetManager = ManagerEndPoint + "/{id}";
+            public const string DeleteManager = ManagerEndPoint + "/{id}";
         }
     }
 }

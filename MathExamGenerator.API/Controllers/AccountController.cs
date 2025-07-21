@@ -38,17 +38,6 @@ namespace MathExamGenerator.API.Controllers
             return StatusCode(int.Parse(response.Status), response);
         }
 
-        [HttpPost(ApiEndPointConstant.Account.RegisterManager)]
-        [ProducesResponseType(typeof(BaseResponse<RegisterResponse>), StatusCodes.Status200OK)]
-        [ProducesResponseType(typeof(BaseResponse<RegisterResponse>), StatusCodes.Status404NotFound)]
-        [ProducesResponseType(typeof(BaseResponse<RegisterResponse>), StatusCodes.Status400BadRequest)]
-        [ProducesErrorResponseType(typeof(ProblemDetails))]
-        public async Task<IActionResult> RegisterManager([FromForm] RegisterManagerRequest request)
-        {
-            var response = await _accountService.RegisterManager(request);
-            return StatusCode(int.Parse(response.Status), response);
-        }
-
         [HttpPut(ApiEndPointConstant.Account.ChangePassword)]
         [ProducesResponseType(typeof(BaseResponse<bool>), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(BaseResponse<bool>), StatusCodes.Status404NotFound)]
