@@ -11,7 +11,7 @@ namespace MathExamGenerator.API.Controllers
     public class PackageController : BaseController<PackageController>
     {
         private readonly IPackageService _packageService;
-        public PackageController(ILogger<PackageController> logger,IPackageService packageService) : base(logger)
+        public PackageController(ILogger<PackageController> logger, IPackageService packageService) : base(logger)
         {
             _packageService = packageService;
         }
@@ -55,7 +55,24 @@ namespace MathExamGenerator.API.Controllers
             var response = await _packageService.GetAll(pageNumber, pageSize);
             return StatusCode(int.Parse(response.Status), response);
         }
+        [HttpPut(ApiEndPointConstant.Package.UpdatePackage)]
+        [ProducesResponseType(typeof(BaseResponse<GetPackageResponse>), StatusCodes.Status200OK)]
+        [ProducesErrorResponseType(typeof(ProblemDetails))]
+        public async Task<IActionResult> UpdatePackage([FromQuery] Guid id, [FromBody] UpdatePackageRequest request)
+        {
+            var response = await _packageService.Update(id, request);
+            return StatusCode(int.Parse(response.Status), response);
 
-
+        }
+        [HttpGet(ApiEndPointConstant.Package.GetActivePackage)]
+        [ProducesResponseType(typeof(BaseResponse<IPaginate<GetPackageResponse>>), StatusCodes.Status200OK)]
+        [ProducesErrorResponseType(typeof(ProblemDetails))]
+        public async Task<IActionResult> GetActivePackage([FromQuery] int? page, [FromQuery] int? size)
+        {
+            int pageNumber = page ?? 1;
+            int pageSize = size ?? 10;
+            var response = await _packageService.GetActive(pageNumber, pageSize);
+            return StatusCode(int.Parse(response.Status), response);
+        }
     }
 }

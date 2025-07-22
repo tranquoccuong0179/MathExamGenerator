@@ -6,9 +6,9 @@ using System.Threading.Tasks;
 
 namespace MathExamGenerator.Model.Payload.Response.ExamExchange
 {
-    public class GetExamExchangeTeacherResponse : GetExamExchangeResponse
+    public class GetExamExchangeStaffResponse : GetExamExchangeResponse
     {
-        public Guid TeacherId { get; set; }
-        public string TeacherName { get; set; }
+        public Guid StaffId { get; set; }
+        public string StaffName { get; set; }
     }
 }

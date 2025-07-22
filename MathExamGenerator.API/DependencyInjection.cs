@@ -63,6 +63,9 @@ namespace MathExamGenerator.API
             services.AddScoped<IGoogleAuthenticationService, GoogleAuthenticateService>();
             services.AddScoped<IAnalyticsService, AnalyticsService>();
             services.AddScoped<IManagerService, ManagerService>();
+            services.AddScoped<IReportService, ReportService>();
+            services.AddScoped<IPackageService, PackageService>();
+            services.AddScoped<ICategoryService, CategoryService>();
             services.AddScoped<IStaffService, StaffService>();
 
             return services;
