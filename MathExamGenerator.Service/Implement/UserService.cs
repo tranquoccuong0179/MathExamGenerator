@@ -102,7 +102,6 @@ namespace MathExamGenerator.Service.Implement
                 selector: u => new GetUserResponse
                 {
                     AccountId = u.Id,
-                    UserId = u.Id,
                     FullName = u.FullName,
                     Email = u.Email,
                     Phone = u.Phone,

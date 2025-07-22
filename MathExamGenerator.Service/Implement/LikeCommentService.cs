@@ -31,10 +31,7 @@ namespace MathExamGenerator.Service.Implement
 
             var comment = await _unitOfWork.GetRepository<Comment>().SingleOrDefaultAsync(
                 predicate: c => c.Id.Equals(id) && c.IsActive == true) ?? throw new NotFoundException("Không tìm thấy bình luận");
-
-            var userInfo = await _unitOfWork.GetRepository<UserInfo>().SingleOrDefaultAsync(
-                predicate: u => u.AccountId.Equals(comment.AccountId) && u.IsActive == true) ?? throw new NotFoundException("Không tìm thấy thông tin người dùng bình luận câu hỏi");
-
+            
             var existedLike = await _unitOfWork.GetRepository<LikeComment>().SingleOrDefaultAsync(
                 predicate: l => l.CommentId.Equals(comment.Id) && l.AccountId.Equals(accountId));
 
@@ -58,20 +55,7 @@ namespace MathExamGenerator.Service.Implement
                 await _unitOfWork.GetRepository<LikeComment>().InsertAsync(likeComment);
                 liked = true;
             }
-
-            if (liked)
-            {
-                userInfo.Point += 10;
-                userInfo.UpdateAt = TimeUtil.GetCurrentSEATime();
-            }
-            else
-            {
-                userInfo.Point -= 10;
-                userInfo.UpdateAt = TimeUtil.GetCurrentSEATime();
-            }
-
-            _unitOfWork.GetRepository<UserInfo>().UpdateAsync(userInfo);
-
+            
             var isSuccess = await _unitOfWork.CommitAsync() > 0;
 
             if (!isSuccess)
