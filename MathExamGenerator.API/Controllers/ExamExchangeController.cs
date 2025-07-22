@@ -33,14 +33,14 @@ namespace MathExamGenerator.API.Controllers
             var response = await _service.Create(request);
             return StatusCode(int.Parse(response.Status), response);
         }
-        [HttpGet(ApiEndPointConstant.ExamEchange.GetExamExchangeByTeacher)]
+        [HttpGet(ApiEndPointConstant.ExamEchange.GetExamExchangeByStaff)]
         [ProducesResponseType(typeof(BaseResponse<IPaginate<ExamExchangeResponse>>), StatusCodes.Status200OK)]
         [ProducesErrorResponseType(typeof(ProblemDetails))]
-        public async Task<IActionResult> GetExamExchangeByTeacher([FromQuery] int? page, [FromQuery] int? size)
+        public async Task<IActionResult> GetExamExchangeByStaff([FromQuery] int? page, [FromQuery] int? size)
         {
             int pageNumber = page ?? 1;
             int pageSize = size ?? 10;
-            var response = await _service.GetByTeacher(pageNumber, pageSize);
+            var response = await _service.GetByStaff(pageNumber, pageSize);
             return StatusCode(int.Parse(response.Status), response);
         }
         [HttpGet(ApiEndPointConstant.ExamEchange.GetExamExchangeById)]
@@ -69,14 +69,14 @@ namespace MathExamGenerator.API.Controllers
             return StatusCode(int.Parse(response.Status), response);
         }
 
-        [HttpGet(ApiEndPointConstant.ExamEchange.GetAllTeacher)]
+        [HttpGet(ApiEndPointConstant.ExamEchange.GetAllStaff)]
         [ProducesResponseType(typeof(BaseResponse<IPaginate<GetExamExchangeTeacherResponse>>), StatusCodes.Status200OK)]
         [ProducesErrorResponseType(typeof(ProblemDetails))]
-        public async Task<IActionResult> GetAllTeacher([FromQuery] int? page, [FromQuery] int? size)
+        public async Task<IActionResult> GetAllStaff([FromQuery] int? page, [FromQuery] int? size)
         {
             int pageNumber = page ?? 1;
             int pageSize = size ?? 10;
-            var response = await _service.GetAllTeacher(pageNumber, pageSize);
+            var response = await _service.GetAllStaff(pageNumber, pageSize);
             return StatusCode(int.Parse(response.Status), response);
         }
         [HttpPut(ApiEndPointConstant.ExamEchange.ApproveExamExchange)]
