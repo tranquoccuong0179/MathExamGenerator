@@ -24,5 +24,7 @@ namespace MathExamGenerator.Model.Payload.Response.Account
         public string? Gender { get; set; }
 
         public string? AvatarUrl { get; set; }
+        
+        public string? Role { get; set; }
     }
 }

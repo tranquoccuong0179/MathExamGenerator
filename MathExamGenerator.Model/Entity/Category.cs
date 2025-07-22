@@ -11,8 +11,6 @@ public partial class Category
 
     public string? Grade { get; set; }
 
-    public bool? IsTrue { get; set; }
-
     public bool? IsActive { get; set; }
 
     public DateTime? CreateAt { get; set; }

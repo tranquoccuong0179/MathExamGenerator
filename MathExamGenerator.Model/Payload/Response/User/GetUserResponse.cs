@@ -9,9 +9,7 @@ namespace MathExamGenerator.Model.Payload.Response.User
     public class GetUserResponse
     {
         public Guid? AccountId { get; set; }
-
-        public Guid UserId { get; set; }
-
+        
         public string? FullName { get; set; }
 
         public string? Email { get; set; }
@@ -24,7 +22,7 @@ namespace MathExamGenerator.Model.Payload.Response.User
 
         public string? Gender { get; set; }
 
-        public int? QuizFree { get; set; }
+        public int? FreeTries { get; set; }
 
         public double? Point { get; set; }
 

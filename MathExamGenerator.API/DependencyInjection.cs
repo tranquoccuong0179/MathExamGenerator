@@ -38,11 +38,9 @@ namespace MathExamGenerator.API
             services.AddScoped<IAccountService, AccountService>();
             services.AddScoped<IEmailSender, EmailSender>();
             services.AddScoped<IAuthenticateService, AuthenticateService>();
-            services.AddScoped<ITeacherService, TeacherService>();
             services.AddScoped<IExamExchangeService, ExamExchangeService>();
             services.AddScoped<IBookTopicService, BookTopicService>();
             services.AddScoped<IBookChapterService, BookChapterService>();
-            services.AddScoped<ILocationService, LocationService>();
             services.AddScoped<IExamService, ExamService>();
             services.AddScoped<IUploadService, UploadService>();
             services.AddScoped<IUserService, UserService>();
@@ -54,18 +52,21 @@ namespace MathExamGenerator.API
             services.AddScoped<IMatrixSectionService, MatrixSectionService>();
             services.AddScoped<IMatrixSectionDetailService, MatrixSectionDetailService>();
             services.AddScoped<ICommentService, CommentService>();
-            services.AddScoped<ITestHistoryService, TestHistoryService>();
+            services.AddScoped<IExamDoingService, ExamDoingService>();
             services.AddScoped<ILikeCommentService, LikeCommentService>();
             services.AddScoped<IReplyService, ReplyService>();
             services.AddScoped<IQuestionHistoryService, QuestionHistoryService>();
             services.AddScoped<ITestStorageService, TestStorageService>();
-            services.AddScoped<IQuizService, QuizService>();
             services.AddScoped<IQuestionService, QuestionService>();
             services.AddScoped<ITransactionService, TransactionService>();
             services.AddScoped<IPremiumService, PremiumService>();
             services.AddScoped<IGoogleAuthenticationService, GoogleAuthenticateService>();
             services.AddScoped<IAnalyticsService, AnalyticsService>();
             services.AddScoped<IManagerService, ManagerService>();
+            services.AddScoped<IReportService, ReportService>();
+            services.AddScoped<IPackageService, PackageService>();
+            services.AddScoped<ICategoryService, CategoryService>();
+            services.AddScoped<IStaffService, StaffService>();
 
             return services;
         }

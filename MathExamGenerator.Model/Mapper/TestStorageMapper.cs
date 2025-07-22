@@ -16,7 +16,7 @@ namespace MathExamGenerator.Model.Mapper
         public TestStorageMapper()
         {
             CreateMap<TestStorage, GetTestStorageResponse>()
-                .ForMember(dest => dest.Name, opt => opt.MapFrom(src => src.Exam != null ? src.Exam.Name : src.Quiz != null ? src.Quiz.Name : null));
+                .ForMember(dest => dest.Name, opt => opt.MapFrom(src => src.Exam.Name));
 
             CreateMap<CreateTestStorageRequest, TestStorage>()
                 .ForMember(dest => dest.Id, opt => opt.MapFrom(_ => Guid.NewGuid()))

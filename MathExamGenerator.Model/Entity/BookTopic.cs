@@ -26,6 +26,4 @@ public partial class BookTopic
     public virtual ICollection<MatrixSectionDetail> MatrixSectionDetails { get; set; } = new List<MatrixSectionDetail>();
 
     public virtual ICollection<Question> Questions { get; set; } = new List<Question>();
-
-    public virtual ICollection<Quiz> Quizzes { get; set; } = new List<Quiz>();
 }

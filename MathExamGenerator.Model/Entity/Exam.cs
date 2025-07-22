@@ -7,13 +7,15 @@ public partial class Exam
 {
     public Guid Id { get; set; }
 
+    public Guid? AccountId { get; set; }
+
+    public Guid? ExamMatrixId { get; set; }
+
     public string? Name { get; set; }
 
     public long? Time { get; set; }
 
-    public DateTime? StartDate { get; set; }
-
-    public DateTime? EndDate { get; set; }
+    public string? Status { get; set; }
 
     public bool? IsActive { get; set; }
 
@@ -23,17 +25,13 @@ public partial class Exam
 
     public DateTime? DeleteAt { get; set; }
 
-    public Guid? ExamMatrixId { get; set; }
-
-    public Guid? AccountId { get; set; }
-
     public virtual Account? Account { get; set; }
+
+    public virtual ICollection<ExamDoing> ExamDoings { get; set; } = new List<ExamDoing>();
 
     public virtual ExamMatrix? ExamMatrix { get; set; }
 
     public virtual ICollection<ExamQuestion> ExamQuestions { get; set; } = new List<ExamQuestion>();
-
-    public virtual ICollection<TestHistory> TestHistories { get; set; } = new List<TestHistory>();
 
     public virtual ICollection<TestStorage> TestStorages { get; set; } = new List<TestStorage>();
 }

@@ -120,15 +120,14 @@
         public static class ExamEchange
         {
             public const string ExamExchangeEndPoint = ApiEndpoint + "/exam-exchange";
-            public const string ExamExchangeTeacherEndPoint = ApiEndpoint + "/teacher";
-
+            public const string ExamExchangeStaffEndPoint = ApiEndpoint + "/staff";
             public const string GetExamExchange = ExamExchangeEndPoint;
             public const string CreateExamExchange = ExamExchangeEndPoint;
-            public const string GetExamExchangeByTeacher = ExamExchangeTeacherEndPoint + "/exam-exchange";
+            public const string GetExamExchangeByStaff = ExamExchangeStaffEndPoint + "/exam-exchange";
             public const string GetExamExchangeById = ExamExchangeEndPoint + "/{id}";
             public const string UpdateExamExchange = ExamExchangeEndPoint + "/{id}";
             public const string DeleteExamExchange = ExamExchangeEndPoint + "/{id}";
-            public const string GetAllTeacher = ExamExchangeEndPoint;
+            public const string GetAllStaff = ExamExchangeEndPoint;
             public const string ApproveExamExchange = ExamExchangeEndPoint + "/status" +"/{id}";
         }
 
@@ -192,15 +191,15 @@
             public const string GetQuestionSolution = QuestionEndPoint + "/solution";
         }
 
-        public static class TestHistory
+        public static class ExamDoing
         {
-            public const string TestHistoryEndpoint = ApiEndpoint + "/test-history";
-            public const string GetAll = TestHistoryEndpoint;
-            public const string GetById = TestHistoryEndpoint + "/{id}";
-            public const string Create = TestHistoryEndpoint;
-            public const string Update = TestHistoryEndpoint + "/{id}";
-            public const string Delete = TestHistoryEndpoint + "/{id}";
-            public const string GetQuestionHistoriesByTestId = TestHistoryEndpoint + "/{id}/question-histories";
+            public const string ExamDoingEndpoint = ApiEndpoint + "/test-history";
+            public const string GetAll = ExamDoingEndpoint;
+            public const string GetById = ExamDoingEndpoint + "/{id}";
+            public const string Create = ExamDoingEndpoint;
+            public const string Update = ExamDoingEndpoint + "/{id}";
+            public const string Delete = ExamDoingEndpoint + "/{id}";
+            public const string GetQuestionHistoriesByTestId = ExamDoingEndpoint + "/{id}/question-histories";
         }
 
         public static class Reply
@@ -274,5 +273,55 @@
             public const string GetManager = ManagerEndPoint + "/{id}";
             public const string DeleteManager = ManagerEndPoint + "/{id}";
         }
+
+        public static class Package
+        {
+            public const string PackageEndPoint = ApiEndpoint + "/package";
+            public const string CreatePackage = PackageEndPoint;
+            public const string GetAllPackage = PackageEndPoint;
+            public const string GetPackageById = PackageEndPoint + "/{id}";
+            public const string UpdatePackage = PackageEndPoint + "/{id}";
+            public const string DeletePackage = PackageEndPoint + "/{id}";
+            public const string GetActivePackage = PackageEndPoint + "/active";
+        }
+
+
+        public static class Report
+        {
+            public const string ReportEndPoint = ApiEndpoint + "/report";
+            public const string CreateReport = ReportEndPoint;
+            public const string GetAllReports = ReportEndPoint;
+            public const string GetReportById = ReportEndPoint + "/{id}";
+            public const string UpdateReport = ReportEndPoint + "/{id}";
+            public const string DeleteReport = ReportEndPoint + "/{id}";
+            public const string GetReportType = ReportEndPoint + "/type";
+
+        }
+
+        public static class Category
+        {
+            public const string CategoryEndPoint = ApiEndpoint + "/category";
+            public const string GetByGrade = CategoryEndPoint + "/grade/{grade}";
+            public const string GetAllCategories = CategoryEndPoint;
+            public const string GetCategoryById = CategoryEndPoint + "/{id}";
+            public const string CreateCategory = CategoryEndPoint;
+            public const string UpdateCategory = CategoryEndPoint + "/{id}";
+            public const string DeleteCategory = CategoryEndPoint + "/{id}";
+            public const string GetAllGrades = CategoryEndPoint + "/grades";
+
+        }
+
+        public static class Staff
+        {
+            public const string StaffEndPoint = ApiEndpoint + "/staff";
+            public const string RegisterStaff = StaffEndPoint;
+            public const string GetAllStaff = StaffEndPoint;
+            public const string GetStaffById = StaffEndPoint + "/{id}";
+            public const string GetProfile = StaffEndPoint + "/profile";
+            public const string DeleteStaff = StaffEndPoint + "/{id}";
+            public const string UpdateStaff = StaffEndPoint;
+        }
+
+
     }
 }

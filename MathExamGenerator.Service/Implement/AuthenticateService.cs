@@ -15,6 +15,7 @@ using MathExamGenerator.Model.Utils;
 using MathExamGenerator.Repository.Interface;
 using MathExamGenerator.Service.Interface;
 using Microsoft.AspNetCore.Http;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 
 namespace MathExamGenerator.Service.Implement
@@ -33,7 +34,7 @@ namespace MathExamGenerator.Service.Implement
                   || p.Phone.Equals(request.UsernameOrEmailOrPhone)) &&
                   p.Password.Equals(PasswordUtil.HashPassword(request.Password)) &&
                   (p.Role == RoleEnum.ADMIN.GetDescriptionFromEnum() ||
-                  p.Role == RoleEnum.TEACHER.GetDescriptionFromEnum() ||
+                  p.Role == RoleEnum.STAFF.GetDescriptionFromEnum() ||
                   p.Role == RoleEnum.MANAGER.GetDescriptionFromEnum() ||
                   p.Role == RoleEnum.USER.GetDescriptionFromEnum()) &&
                   p.IsActive == true &&
@@ -49,18 +50,22 @@ namespace MathExamGenerator.Service.Implement
             {
                 var today = DateOnly.FromDateTime(TimeUtil.GetCurrentSEATime());
 
-                var user = await _unitOfWork.GetRepository<UserInfo>().SingleOrDefaultAsync(
-                    predicate: u => u.AccountId.Equals(account.Id) && u.IsActive == true) ?? throw new NotFoundException("Không tìm thấy thông tin người dùng");
-
                 if (account.DailyLoginRewardedAt == null || account.DailyLoginRewardedAt.Value < today)
                 {
                     account.DailyLoginRewardedAt = today;
 
                     _unitOfWork.GetRepository<Account>().UpdateAsync(account);
 
-                    user.Point += 10;
+                    if (account.Role.Equals(RoleEnum.USER.GetDescriptionFromEnum()))
+                    {
+                        var wallet = await _unitOfWork.GetRepository<Wallet>().SingleOrDefaultAsync(
+                            predicate: w => w.AccountId.Equals(account.Id) && w.IsActive == true);
 
-                    _unitOfWork.GetRepository<UserInfo>().UpdateAsync(user);
+                        wallet.Point += 1;
+                        
+                        _unitOfWork.GetRepository<Wallet>().UpdateAsync(wallet);
+                    }
+                    
                     await _unitOfWork.CommitAsync();
                 }
             }

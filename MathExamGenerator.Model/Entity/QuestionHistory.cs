@@ -7,7 +7,7 @@ public partial class QuestionHistory
 {
     public Guid Id { get; set; }
 
-    public Guid? HistoryTestId { get; set; }
+    public Guid? ExamDoingId { get; set; }
 
     public Guid? QuestionId { get; set; }
 
@@ -23,7 +23,7 @@ public partial class QuestionHistory
 
     public DateTime? DeleteAt { get; set; }
 
-    public virtual TestHistory? HistoryTest { get; set; }
+    public virtual ExamDoing? ExamDoing { get; set; }
 
     public virtual Question? Question { get; set; }
 }

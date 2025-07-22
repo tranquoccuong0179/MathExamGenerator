@@ -11,8 +11,6 @@ public partial class TestStorage
 
     public Guid? ExamId { get; set; }
 
-    public Guid? QuizId { get; set; }
-
     public bool? Liked { get; set; }
 
     public bool? Seen { get; set; }
@@ -28,6 +26,4 @@ public partial class TestStorage
     public virtual Account? Account { get; set; }
 
     public virtual Exam? Exam { get; set; }
-
-    public virtual Quiz? Quiz { get; set; }
 }

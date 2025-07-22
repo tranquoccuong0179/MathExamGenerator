@@ -25,7 +25,13 @@ public partial class Account
 
     public string? AvatarUrl { get; set; }
 
-    public int? QuizFree { get; set; }
+    public int? FreeTries { get; set; }
+
+    public DateOnly? DailyLoginRewardedAt { get; set; }
+
+    public bool? IsPremium { get; set; }
+
+    public DateTime? PremiumExpireAt { get; set; }
 
     public bool? IsActive { get; set; }
 
@@ -35,15 +41,13 @@ public partial class Account
 
     public DateTime? DeleteAt { get; set; }
 
-    public DateOnly? DailyLoginRewardedAt { get; set; }
-
-    public bool? IsPremium { get; set; }
-
-    public DateTime? PremiumExpireAt { get; set; }
-
     public virtual ICollection<Comment> Comments { get; set; } = new List<Comment>();
 
     public virtual ICollection<Deposit> Deposits { get; set; } = new List<Deposit>();
+
+    public virtual ICollection<ExamDoing> ExamDoings { get; set; } = new List<ExamDoing>();
+
+    public virtual ICollection<ExamExchange> ExamExchanges { get; set; } = new List<ExamExchange>();
 
     public virtual ICollection<ExamMatrix> ExamMatrices { get; set; } = new List<ExamMatrix>();
 
@@ -51,7 +55,7 @@ public partial class Account
 
     public virtual ICollection<LikeComment> LikeComments { get; set; } = new List<LikeComment>();
 
-    public virtual ICollection<Quiz> Quizzes { get; set; } = new List<Quiz>();
+    public virtual ICollection<PackageOrder> PackageOrders { get; set; } = new List<PackageOrder>();
 
     public virtual ICollection<Reply> Replies { get; set; } = new List<Reply>();
 
@@ -59,13 +63,7 @@ public partial class Account
 
     public virtual ICollection<Report> ReportSendAccounts { get; set; } = new List<Report>();
 
-    public virtual Teacher? Teacher { get; set; }
-
-    public virtual ICollection<TestHistory> TestHistories { get; set; } = new List<TestHistory>();
-
     public virtual ICollection<TestStorage> TestStorages { get; set; } = new List<TestStorage>();
-
-    public virtual ICollection<UserInfo> UserInfos { get; set; } = new List<UserInfo>();
 
     public virtual ICollection<Wallet> Wallets { get; set; } = new List<Wallet>();
 }

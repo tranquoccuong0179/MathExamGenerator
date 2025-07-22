@@ -11,8 +11,6 @@ namespace MathExamGenerator.Model.Payload.Request.ExamExchange
     public class UpdateExamEchangeRequest
     {
         public Guid CategoryId { get; set; }
-        public string CategoryName { get; set; } = default!;
-        public string CategoryGrade { get; set; } = default!;
         public List<UpdateQuestionRequest> Questions { get; set; }
     }
 }
