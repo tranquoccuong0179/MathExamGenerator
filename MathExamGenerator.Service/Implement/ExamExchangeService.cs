@@ -19,6 +19,7 @@ using Microsoft.Extensions.Logging;
 using Org.BouncyCastle.Asn1.Ocsp;
 using Microsoft.Identity.Client;
 using MathExamGenerator.Model.Enum;
+using Google.Apis.Drive.v3.Data;
 namespace MathExamGenerator.Service.Implement
 {
     public class ExamExchangeService : BaseService<ExamExchangeService>, IExamExchangeService
@@ -37,18 +38,20 @@ namespace MathExamGenerator.Service.Implement
         {
             Guid? accountId = UserUtil.GetAccountId(_httpContextAccessor.HttpContext);
 
-            var account = await _unitOfWork.GetRepository<Account>().SingleOrDefaultAsync(
-                predicate: a => a.Id.Equals(accountId) && a.IsActive == true) ?? throw new NotFoundException("Không tìm thấy tài khoản");
+                    var account = await _unitOfWork.GetRepository<Account>().SingleOrDefaultAsync(
+            predicate: a => a.Id.Equals(accountId) &&
+                            a.IsActive == true &&
+                            a.Role == RoleEnum.STAFF.ToString())
+            ?? throw new NotFoundException("Chỉ Staff mới được phép thực hiện hành động này");
 
-            var teacher = await _unitOfWork.GetRepository<Teacher>().SingleOrDefaultAsync(
-                predicate: t => t.AccountId.Equals(accountId) && t.IsActive == true) ?? throw new NotFoundException("Không tìm thấy giáo viên");
+
             var examRepo = _unitOfWork.GetRepository<ExamExchange>();
             var categoryRepo = _unitOfWork.GetRepository<Category>();
             var questionRepo = _unitOfWork.GetRepository<Question>();
 
             var examEntity = _mapper.Map<ExamExchange>(request);
-            if(examEntity.TeacherId == null) throw new NotFoundException("Gửi yêu cầu bị sai!");
-            examEntity.TeacherId = teacher.Id;
+       
+            examEntity.AccountId = accountId;
             examEntity.Status = ExamExchangeEnum.Pending.ToString();
             var category = await categoryRepo.SingleOrDefaultAsync(
                    predicate: c =>
