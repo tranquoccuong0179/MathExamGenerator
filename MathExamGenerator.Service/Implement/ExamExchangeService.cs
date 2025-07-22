@@ -400,7 +400,7 @@ namespace MathExamGenerator.Service.Implement
                                    .Where(p => p.Metadata.IsPrimaryKey())
                                    .ToDictionary(p => p.Metadata.Name, p => p.CurrentValue);
 
-                    Console.WriteLine($"Sắp DELETE: {entry.Entity.GetType().Name} - ID: {string.Join(", ", key)}");
+                    //Console.WriteLine($"Sắp DELETE: {entry.Entity.GetType().Name} - ID: {string.Join(", ", key)}");
                 }
             }
             var result = await _unitOfWork.CommitAsync() > 0;
