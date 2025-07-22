@@ -38,11 +38,11 @@ namespace MathExamGenerator.Service.Implement
         {
             Guid? accountId = UserUtil.GetAccountId(_httpContextAccessor.HttpContext);
 
-                    var account = await _unitOfWork.GetRepository<Account>().SingleOrDefaultAsync(
-            predicate: a => a.Id.Equals(accountId) &&
-                            a.IsActive == true &&
-                            a.Role == RoleEnum.STAFF.ToString())
-            ?? throw new NotFoundException("Chỉ Staff mới được phép thực hiện hành động này");
+            var account = await _unitOfWork.GetRepository<Account>().SingleOrDefaultAsync(
+    predicate: a => a.Id.Equals(accountId) &&
+                    a.IsActive == true &&
+                    a.Role == RoleEnum.STAFF.ToString())
+    ?? throw new NotFoundException("Chỉ Staff mới được phép thực hiện hành động này");
 
 
             var examRepo = _unitOfWork.GetRepository<ExamExchange>();
@@ -50,7 +50,7 @@ namespace MathExamGenerator.Service.Implement
             var questionRepo = _unitOfWork.GetRepository<Question>();
 
             var examEntity = _mapper.Map<ExamExchange>(request);
-       
+
             examEntity.AccountId = accountId;
             examEntity.Status = ExamExchangeEnum.Pending.ToString();
             var category = await categoryRepo.SingleOrDefaultAsync(
@@ -139,38 +139,38 @@ namespace MathExamGenerator.Service.Implement
 
             Guid? accountId = UserUtil.GetAccountId(_httpContextAccessor.HttpContext);
 
-            var teacher = await _unitOfWork.GetRepository<Teacher>()
-        .SingleOrDefaultAsync(
-            predicate: t => t.AccountId == accountId && t.IsActive == true,
-            include: q => q.Include(t => t.Account))
-        ?? throw new NotFoundException("Không tìm thấy giáo viên");
+            var account = await _unitOfWork.GetRepository<Account>().SingleOrDefaultAsync(
+             predicate: a => a.Id.Equals(accountId) &&
+                             a.IsActive == true &&
+                             a.Role == RoleEnum.STAFF.ToString())
+             ?? throw new NotFoundException("Chỉ Staff mới được phép thực hiện hành động này");
 
             var exams = await _unitOfWork.GetRepository<ExamExchange>().GetPagingListAsync(
-                selector: e => new GetExamExchangeResponse
-                {
-                    ExamExchangeId = e.Id,
-                    Status = e.Status,
-                    CreateAt = e.CreateAt,
-                    QuestionCount = e.Questions.Count,
-                    CategoryName = e.Questions.FirstOrDefault() != null
-                                    ? e.Questions.First().Category.Name
-                                    : null,
-                    CategoryGrade = e.Questions.FirstOrDefault() != null
-                                    ? e.Questions.First().Category.Grade
-                                    : null
-                },
-                predicate: e => e.TeacherId == teacher.Id && e.IsActive == true,
-                orderBy: q => q.OrderByDescending(e => e.CreateAt),
-                include: q => q
-                            .Include(e => e.Questions)
-                                .ThenInclude(q => q.Category),
-                page: page,
-                size: size);
+        selector: e => new GetExamExchangeResponse
+        {
+            ExamExchangeId = e.Id,
+            Status = e.Status,
+            CreateAt = e.CreateAt,
+            QuestionCount = e.Questions.Count,
+            CategoryName = e.Questions.FirstOrDefault() != null
+                            ? e.Questions.First().Category.Name
+                            : null,
+            CategoryGrade = e.Questions.FirstOrDefault() != null
+                            ? e.Questions.First().Category.Grade
+                            : null
+        },
+        predicate: e => e.AccountId == accountId && e.IsActive == true,
+        orderBy: q => q.OrderByDescending(e => e.CreateAt),
+        include: q => q
+                    .Include(e => e.Questions)
+                        .ThenInclude(q => q.Category),
+        page: page,
+        size: size);
 
             return new BaseResponse<IPaginate<GetExamExchangeResponse>>
             {
                 Status = StatusCodes.Status200OK.ToString(),
-                Message = "Lấy danh sách đề của giáo viên thành công",
+                Message = "Lấy danh sách đề của giáo viên (STAFF) thành công",
                 Data = exams
             };
         }
@@ -179,38 +179,40 @@ namespace MathExamGenerator.Service.Implement
         public async Task<BaseResponse<IPaginate<GetExamExchangeTeacherResponse>>> GetAllTeacher(int page, int size)
         {
             var exams = await _unitOfWork.GetRepository<ExamExchange>().GetPagingListAsync(
-                   selector: e => new GetExamExchangeTeacherResponse
-                   {
-                       ExamExchangeId = e.Id,
-                       Status = e.Status,
-                       CreateAt = e.CreateAt,
-                       QuestionCount = e.Questions.Count,
-                       CategoryName = e.Questions.FirstOrDefault() != null
-                             ? e.Questions.First().Category.Name
-                             : null,
-                       CategoryGrade = e.Questions.FirstOrDefault() != null
-                             ? e.Questions.First().Category.Grade
-                             : null,
-                       TeacherId = e.TeacherId.Value,
-                       TeacherName = e.Teacher!.Account.FullName
-                   },
-                        predicate: e => e.IsActive == true,
-                        orderBy: q => q.OrderByDescending(e => e.CreateAt),
-                        include: q => q
-                                    .Include(e => e.Questions)
-                                        .ThenInclude(q => q.Category)
-                                    .Include(e => e.Teacher)
-                                        .ThenInclude(t => t.Account),
-                        page: page,
-                        size: size);
+                selector: e => new GetExamExchangeTeacherResponse
+                {
+                    ExamExchangeId = e.Id,
+                    Status = e.Status,
+                    CreateAt = e.CreateAt,
+                    QuestionCount = e.Questions.Count,
+                    CategoryName = e.Questions.FirstOrDefault() != null
+                          ? e.Questions.First().Category.Name
+                          : null,
+                    CategoryGrade = e.Questions.FirstOrDefault() != null
+                          ? e.Questions.First().Category.Grade
+                          : null,
+                    TeacherId = e.AccountId.Value,
+                    TeacherName = e.Account.FullName
+                },
+                predicate: e => e.IsActive == true &&
+                                e.Account != null &&
+                                e.Account.Role == RoleEnum.STAFF.ToString(),
+                orderBy: q => q.OrderByDescending(e => e.CreateAt),
+                include: q => q
+                            .Include(e => e.Questions)
+                                .ThenInclude(q => q.Category)
+                            .Include(e => e.Account),
+                page: page,
+                size: size);
 
             return new BaseResponse<IPaginate<GetExamExchangeTeacherResponse>>
             {
                 Status = StatusCodes.Status200OK.ToString(),
-                Message = "Lấy danh sách tất cả đề thi thành công",
+                Message = "Lấy danh sách tất cả đề thi từ STAFF thành công",
                 Data = exams
             };
         }
+
 
         public async Task<BaseResponse<ExamExchangeResponse>> GetExamChange(Guid examchangeId)
         {
@@ -478,7 +480,7 @@ namespace MathExamGenerator.Service.Implement
 
         public async Task<BaseResponse<bool>> ApproveExamExchange(Guid id, ExamExchangeEnum? status)
         {
-        
+
             var examRepo = _unitOfWork.GetRepository<ExamExchange>();
             var exam = await examRepo.SingleOrDefaultAsync(
                 predicate: e => e.Id == id,
