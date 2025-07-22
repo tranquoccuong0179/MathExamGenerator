@@ -284,5 +284,16 @@
             public const string DeletePackage = PackageEndPoint + "/{id}";
         }
 
+        public static class Report
+        {
+            public const string ReportEndPoint = ApiEndpoint + "/report";
+            public const string CreateReport = ReportEndPoint;
+            public const string GetAllReports = ReportEndPoint;
+            public const string GetReportById = ReportEndPoint + "/{id}";
+            public const string UpdateReport = ReportEndPoint + "/{id}";
+            public const string DeleteReport = ReportEndPoint + "/{id}";
+            public const string GetReportType = ReportEndPoint + "/type";
+
+        }
     }
 }
