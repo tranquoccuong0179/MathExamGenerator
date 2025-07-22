@@ -39,7 +39,7 @@ namespace MathExamGenerator.Service.Implement
                      Image = q.Image,
                      CategoryId = q.CategoryId.Value,
                      CategoryName = q.Category.Name.ToString(),
-                     CategoryGrade = q.Category.Name.ToString(),
+                     CategoryGrade = q.Category.Grade.ToString(),
                      Answers = q.Answers.Select(a => new AnswerResponse
                      {
                          Id = a.Id,
@@ -80,7 +80,7 @@ namespace MathExamGenerator.Service.Implement
                     Image = q.Image,
                     CategoryId = q.CategoryId.Value,
                     CategoryName = q.Category.Name.ToString(),
-                    CategoryGrade = q.Category.Name.ToString(),
+                    CategoryGrade = q.Category.Grade.ToString(),
                     Answers = q.Answers.Select(a => new AnswerResponse
                     {
                         Id = a.Id,
@@ -165,7 +165,7 @@ namespace MathExamGenerator.Service.Implement
                 Image = question.Image,
                 CategoryId = question.CategoryId.Value,
                 CategoryName = question.Category?.ToString(),
-                CategoryGrade = question.Category?.Name.ToString(),
+                CategoryGrade = question.Category?.Grade.ToString(),
                 Answers = question.Answers.Select(a => new AnswerResponse
                 {
                     Id = a.Id,
