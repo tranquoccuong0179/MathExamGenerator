@@ -9,8 +9,7 @@ namespace MathExamGenerator.Model.Payload.Request.ExamExchange
 {
     public class ExamExchangeRequest
     {
-        public string CategoryName { get; set; } = default!;
-        public string CategoryGrade { get; set; } = default!;
+        public Guid CategoryId { get; set; } = default!;
         public List<QuestionRequest> Questions { get; set; } = new();
     }
 }

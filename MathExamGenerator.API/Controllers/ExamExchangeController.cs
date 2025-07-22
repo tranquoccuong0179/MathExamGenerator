@@ -70,7 +70,7 @@ namespace MathExamGenerator.API.Controllers
         }
 
         [HttpGet(ApiEndPointConstant.ExamEchange.GetAllStaff)]
-        [ProducesResponseType(typeof(BaseResponse<IPaginate<GetExamExchangeTeacherResponse>>), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(BaseResponse<IPaginate<GetExamExchangeStaffResponse>>), StatusCodes.Status200OK)]
         [ProducesErrorResponseType(typeof(ProblemDetails))]
         public async Task<IActionResult> GetAllStaff([FromQuery] int? page, [FromQuery] int? size)
         {

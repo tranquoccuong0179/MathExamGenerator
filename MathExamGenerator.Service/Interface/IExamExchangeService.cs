@@ -18,7 +18,7 @@ namespace MathExamGenerator.Service.Interface
         Task<BaseResponse<IPaginate<GetExamExchangeResponse>>> GetByStaff(int page, int size);
         Task<BaseResponse<ExamExchangeResponse>> GetExamChange(Guid examchangeId);
         Task<BaseResponse<ExamExchangeResponse>> Update(Guid examchange, UpdateExamEchangeRequest request);
-        Task<BaseResponse<IPaginate<GetExamExchangeTeacherResponse>>> GetAllStaff(int page, int size);
+        Task<BaseResponse<IPaginate<GetExamExchangeStaffResponse>>> GetAllStaff(int page, int size);
         Task<BaseResponse<bool>> ApproveExamExchange(Guid id, ExamExchangeEnum? status);
 
     }
