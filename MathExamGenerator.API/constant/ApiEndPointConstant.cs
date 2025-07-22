@@ -285,6 +285,7 @@
             public const string GetActivePackage = PackageEndPoint + "/active";
         }
 
+
         public static class Report
         {
             public const string ReportEndPoint = ApiEndpoint + "/report";
@@ -309,5 +310,18 @@
             public const string GetAllGrades = CategoryEndPoint + "/grades";
 
         }
+
+        public static class Staff
+        {
+            public const string StaffEndPoint = ApiEndpoint + "/staff";
+            public const string RegisterStaff = StaffEndPoint;
+            public const string GetAllStaff = StaffEndPoint;
+            public const string GetStaffById = StaffEndPoint + "/{id}";
+            public const string GetProfile = StaffEndPoint + "/profile";
+            public const string DeleteStaff = StaffEndPoint + "/{id}";
+            public const string UpdateStaff = StaffEndPoint;
+        }
+
+
     }
 }
