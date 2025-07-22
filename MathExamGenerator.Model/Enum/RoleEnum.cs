@@ -10,7 +10,7 @@ namespace MathExamGenerator.Model.Enum
     {
         ADMIN,
         MANAGER,
-        TEACHER,
+        STAFF,
         USER
     }
 }
