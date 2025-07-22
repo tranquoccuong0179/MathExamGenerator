@@ -44,7 +44,7 @@ namespace MathExamGenerator.Service.Implement
                 };
             }
 
-            if (account.QuizFree <= 0)
+            if (account.FreeTries <= 0)
             {
                 return new BaseResponse<CreateExamResponse>
                 {
