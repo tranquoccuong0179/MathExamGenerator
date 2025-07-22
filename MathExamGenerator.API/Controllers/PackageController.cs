@@ -11,7 +11,7 @@ namespace MathExamGenerator.API.Controllers
     public class PackageController : BaseController<PackageController>
     {
         private readonly IPackageService _packageService;
-        public PackageController(ILogger<PackageController> logger,IPackageService packageService) : base(logger)
+        public PackageController(ILogger<PackageController> logger, IPackageService packageService) : base(logger)
         {
             _packageService = packageService;
         }
@@ -58,11 +58,12 @@ namespace MathExamGenerator.API.Controllers
         [HttpPut(ApiEndPointConstant.Package.UpdatePackage)]
         [ProducesResponseType(typeof(BaseResponse<GetPackageResponse>), StatusCodes.Status200OK)]
         [ProducesErrorResponseType(typeof(ProblemDetails))]
-        public async Task<IActionResult> UpdatePackage([FromQuery] Guid id,[FromBody] UpdatePackageRequest request)
+        public async Task<IActionResult> UpdatePackage([FromQuery] Guid id, [FromBody] UpdatePackageRequest request)
         {
-            var response = await _packageService.Update(id,request);
+            var response = await _packageService.Update(id, request);
             return StatusCode(int.Parse(response.Status), response);
 
 
         }
+    }
 }
