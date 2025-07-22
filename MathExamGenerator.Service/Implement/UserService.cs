@@ -169,7 +169,7 @@ namespace MathExamGenerator.Service.Implement
 
             account.FullName = request.FullName ?? account.FullName;
             account.DateOfBirth = request.DateOfBirth ?? account.DateOfBirth;
-            account.Gender = request.Gender.GetDescriptionFromEnum() ?? account.Gender;
+            account.Gender = request.Gender?.GetDescriptionFromEnum() ?? account.Gender;
             account.UpdateAt = TimeUtil.GetCurrentSEATime();
 
             _unitOfWork.GetRepository<Account>().UpdateAsync(account);
