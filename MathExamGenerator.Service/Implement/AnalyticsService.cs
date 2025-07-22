@@ -135,7 +135,7 @@ namespace MathExamGenerator.Service.Implement
                             Date = g.CreateAt!.Value.Date
                         },
                         predicate: u => u.CreateAt.HasValue &&
-                            (u.Role == RoleEnum.USER.ToString() || u.Role == RoleEnum.TEACHER.ToString())
+                            (u.Role == RoleEnum.USER.ToString())
                     );
 
                 var grouped = rawList
