@@ -1,12 +1,12 @@
 ﻿using AutoMapper;
 using Azure;
 using MathExamGenerator.Model.Entity;
+using MathExamGenerator.Model.Enum;
 using MathExamGenerator.Model.Exceptions;
 using MathExamGenerator.Model.Paginate;
 using MathExamGenerator.Model.Payload.Request.Exam;
 using MathExamGenerator.Model.Payload.Response;
 using MathExamGenerator.Model.Payload.Response.Exam;
-using MathExamGenerator.Model.Payload.Response.TestHistory;
 using MathExamGenerator.Model.Utils;
 using MathExamGenerator.Repository.Interface;
 using MathExamGenerator.Service.Interface;
@@ -44,30 +44,12 @@ namespace MathExamGenerator.Service.Implement
                 };
             }
 
-            if (account.FreeTries <= 0)
-            {
-                return new BaseResponse<CreateExamResponse>
-                {
-                    Status = StatusCodes.Status404NotFound.ToString(),
-                    Message = "Bạn không đủ lượt free để tạo quiz.",
-                };
-            }
-
             if (request == null || request.ExamMatrixId == null)
             {
                 return new BaseResponse<CreateExamResponse>
                 {
                     Status = StatusCodes.Status400BadRequest.ToString(),
                     Message = "Yêu cầu không hợp lệ."
-                };
-            }
-
-            if (request.StartDate.HasValue && request.EndDate.HasValue && request.StartDate > request.EndDate)
-            {
-                return new BaseResponse<CreateExamResponse>
-                {
-                    Status = StatusCodes.Status400BadRequest.ToString(),
-                    Message = "Ngày bắt đầu không được sau ngày kết thúc.",
                 };
             }
 
@@ -84,11 +66,8 @@ namespace MathExamGenerator.Service.Implement
 
             var exam = _mapper.Map<Exam>(request);
             exam.AccountId = account.Id;
+            exam.Status = ExamEnum.Pending.ToString();
             await _unitOfWork.GetRepository<Exam>().InsertAsync(exam);
-
-            account.QuizFree -= 1;
-            account.UpdateAt = TimeUtil.GetCurrentSEATime();
-            _unitOfWork.GetRepository<Account>().UpdateAsync(account);
 
             var sections = await _unitOfWork.GetRepository<MatrixSection>().GetListAsync(
                 predicate: s => s.ExamMatrixId == examMatrix.Id && s.IsActive == true);
@@ -371,7 +350,7 @@ namespace MathExamGenerator.Service.Implement
             };
         }
 
-        public async Task<BaseResponse<bool>> UpdateExam(Guid id, UpdateExamRequest request)
+        public async Task<BaseResponse<bool>> UpdateExam(Guid id, UpdateExamRequest request, ExamEnum? examEnum)
         {
             var exam = await _unitOfWork.GetRepository<Exam>().SingleOrDefaultAsync(
                 predicate: x => x.Id == id && x.IsActive == true);
@@ -386,21 +365,12 @@ namespace MathExamGenerator.Service.Implement
                 };
             }
 
-            if (request.StartDate.HasValue && request.EndDate.HasValue && request.StartDate > request.EndDate)
-            {
-                return new BaseResponse<bool>
-                {
-                    Status = StatusCodes.Status400BadRequest.ToString(),
-                    Message = "Ngày bắt đầu không được sau ngày kết thúc.",
-                    Data = false
-                };
-            }
-
             exam.Name = request.Name ?? exam.Name;
             exam.Time = request.Time ?? exam.Time;
-            exam.StartDate = request.StartDate ?? exam.StartDate;
-            exam.EndDate = request.EndDate ?? exam.EndDate;
-            exam.IsActive = true;
+            if (examEnum.HasValue)
+            {
+                exam.Status = examEnum.ToString();
+            }
             exam.UpdateAt = TimeUtil.GetCurrentSEATime();
 
             _unitOfWork.GetRepository<Exam>().UpdateAsync(exam);

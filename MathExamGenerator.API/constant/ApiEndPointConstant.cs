@@ -191,15 +191,15 @@
             public const string GetQuestionSolution = QuestionEndPoint + "/solution";
         }
 
-        public static class TestHistory
+        public static class ExamDoing
         {
-            public const string TestHistoryEndpoint = ApiEndpoint + "/test-history";
-            public const string GetAll = TestHistoryEndpoint;
-            public const string GetById = TestHistoryEndpoint + "/{id}";
-            public const string Create = TestHistoryEndpoint;
-            public const string Update = TestHistoryEndpoint + "/{id}";
-            public const string Delete = TestHistoryEndpoint + "/{id}";
-            public const string GetQuestionHistoriesByTestId = TestHistoryEndpoint + "/{id}/question-histories";
+            public const string ExamDoingEndpoint = ApiEndpoint + "/test-history";
+            public const string GetAll = ExamDoingEndpoint;
+            public const string GetById = ExamDoingEndpoint + "/{id}";
+            public const string Create = ExamDoingEndpoint;
+            public const string Update = ExamDoingEndpoint + "/{id}";
+            public const string Delete = ExamDoingEndpoint + "/{id}";
+            public const string GetQuestionHistoriesByTestId = ExamDoingEndpoint + "/{id}/question-histories";
         }
 
         public static class Reply

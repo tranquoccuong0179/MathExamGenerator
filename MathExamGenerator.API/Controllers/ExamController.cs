@@ -1,4 +1,5 @@
 ﻿using MathExamGenerator.API.constant;
+using MathExamGenerator.Model.Enum;
 using MathExamGenerator.Model.Paginate;
 using MathExamGenerator.Model.Payload.Request.Exam;
 using MathExamGenerator.Model.Payload.Response;
@@ -44,9 +45,9 @@ namespace MathExamGenerator.API.Controllers
         [ProducesResponseType(typeof(BaseResponse<bool>), StatusCodes.Status400BadRequest)]
         [ProducesResponseType(typeof(BaseResponse<bool>), StatusCodes.Status404NotFound)]
         [ProducesErrorResponseType(typeof(ProblemDetails))]
-        public async Task<IActionResult> UpdateExam([FromRoute] Guid id, [FromBody] UpdateExamRequest request)
+        public async Task<IActionResult> UpdateExam([FromRoute] Guid id, [FromBody] UpdateExamRequest request, [FromQuery] ExamEnum? status)
         {
-            var response = await _examService.UpdateExam(id, request);
+            var response = await _examService.UpdateExam(id, request, status);
             return StatusCode(int.Parse(response.Status), response);
         }
 

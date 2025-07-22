@@ -81,10 +81,18 @@ builder.Services.AddSwaggerGen(c =>
                .ToList()
     });
 
-    c.MapType<TestHistoryEnum>(() => new OpenApiSchema
+    c.MapType<ExamDoingEnum>(() => new OpenApiSchema
     {
         Type = "string",
-        Enum = Enum.GetNames(typeof(TestHistoryEnum))
+        Enum = Enum.GetNames(typeof(ExamDoingEnum))
+           .Select(name => new OpenApiString(name) as IOpenApiAny)
+           .ToList()
+    });
+
+    c.MapType<ExamEnum>(() => new OpenApiSchema
+    {
+        Type = "string",
+        Enum = Enum.GetNames(typeof(ExamEnum))
            .Select(name => new OpenApiString(name) as IOpenApiAny)
            .ToList()
     });

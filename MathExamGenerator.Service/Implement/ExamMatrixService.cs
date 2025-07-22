@@ -4,7 +4,6 @@ using MathExamGenerator.Model.Paginate;
 using MathExamGenerator.Model.Payload.Request.ExamMatrix;
 using MathExamGenerator.Model.Payload.Response;
 using MathExamGenerator.Model.Payload.Response.ExamMatrix;
-using MathExamGenerator.Model.Payload.Response.TestHistory;
 using MathExamGenerator.Model.Utils;
 using MathExamGenerator.Repository.Interface;
 using MathExamGenerator.Service.Interface;
@@ -62,6 +61,9 @@ namespace MathExamGenerator.Service.Implement
                     Message = $"Tổng số câu hỏi của các section ({totalSectionQuestions}) không bằng TotalQuestions của ExamMatrix ({request.TotalQuestions})."
                 };
             }
+
+            int totalDifficulty1 = 0, totalDifficulty2 = 0, totalDifficulty3 = 0;
+            string level = "Dễ";  
 
             foreach (var sectionReq in request.Sections)
             {
@@ -121,7 +123,33 @@ namespace MathExamGenerator.Service.Implement
                             Message = $"Chi tiết trong section '{sectionReq.SectionName}' có TotalQuestionsDetail không hợp lệ."
                         };
                     }
+
+                    if (detail.Difficulty == "1")
+                    {
+                        totalDifficulty1 += detail.TotalQuestionsDetail;
+                    }
+                    else if (detail.Difficulty == "2")
+                    {
+                        totalDifficulty2 += detail.TotalQuestionsDetail;
+                    }
+                    else if (detail.Difficulty == "3")
+                    {
+                        totalDifficulty3 += detail.TotalQuestionsDetail;
+                    }                  
                 }
+            }
+
+            double percentageDifficulty1 = (double)totalDifficulty1 / request.TotalQuestions * 100;
+            double percentageDifficulty2 = (double)totalDifficulty2 / request.TotalQuestions * 100;
+            double percentageDifficulty3 = (double)totalDifficulty3 / request.TotalQuestions * 100;
+
+            if (percentageDifficulty2 >= 40)
+            {
+                level = "Trung Bình";
+            }
+            if (percentageDifficulty3 >= 40)
+            {
+                level = "Khó";
             }
 
             var subject = await _unitOfWork.GetRepository<Subject>().SingleOrDefaultAsync(
@@ -139,6 +167,7 @@ namespace MathExamGenerator.Service.Implement
             var matrix = _mapper.Map<ExamMatrix>(request);
             matrix.SubjectId = subject.Id;
             matrix.AccountId = account.Id;
+            matrix.Level = level;
             await _unitOfWork.GetRepository<ExamMatrix>().InsertAsync(matrix);
 
             double scorePerQuestion = request.TotalQuestions > 0 ? examTotalScore / request.TotalQuestions : 0;

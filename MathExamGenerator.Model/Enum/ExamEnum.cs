@@ -6,9 +6,10 @@ using System.Threading.Tasks;
 
 namespace MathExamGenerator.Model.Enum
 {
-    public enum TestHistoryEnum
+    public enum ExamEnum
     {
-        Processing,
-        Finish
+        Pending,
+        Approved,
+        Rejected
     }
 }

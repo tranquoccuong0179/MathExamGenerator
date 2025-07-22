@@ -6,13 +6,12 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace MathExamGenerator.Model.Payload.Request.TestHistory
+namespace MathExamGenerator.Model.Payload.Request.ExamDoing
 {
-    public class CreateTestHistoryRequest
+    public class CreateExamDoingRequest
     {
         public Guid? ExamId { get; set; }
-        public Guid? QuizId { get; set; }
         [Required(ErrorMessage = "Thời gian bắt đầu không được để trống.")]
-        public TimeSpan StartAt { get; set; }
+        public TimeSpan Duration { get; set; }
     }
 }
