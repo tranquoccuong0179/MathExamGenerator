@@ -15,6 +15,8 @@ namespace MathExamGenerator.Service.Interface
         Task<BaseResponse<GetPackageResponse>> GetById(Guid id);
         Task<BaseResponse<IPaginate<GetPackageResponse>>> GetAll(int page, int size);
 
+        Task<BaseResponse<IPaginate<GetPackageResponse>>> GetActive(int page, int size);
+
         Task<BaseResponse<GetPackageResponse>> Create(CreatePackageRequest request);
         Task<BaseResponse<GetPackageResponse>> Update(Guid id, UpdatePackageRequest request);
         Task<BaseResponse<bool>> Delete(Guid id);

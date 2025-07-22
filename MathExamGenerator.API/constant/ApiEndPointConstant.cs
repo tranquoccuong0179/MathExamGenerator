@@ -282,6 +282,7 @@
             public const string GetPackageById = PackageEndPoint + "/{id}";
             public const string UpdatePackage = PackageEndPoint + "/{id}";
             public const string DeletePackage = PackageEndPoint + "/{id}";
+            public const string GetActivePackage = PackageEndPoint + "/active";
         }
 
         public static class Report
@@ -293,6 +294,19 @@
             public const string UpdateReport = ReportEndPoint + "/{id}";
             public const string DeleteReport = ReportEndPoint + "/{id}";
             public const string GetReportType = ReportEndPoint + "/type";
+
+        }
+
+        public static class Category
+        {
+            public const string CategoryEndPoint = ApiEndpoint + "/category";
+            public const string GetByGrade = CategoryEndPoint + "/grade/{grade}";
+            public const string GetAllCategories = CategoryEndPoint;
+            public const string GetCategoryById = CategoryEndPoint + "/{id}";
+            public const string CreateCategory = CategoryEndPoint;
+            public const string UpdateCategory = CategoryEndPoint + "/{id}";
+            public const string DeleteCategory = CategoryEndPoint + "/{id}";
+            public const string GetAllGrades = CategoryEndPoint + "/grades";
 
         }
     }

@@ -65,6 +65,7 @@ namespace MathExamGenerator.API
             services.AddScoped<IManagerService, ManagerService>();
             services.AddScoped<IReportService, ReportService>();
             services.AddScoped<IPackageService, PackageService>();
+            services.AddScoped<ICategoryService, CategoryService>();
 
             return services;
         }

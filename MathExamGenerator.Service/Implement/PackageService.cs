@@ -79,7 +79,32 @@ namespace MathExamGenerator.Service.Implement
             };
         }
 
-            public async Task<BaseResponse<IPaginate<GetPackageResponse>>> GetAll(int page, int size)
+        public async Task<BaseResponse<IPaginate<GetPackageResponse>>> GetActive(int page, int size)
+        {
+            var packages = await _unitOfWork.GetRepository<Package>()
+                    .GetPagingListAsync(
+                        predicate: p => p.IsActive == true,
+                        selector: p => new GetPackageResponse
+                        {
+                            Id = p.Id,
+                            Name = p.Name,
+                            Price = p.Price,
+                            CreateAt = p.CreateAt
+                        },
+                        orderBy: q => q.OrderByDescending(p => p.CreateAt),
+                        page: page,
+                        size: size
+                    );
+
+            return new BaseResponse<IPaginate<GetPackageResponse>>
+            {
+                Status = StatusCodes.Status200OK.ToString(),
+                Message = "Lấy danh sách gói đang hoạt động thành công",
+                Data = packages
+            };
+        }
+
+        public async Task<BaseResponse<IPaginate<GetPackageResponse>>> GetAll(int page, int size)
             {
                 var packages = await _unitOfWork.GetRepository<Package>()
                     .GetPagingListAsync(
