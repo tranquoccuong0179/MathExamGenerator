@@ -34,7 +34,7 @@ namespace MathExamGenerator.Service.Implement
                   || p.Phone.Equals(request.UsernameOrEmailOrPhone)) &&
                   p.Password.Equals(PasswordUtil.HashPassword(request.Password)) &&
                   (p.Role == RoleEnum.ADMIN.GetDescriptionFromEnum() ||
-                  p.Role == RoleEnum.TEACHER.GetDescriptionFromEnum() ||
+                  p.Role == RoleEnum.STAFF.GetDescriptionFromEnum() ||
                   p.Role == RoleEnum.MANAGER.GetDescriptionFromEnum() ||
                   p.Role == RoleEnum.USER.GetDescriptionFromEnum()) &&
                   p.IsActive == true &&
