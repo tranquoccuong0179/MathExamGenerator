@@ -9,7 +9,6 @@ namespace MathExamGenerator.Model.Payload.Request.TestStorage
     public class CreateTestStorageRequest
     {
         public Guid? ExamId { get; set; }
-        public Guid? QuizId { get; set; }
         public bool? Liked { get; set; }
         public bool? Seen { get; set; }
     }

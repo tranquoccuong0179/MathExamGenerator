@@ -1,4 +1,5 @@
-﻿using MathExamGenerator.Model.Paginate;
+﻿using MathExamGenerator.Model.Enum;
+using MathExamGenerator.Model.Paginate;
 using MathExamGenerator.Model.Payload.Request.Exam;
 using MathExamGenerator.Model.Payload.Response;
 using MathExamGenerator.Model.Payload.Response.Exam;
@@ -16,7 +17,7 @@ namespace MathExamGenerator.Service.Interface
         Task<BaseResponse<IPaginate<GetExamResponse>>> GetExamsOfCurrentUser(int page, int size);
         Task<BaseResponse<GetExamResponse>> GetById(Guid id);
         Task<BaseResponse<CreateExamResponse>> CreateExam(CreateExamRequest request);
-        Task<BaseResponse<bool>> UpdateExam(Guid id, UpdateExamRequest request);
+        Task<BaseResponse<bool>> UpdateExam(Guid id, UpdateExamRequest request, ExamEnum? examEnum);
         Task<BaseResponse<bool>> DeleteExam(Guid id);
         Task<BaseResponse<ExamWithQuestionsResponse>> GetAllQuestionByExam(Guid examId);
     }

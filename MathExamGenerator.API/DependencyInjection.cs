@@ -54,12 +54,11 @@ namespace MathExamGenerator.API
             services.AddScoped<IMatrixSectionService, MatrixSectionService>();
             services.AddScoped<IMatrixSectionDetailService, MatrixSectionDetailService>();
             services.AddScoped<ICommentService, CommentService>();
-            services.AddScoped<ITestHistoryService, TestHistoryService>();
+            services.AddScoped<IExamDoingService, ExamDoingService>();
             services.AddScoped<ILikeCommentService, LikeCommentService>();
             services.AddScoped<IReplyService, ReplyService>();
             services.AddScoped<IQuestionHistoryService, QuestionHistoryService>();
             services.AddScoped<ITestStorageService, TestStorageService>();
-            services.AddScoped<IQuizService, QuizService>();
             services.AddScoped<IQuestionService, QuestionService>();
             services.AddScoped<ITransactionService, TransactionService>();
             services.AddScoped<IPremiumService, PremiumService>();

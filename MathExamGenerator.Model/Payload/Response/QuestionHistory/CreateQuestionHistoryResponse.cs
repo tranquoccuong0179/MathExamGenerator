@@ -9,7 +9,7 @@ namespace MathExamGenerator.Model.Payload.Response.QuestionHistory
     public class CreateQuestionHistoryResponse
     {
         public Guid Id { get; set; }
-        public Guid? HistoryTestId { get; set; }
+        public Guid? ExamDoingId { get; set; }
         public Guid? QuestionId { get; set; }
         public string? Answer { get; set; }
         public string? YourAnswer { get; set; }

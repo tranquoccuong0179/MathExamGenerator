@@ -6,13 +6,12 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace MathExamGenerator.Model.Payload.Request.TestHistory
+namespace MathExamGenerator.Model.Payload.Request.ExamDoing
 {
-    public class UpdateTestHistoryRequest
+    public class UpdateExamDoingRequest
     {
         public Guid? ExamId { get; set; }
-        public Guid? QuizId { get; set; }
-        public TimeSpan? StartAt { get; set; }
+        public TimeSpan? Duration { get; set; }
         public List<UpdateQuestionHistoryRequest> QuestionHistories { get; set; }
     }
 }

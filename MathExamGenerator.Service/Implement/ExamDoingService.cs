@@ -2,11 +2,11 @@
 using MathExamGenerator.Model.Entity;
 using MathExamGenerator.Model.Enum;
 using MathExamGenerator.Model.Paginate;
-using MathExamGenerator.Model.Payload.Request.TestHistory;
+using MathExamGenerator.Model.Payload.Request.ExamDoing;
 using MathExamGenerator.Model.Payload.Response;
 using MathExamGenerator.Model.Payload.Response.Exam;
 using MathExamGenerator.Model.Payload.Response.QuestionHistory;
-using MathExamGenerator.Model.Payload.Response.TestHistory;
+using MathExamGenerator.Model.Payload.Response.ExamDoing;
 using MathExamGenerator.Model.Payload.Response.TestStorage;
 using MathExamGenerator.Model.Utils;
 using MathExamGenerator.Repository.Interface;
@@ -19,16 +19,17 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Microsoft.Identity.Client;
 
 namespace MathExamGenerator.Service.Implement
 {
-    public class TestHistoryService : BaseService<TestHistoryService>, ITestHistoryService
+    public class ExamDoingService : BaseService<ExamDoingService>, IExamDoingService
     {
-        public TestHistoryService(IUnitOfWork<MathExamGeneratorContext> unitOfWork, ILogger<TestHistoryService> logger, IMapper mapper, IHttpContextAccessor httpContextAccessor) : base(unitOfWork, logger, mapper, httpContextAccessor)
+        public ExamDoingService(IUnitOfWork<MathExamGeneratorContext> unitOfWork, ILogger<ExamDoingService> logger, IMapper mapper, IHttpContextAccessor httpContextAccessor) : base(unitOfWork, logger, mapper, httpContextAccessor)
         {
         }
 
-        public async Task<BaseResponse<CreateTestHistoryResponse>> Create(CreateTestHistoryRequest request)
+        public async Task<BaseResponse<CreateExamDoingResponse>> Create(CreateExamDoingRequest request)
         {
             Guid? accountId = UserUtil.GetAccountId(_httpContextAccessor.HttpContext);
 
@@ -37,7 +38,7 @@ namespace MathExamGenerator.Service.Implement
 
             if (account == null)
             {
-                return new BaseResponse<CreateTestHistoryResponse>
+                return new BaseResponse<CreateExamDoingResponse>
                 {
                     Status = StatusCodes.Status404NotFound.ToString(),
                     Message = "Không tìm thấy tài khoản.",
@@ -45,92 +46,106 @@ namespace MathExamGenerator.Service.Implement
                 };
             }
 
-            if (request.ExamId == null && request.QuizId == null)
+            if (request.ExamId == null)
             {
-                return new BaseResponse<CreateTestHistoryResponse>
+                return new BaseResponse<CreateExamDoingResponse>
                 {
                     Status = StatusCodes.Status400BadRequest.ToString(),
-                    Message = "Phải cung cấp ExamId hoặc QuizId.",
+                    Message = "Phải cung cấp ExamId.",
                     Data = null
                 };
             }
 
-            if (request.ExamId != null && request.QuizId != null)
+            var wallet = await _unitOfWork.GetRepository<Wallet>().SingleOrDefaultAsync(
+                predicate: a => a.AccountId.Equals(accountId) && a.IsActive == true);
+
+            if (wallet == null) 
             {
-                return new BaseResponse<CreateTestHistoryResponse>
+                return new BaseResponse<CreateExamDoingResponse>
                 {
-                    Status = StatusCodes.Status400BadRequest.ToString(),
-                    Message = "Chỉ được chọn ExamId hoặc QuizId, không được cả hai.",
+                    Status = StatusCodes.Status404NotFound.ToString(),
+                    Message = "Không tìm thấy ví của tài khoản.",
                     Data = null
                 };
             }
 
-            var testHistory = _mapper.Map<TestHistory>(request);
-            testHistory.AccountId = accountId;
-            testHistory.Grade = 0;
-            testHistory.Status = TestHistoryEnum.Processing.ToString();
+            if (account.FreeTries <= 0 && wallet.Point <= 5000)
+            {
+                return new BaseResponse<CreateExamDoingResponse>
+                {
+                    Status = StatusCodes.Status404NotFound.ToString(),
+                    Message = "Bạn không còn đủ số lần free và point để mua Exam này.",
+                    Data = null
+                };
+            }
+
+            var examDoing = _mapper.Map<ExamDoing>(request);
+            examDoing.AccountId = accountId;
+            examDoing.Grade = 0;
+            examDoing.Status = ExamDoingEnum.Processing.ToString();
+
+            if (account.FreeTries > 0)
+            {
+                account.FreeTries--;
+                account.UpdateAt = TimeUtil.GetCurrentSEATime();
+                _unitOfWork.GetRepository<Account>().UpdateAsync(account);
+            } 
+            else
+            {
+                wallet.Point -= 5000;
+                wallet.UpdateAt = TimeUtil.GetCurrentSEATime();
+                _unitOfWork.GetRepository<Wallet>().UpdateAsync(wallet);
+
+                var transaction = new Transaction
+                {
+                    Id = Guid.NewGuid(),
+                    WalletId = wallet.Id,
+                    DepositId = null,
+                    PackageOrderId = null,
+                    ExamDoingId = examDoing.Id,
+                    Type = "Thanh toán",
+                    Description = "Mua đề thi",
+                    Status = "Success",
+                    Amount = 5000.00m,
+                    IsActive = true,
+                    CreateAt = TimeUtil.GetCurrentSEATime(),
+                };
+
+                await _unitOfWork.GetRepository<Transaction>().InsertAsync(transaction);
+            }
 
             List<Guid> questionIds = new();
 
-            if (request.ExamId.HasValue)
+            var exam = await _unitOfWork.GetRepository<Exam>().SingleOrDefaultAsync(
+                predicate: x => x.Id == request.ExamId);
+
+            if (exam == null)
             {
-                var exam = await _unitOfWork.GetRepository<Exam>().SingleOrDefaultAsync(
-                    predicate: x => x.Id == request.ExamId);
-
-                if (exam == null)
+                return new BaseResponse<CreateExamDoingResponse>
                 {
-                    return new BaseResponse<CreateTestHistoryResponse>
-                    {
-                        Status = StatusCodes.Status404NotFound.ToString(),
-                        Message = "Không tìm thấy Exam.",
-                        Data = null
-                    };
-                }
-
-                if (exam.StartDate.HasValue && exam.EndDate.HasValue)
-                {
-                    if (exam.StartDate > TimeUtil.GetCurrentSEATime() || exam.EndDate < TimeUtil.GetCurrentSEATime())
-                    {
-                        return new BaseResponse<CreateTestHistoryResponse>
-                        {
-                            Status = StatusCodes.Status400BadRequest.ToString(),
-                            Message = "Exam này đã hết hạn làm bài.",
-                            Data = null
-                        };
-                    }
-                }
-
-                var examQuestions = await _unitOfWork.GetRepository<ExamQuestion>().GetListAsync(
-                    predicate: x => x.ExamId == request.ExamId);
-
-                questionIds = examQuestions
-                    .Where(x => x.QuestionId.HasValue)
-                    .Select(x => x.QuestionId.Value)
-                    .ToList();
+                    Status = StatusCodes.Status404NotFound.ToString(),
+                    Message = "Không tìm thấy Exam.",
+                    Data = null
+                };
             }
-            else if (request.QuizId.HasValue)
+
+            var examQuestions = await _unitOfWork.GetRepository<ExamQuestion>().GetListAsync(
+                predicate: x => x.ExamId == request.ExamId);
+
+            if (!examQuestions.Any())
             {
-                var quiz = await _unitOfWork.GetRepository<Quiz>().SingleOrDefaultAsync(
-                    predicate: x => x.Id == request.QuizId);
-
-                if (quiz == null)
+                return new BaseResponse<CreateExamDoingResponse>
                 {
-                    return new BaseResponse<CreateTestHistoryResponse>
-                    {
-                        Status = StatusCodes.Status404NotFound.ToString(),
-                        Message = "Không tìm thấy Quiz.",
-                        Data = null
-                    };
-                }
-
-                var quizQuestions = await _unitOfWork.GetRepository<QuizQuestion>().GetListAsync(
-                    predicate: x => x.QuizId == request.QuizId);
-
-                questionIds = quizQuestions
-                    .Where(x => x.QuestionId.HasValue)
-                    .Select(x => x.QuestionId.Value)
-                    .ToList();
+                    Status = StatusCodes.Status404NotFound.ToString(),
+                    Message = "Không tìm thấy câu hỏi cho bài thi.",
+                    Data = null
+                };
             }
+
+            questionIds = examQuestions
+                .Where(x => x.QuestionId.HasValue)
+                .Select(x => x.QuestionId.Value)
+                .ToList();           
 
             var questions = await _unitOfWork.GetRepository<Question>().GetListAsync(
                 predicate: q => questionIds.Contains(q.Id),
@@ -143,7 +158,7 @@ namespace MathExamGenerator.Service.Implement
                 return new QuestionHistory
                 {
                     Id = Guid.NewGuid(),
-                    HistoryTestId = testHistory.Id,
+                    ExamDoingId = examDoing.Id,
                     QuestionId = q.Id,
                     Answer = correctAnswer,
                     YourAnswer = null,
@@ -153,35 +168,35 @@ namespace MathExamGenerator.Service.Implement
                 };
             }).ToList();
 
-            testHistory.QuestionHistories = questionHistories;
+            examDoing.QuestionHistories = questionHistories;
 
-            await _unitOfWork.GetRepository<TestHistory>().InsertAsync(testHistory);
+            await _unitOfWork.GetRepository<ExamDoing>().InsertAsync(examDoing);
             bool isSuccessfully = await _unitOfWork.CommitAsync() > 0;
 
             if (!isSuccessfully)
             {
-                return new BaseResponse<CreateTestHistoryResponse>
+                return new BaseResponse<CreateExamDoingResponse>
                 {
                     Status = StatusCodes.Status500InternalServerError.ToString(),
                     Message = "Một lỗi đã xảy ra trong quá trình tạo lịch sử đề thi.",
                 };
             }
 
-            return new BaseResponse<CreateTestHistoryResponse>
+            return new BaseResponse<CreateExamDoingResponse>
             {
                 Status = StatusCodes.Status200OK.ToString(),
                 Message = "Tạo lịch sử thi thành công.",
-                Data = _mapper.Map<CreateTestHistoryResponse>(testHistory)
+                Data = _mapper.Map<CreateExamDoingResponse>(examDoing)
             };
         }
 
         public async Task<BaseResponse<bool>> Delete(Guid id)
         {
-            var testHistory = await _unitOfWork.GetRepository<TestHistory>().SingleOrDefaultAsync(
+            var examDoing = await _unitOfWork.GetRepository<ExamDoing>().SingleOrDefaultAsync(
                 predicate: x => x.Id == id && x.IsActive == true,
                 include: q => q.Include(x => x.QuestionHistories));
 
-            if (testHistory == null)
+            if (examDoing == null)
             {
                 return new BaseResponse<bool>
                 {
@@ -191,11 +206,11 @@ namespace MathExamGenerator.Service.Implement
                 };
             }
 
-            testHistory.IsActive = false;
-            testHistory.DeleteAt = TimeUtil.GetCurrentSEATime();
-            testHistory.UpdateAt = TimeUtil.GetCurrentSEATime();
+            examDoing.IsActive = false;
+            examDoing.DeleteAt = TimeUtil.GetCurrentSEATime();
+            examDoing.UpdateAt = TimeUtil.GetCurrentSEATime();
 
-            foreach (var qh in testHistory.QuestionHistories)
+            foreach (var qh in examDoing.QuestionHistories)
             {
                 qh.IsActive = false;
                 qh.DeleteAt = TimeUtil.GetCurrentSEATime();
@@ -204,7 +219,7 @@ namespace MathExamGenerator.Service.Implement
                 _unitOfWork.GetRepository<QuestionHistory>().UpdateAsync(qh);
             }
 
-            _unitOfWork.GetRepository<TestHistory>().UpdateAsync(testHistory);
+            _unitOfWork.GetRepository<ExamDoing>().UpdateAsync(examDoing);
 
             bool isSuccessfully = await _unitOfWork.CommitAsync() > 0;
 
@@ -226,11 +241,11 @@ namespace MathExamGenerator.Service.Implement
             };
         }
 
-        public async Task<BaseResponse<IPaginate<TestHistoryOverviewResponse>>> GetAll(int page, int size)
+        public async Task<BaseResponse<IPaginate<ExamDoingOverviewResponse>>> GetAll(int page, int size)
         {
             if (page < 1 || size < 1)
             {
-                return new BaseResponse<IPaginate<TestHistoryOverviewResponse>>
+                return new BaseResponse<IPaginate<ExamDoingOverviewResponse>>
                 {
                     Status = StatusCodes.Status400BadRequest.ToString(),
                     Message = "Page và Size phải lớn hơn 0.",
@@ -245,7 +260,7 @@ namespace MathExamGenerator.Service.Implement
 
             if (account == null)
             {
-                return new BaseResponse<IPaginate<TestHistoryOverviewResponse>>
+                return new BaseResponse<IPaginate<ExamDoingOverviewResponse>>
                 {
                     Status = StatusCodes.Status404NotFound.ToString(),
                     Message = "Không tìm thấy tài khoản.",
@@ -253,24 +268,24 @@ namespace MathExamGenerator.Service.Implement
                 };
             }
 
-            var result = await _unitOfWork.GetRepository<TestHistory>().GetPagingListAsync(
-                selector: x => _mapper.Map<TestHistoryOverviewResponse>(x),
+            var result = await _unitOfWork.GetRepository<ExamDoing>().GetPagingListAsync(
+                selector: x => _mapper.Map<ExamDoingOverviewResponse>(x),
                 page: page,
                 size: size,
                 orderBy: q => q.OrderByDescending(x => x.CreateAt),
                 predicate: x => x.IsActive == true && x.AccountId == account.Id,
-                include: q => q.Include(x => x.Exam).Include(x => x.Quiz));
+                include: q => q.Include(x => x.Exam));
 
             if (result?.Items != null && result.Items.Any())
             {
-                var testHistoryIds = result.Items.Select(x => x.Id).ToList();
+                var examDoingIds = result.Items.Select(x => x.Id).ToList();
 
                 var questionHistories = await _unitOfWork.GetRepository<QuestionHistory>()
-                    .GetListAsync(predicate: q => testHistoryIds.Contains(q.HistoryTestId.Value));
+                    .GetListAsync(predicate: q => examDoingIds.Contains(q.ExamDoingId.Value));
 
                 foreach (var item in result.Items)
                 {
-                    var questions = questionHistories.Where(x => x.HistoryTestId == item.Id);
+                    var questions = questionHistories.Where(x => x.ExamDoingId == item.Id);
 
                     int total = questions.Count();
 
@@ -281,7 +296,7 @@ namespace MathExamGenerator.Service.Implement
             }
 
 
-            return new BaseResponse<IPaginate<TestHistoryOverviewResponse>>
+            return new BaseResponse<IPaginate<ExamDoingOverviewResponse>>
             {
                 Status = StatusCodes.Status200OK.ToString(),
                 Message = "Lấy danh sách lịch sử thi thành công.",
@@ -289,18 +304,17 @@ namespace MathExamGenerator.Service.Implement
             };
         }
 
-        public async Task<BaseResponse<GetTestHistoryResponse>> GetById(Guid id)
+        public async Task<BaseResponse<GetExamDoingResponse>> GetById(Guid id)
         {
-            var entity = await _unitOfWork.GetRepository<TestHistory>().SingleOrDefaultAsync(
+            var entity = await _unitOfWork.GetRepository<ExamDoing>().SingleOrDefaultAsync(
                 predicate: x => x.Id == id && x.IsActive == true,
                 include: q => q
                     .Include(x => x.QuestionHistories)
-                    .Include(x => x.Exam)
-                    .Include(x => x.Quiz));
+                    .Include(x => x.Exam));
 
             if (entity == null)
             {
-                return new BaseResponse<GetTestHistoryResponse>
+                return new BaseResponse<GetExamDoingResponse>
                 {
                     Status = StatusCodes.Status404NotFound.ToString(),
                     Message = "Không tìm thấy lịch sử thi.",
@@ -312,11 +326,11 @@ namespace MathExamGenerator.Service.Implement
 
             int done = entity.QuestionHistories.Count(x => x.YourAnswer != null);
 
-            var response = _mapper.Map<GetTestHistoryResponse>(entity);
-            response.Name = entity.Exam?.Name ?? entity.Quiz?.Name;
+            var response = _mapper.Map<GetExamDoingResponse>(entity);
+            response.Name = entity.Exam?.Name;
             response.TotalQuestion = $"{done}/{total}";
 
-            return new BaseResponse<GetTestHistoryResponse>
+            return new BaseResponse<GetExamDoingResponse>
             {
                 Status = StatusCodes.Status200OK.ToString(),
                 Message = "Lấy lịch sử thi thành công.",
@@ -326,10 +340,10 @@ namespace MathExamGenerator.Service.Implement
 
         public async Task<BaseResponse<List<GetQuestionHistoryResponse>>> GetQuestionHistoriesByTestId(Guid id)
         {
-            var testHistory = await _unitOfWork.GetRepository<TestHistory>().SingleOrDefaultAsync(
+            var examDoing = await _unitOfWork.GetRepository<ExamDoing>().SingleOrDefaultAsync(
                 predicate: x => x.Id == id && x.IsActive == true);
 
-            if (testHistory == null)
+            if (examDoing == null)
             {
                 return new BaseResponse<List<GetQuestionHistoryResponse>>
                 {
@@ -341,7 +355,7 @@ namespace MathExamGenerator.Service.Implement
 
             // Lấy danh sách QuestionHistory theo TestHistoryId
             var questionHistories = await _unitOfWork.GetRepository<QuestionHistory>().GetListAsync(
-                predicate: x => x.HistoryTestId == id && x.IsActive == true
+                predicate: x => x.ExamDoingId == id && x.IsActive == true
             );
 
             var result = questionHistories
@@ -356,13 +370,13 @@ namespace MathExamGenerator.Service.Implement
             };
         }
 
-        public async Task<BaseResponse<bool>> Update(Guid id, UpdateTestHistoryRequest request, TestHistoryEnum? status)
+        public async Task<BaseResponse<bool>> Update(Guid id, UpdateExamDoingRequest request, ExamDoingEnum? status)
         {
-            var testHistory = await _unitOfWork.GetRepository<TestHistory>().SingleOrDefaultAsync(
+            var examDoing = await _unitOfWork.GetRepository<ExamDoing>().SingleOrDefaultAsync(
                 predicate: x => x.Id == id && x.IsActive == true,
                 include: x => x.Include(th => th.QuestionHistories));
 
-            if (testHistory == null)
+            if (examDoing == null)
             {
                 return new BaseResponse<bool>
                 {
@@ -372,20 +386,19 @@ namespace MathExamGenerator.Service.Implement
                 };
             }
 
-            testHistory.ExamId = request.ExamId ?? testHistory.ExamId;
-            testHistory.QuizId = request.QuizId ?? testHistory.QuizId;
+            examDoing.ExamId = request.ExamId ?? examDoing.ExamId;
             if (status.HasValue)
             {
-                testHistory.Status = status.ToString();
+                examDoing.Status = status.ToString();
             }
-            testHistory.StartAt = request.StartAt ?? testHistory.StartAt;
-            testHistory.UpdateAt = TimeUtil.GetCurrentSEATime();
+            examDoing.Duration = request.Duration ?? examDoing.Duration;
+            examDoing.UpdateAt = TimeUtil.GetCurrentSEATime();
 
             if (request.QuestionHistories != null && request.QuestionHistories.Any())
             {
                 var updateMap = request.QuestionHistories.ToDictionary(x => x.Id, x => x.YourAnswer);
 
-                foreach (var qh in testHistory.QuestionHistories)
+                foreach (var qh in examDoing.QuestionHistories)
                 {
                     if (updateMap.TryGetValue(qh.Id, out var yourAnswer))
                     {
@@ -396,12 +409,49 @@ namespace MathExamGenerator.Service.Implement
                 }
             }
 
-            if (testHistory.Status == TestHistoryEnum.Finish.ToString())
+            if (examDoing.Status == ExamDoingEnum.Finish.ToString())
             {
-                testHistory.Grade = 10.0/testHistory.QuestionHistories.Count()*testHistory.QuestionHistories.Count(x => x.Answer==x.YourAnswer);
+                examDoing.Grade = 10.0/examDoing.QuestionHistories.Count()*examDoing.QuestionHistories.Count(x => x.Answer==x.YourAnswer);
+
+                if (examDoing.Grade >= 9.0)
+                {
+                    var wallet = await _unitOfWork.GetRepository<Wallet>().SingleOrDefaultAsync(
+                        predicate: a => a.AccountId.Equals(examDoing.AccountId) && a.IsActive == true);
+
+                    if (wallet == null)
+                    {
+                        return new BaseResponse<bool>
+                        {
+                            Status = StatusCodes.Status404NotFound.ToString(),
+                            Message = "Không tìm thấy ví của tài khoản.",
+                            Data = false
+                        };
+                    }
+
+                    wallet.Point += 2000;
+                    wallet.UpdateAt = TimeUtil.GetCurrentSEATime();
+                    _unitOfWork.GetRepository<Wallet>().UpdateAsync(wallet);
+
+                    var transaction = new Transaction
+                    {
+                        Id = Guid.NewGuid(),
+                        WalletId = wallet.Id,
+                        DepositId = null,
+                        PackageOrderId = null,
+                        ExamDoingId = examDoing.Id,
+                        Type = "Điểm thưởng",
+                        Description = "Thưởng bài thi đạt điểm cao",
+                        Status = "Success",
+                        Amount = 2000.00m,
+                        IsActive = true,
+                        CreateAt = TimeUtil.GetCurrentSEATime(),
+                    };
+
+                    await _unitOfWork.GetRepository<Transaction>().InsertAsync(transaction);
+                }
             }
 
-            _unitOfWork.GetRepository<TestHistory>().UpdateAsync(testHistory);
+            _unitOfWork.GetRepository<ExamDoing>().UpdateAsync(examDoing);
 
             bool isSuccessfully = await _unitOfWork.CommitAsync() > 0;
 
@@ -411,6 +461,16 @@ namespace MathExamGenerator.Service.Implement
                 {
                     Status = StatusCodes.Status500InternalServerError.ToString(),
                     Message = "Một lỗi đã xảy ra trong quá trình cập nhật lịch sử đề thi.",
+                    Data = isSuccessfully
+                };
+            }
+
+            if (examDoing.Status == ExamDoingEnum.Finish.ToString() && examDoing.Grade >= 9.0)
+            {
+                return new BaseResponse<bool>
+                {
+                    Status = StatusCodes.Status200OK.ToString(),
+                    Message = "Người dùng đã hoàn thành bài thi và nhận được điểm thưởng với điểm thi >= 9.0",
                     Data = isSuccessfully
                 };
             }

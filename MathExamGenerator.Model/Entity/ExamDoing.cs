@@ -15,7 +15,7 @@ public partial class ExamDoing
 
     public string? Status { get; set; }
 
-    public TimeOnly? Duration { get; set; }
+    public TimeSpan? Duration { get; set; }
 
     public bool? IsActive { get; set; }
 

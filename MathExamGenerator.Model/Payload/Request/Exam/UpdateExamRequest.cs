@@ -10,7 +10,5 @@ namespace MathExamGenerator.Model.Payload.Request.Exam
     {
         public string? Name { get; set; }
         public long? Time { get; set; }
-        public DateTime? StartDate { get; set; }
-        public DateTime? EndDate { get; set; }
     }
 }
