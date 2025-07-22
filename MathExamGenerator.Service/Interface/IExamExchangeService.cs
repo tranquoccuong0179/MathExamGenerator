@@ -15,10 +15,10 @@ namespace MathExamGenerator.Service.Interface
     {
         Task<BaseResponse<ExamExchangeResponse>> Create(ExamExchangeRequest request);
         Task<BaseResponse<bool>> Delete(Guid id);
-        Task<BaseResponse<IPaginate<GetExamExchangeResponse>>> GetByTeacher(int page, int size);
+        Task<BaseResponse<IPaginate<GetExamExchangeResponse>>> GetByStaff(int page, int size);
         Task<BaseResponse<ExamExchangeResponse>> GetExamChange(Guid examchangeId);
         Task<BaseResponse<ExamExchangeResponse>> Update(Guid examchange, UpdateExamEchangeRequest request);
-        Task<BaseResponse<IPaginate<GetExamExchangeTeacherResponse>>> GetAllTeacher(int page, int size);
+        Task<BaseResponse<IPaginate<GetExamExchangeTeacherResponse>>> GetAllStaff(int page, int size);
         Task<BaseResponse<bool>> ApproveExamExchange(Guid id, ExamExchangeEnum? status);
 
     }

@@ -38,11 +38,11 @@ namespace MathExamGenerator.Service.Implement
         {
             Guid? accountId = UserUtil.GetAccountId(_httpContextAccessor.HttpContext);
 
-            var account = await _unitOfWork.GetRepository<Account>().SingleOrDefaultAsync(
-    predicate: a => a.Id.Equals(accountId) &&
-                    a.IsActive == true &&
-                    a.Role == RoleEnum.STAFF.ToString())
-    ?? throw new NotFoundException("Chỉ Staff mới được phép thực hiện hành động này");
+                var account = await _unitOfWork.GetRepository<Account>().SingleOrDefaultAsync(
+        predicate: a => a.Id.Equals(accountId) &&
+                        a.IsActive == true &&
+                        a.Role == RoleEnum.STAFF.ToString())
+        ?? throw new NotFoundException("Chỉ Staff mới được phép thực hiện hành động này");
 
 
             var examRepo = _unitOfWork.GetRepository<ExamExchange>();
@@ -134,7 +134,7 @@ namespace MathExamGenerator.Service.Implement
 
         }
 
-        public async Task<BaseResponse<IPaginate<GetExamExchangeResponse>>> GetByTeacher(int page, int size)
+        public async Task<BaseResponse<IPaginate<GetExamExchangeResponse>>> GetByStaff(int page, int size)
         {
 
             Guid? accountId = UserUtil.GetAccountId(_httpContextAccessor.HttpContext);
@@ -146,26 +146,26 @@ namespace MathExamGenerator.Service.Implement
              ?? throw new NotFoundException("Chỉ Staff mới được phép thực hiện hành động này");
 
             var exams = await _unitOfWork.GetRepository<ExamExchange>().GetPagingListAsync(
-        selector: e => new GetExamExchangeResponse
-        {
-            ExamExchangeId = e.Id,
-            Status = e.Status,
-            CreateAt = e.CreateAt,
-            QuestionCount = e.Questions.Count,
-            CategoryName = e.Questions.FirstOrDefault() != null
-                            ? e.Questions.First().Category.Name
-                            : null,
-            CategoryGrade = e.Questions.FirstOrDefault() != null
-                            ? e.Questions.First().Category.Grade
-                            : null
-        },
-        predicate: e => e.AccountId == accountId && e.IsActive == true,
-        orderBy: q => q.OrderByDescending(e => e.CreateAt),
-        include: q => q
-                    .Include(e => e.Questions)
-                        .ThenInclude(q => q.Category),
-        page: page,
-        size: size);
+            selector: e => new GetExamExchangeResponse
+            {
+                ExamExchangeId = e.Id,
+                Status = e.Status,
+                CreateAt = e.CreateAt,
+                QuestionCount = e.Questions.Count,
+                CategoryName = e.Questions.FirstOrDefault() != null
+                                ? e.Questions.First().Category.Name
+                                : null,
+                CategoryGrade = e.Questions.FirstOrDefault() != null
+                                ? e.Questions.First().Category.Grade
+                                : null
+            },
+            predicate: e => e.AccountId == accountId && e.IsActive == true,
+            orderBy: q => q.OrderByDescending(e => e.CreateAt),
+            include: q => q
+                        .Include(e => e.Questions)
+                            .ThenInclude(q => q.Category),
+            page: page,
+            size: size);
 
             return new BaseResponse<IPaginate<GetExamExchangeResponse>>
             {
@@ -176,7 +176,7 @@ namespace MathExamGenerator.Service.Implement
         }
 
 
-        public async Task<BaseResponse<IPaginate<GetExamExchangeTeacherResponse>>> GetAllTeacher(int page, int size)
+        public async Task<BaseResponse<IPaginate<GetExamExchangeTeacherResponse>>> GetAllStaff(int page, int size)
         {
             var exams = await _unitOfWork.GetRepository<ExamExchange>().GetPagingListAsync(
                 selector: e => new GetExamExchangeTeacherResponse

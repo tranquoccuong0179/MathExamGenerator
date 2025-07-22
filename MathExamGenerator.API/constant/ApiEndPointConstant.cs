@@ -120,15 +120,14 @@
         public static class ExamEchange
         {
             public const string ExamExchangeEndPoint = ApiEndpoint + "/exam-exchange";
-            public const string ExamExchangeTeacherEndPoint = ApiEndpoint + "/teacher";
-
+            public const string ExamExchangeStaffEndPoint = ApiEndpoint + "/staff";
             public const string GetExamExchange = ExamExchangeEndPoint;
             public const string CreateExamExchange = ExamExchangeEndPoint;
-            public const string GetExamExchangeByTeacher = ExamExchangeTeacherEndPoint + "/exam-exchange";
+            public const string GetExamExchangeByStaff = ExamExchangeStaffEndPoint + "/exam-exchange";
             public const string GetExamExchangeById = ExamExchangeEndPoint + "/{id}";
             public const string UpdateExamExchange = ExamExchangeEndPoint + "/{id}";
             public const string DeleteExamExchange = ExamExchangeEndPoint + "/{id}";
-            public const string GetAllTeacher = ExamExchangeEndPoint;
+            public const string GetAllStaff = ExamExchangeEndPoint;
             public const string ApproveExamExchange = ExamExchangeEndPoint + "/status" +"/{id}";
         }
 
@@ -274,5 +273,16 @@
             public const string GetManager = ManagerEndPoint + "/{id}";
             public const string DeleteManager = ManagerEndPoint + "/{id}";
         }
+
+        public static class Package
+        {
+            public const string PackageEndPoint = ApiEndpoint + "/package";
+            public const string CreatePackage = PackageEndPoint;
+            public const string GetAllPackage = PackageEndPoint;
+            public const string GetPackageById = PackageEndPoint + "/{id}";
+            public const string UpdatePackage = PackageEndPoint + "/{id}";
+            public const string DeletePackage = PackageEndPoint + "/{id}";
+        }
+
     }
 }
