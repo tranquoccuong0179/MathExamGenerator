@@ -30,7 +30,7 @@ namespace MathExamGenerator.Model.Mapper
                 .ForMember(dest => dest.CreateAt, opt => opt.MapFrom(src => TimeUtil.GetCurrentSEATime()))
                 .ForMember(dest => dest.UpdateAt, opt => opt.MapFrom(src => TimeUtil.GetCurrentSEATime()));
             
-            CreateMap<RegisterTeacherRequest, Account>()
+            /*CreateMap<RegisterTeacherRequest, Account>()
                 .ForMember(dest => dest.Id, opt => opt.MapFrom(src => Guid.NewGuid()))
                 .ForMember(dest => dest.Password, opt => opt.MapFrom(src => PasswordUtil.HashPassword(src.Password)))
                 .ForMember(dest => dest.Role, opt => opt.MapFrom(src => RoleEnum.TEACHER.GetDescriptionFromEnum()))
@@ -40,7 +40,7 @@ namespace MathExamGenerator.Model.Mapper
                 .ForMember(dest => dest.IsPremium, opt => opt.MapFrom(src => false))
                 .ForMember(dest => dest.IsActive, opt => opt.MapFrom(src => true))
                 .ForMember(dest => dest.CreateAt, opt => opt.MapFrom(src => TimeUtil.GetCurrentSEATime()))
-                .ForMember(dest => dest.UpdateAt, opt => opt.MapFrom(src => TimeUtil.GetCurrentSEATime()));
+                .ForMember(dest => dest.UpdateAt, opt => opt.MapFrom(src => TimeUtil.GetCurrentSEATime()));*/
 
             CreateMap<RegisterManagerRequest, Account>()
                 .ForMember(dest => dest.Id, opt => opt.MapFrom(src => Guid.NewGuid()))
