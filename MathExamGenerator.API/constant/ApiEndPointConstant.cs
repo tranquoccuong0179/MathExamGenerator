@@ -295,6 +295,8 @@
             public const string UpdateReport = ReportEndPoint + "/{id}";
             public const string DeleteReport = ReportEndPoint + "/{id}";
             public const string GetReportType = ReportEndPoint + "/type";
+            public const string GetMyReports = ReportEndPoint + "/my";
+
 
         }
 

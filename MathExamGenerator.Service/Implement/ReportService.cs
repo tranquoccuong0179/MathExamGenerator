@@ -15,6 +15,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Microsoft.EntityFrameworkCore;
 
 namespace MathExamGenerator.Service.Implement
 {
@@ -24,30 +25,177 @@ namespace MathExamGenerator.Service.Implement
         {
         }
 
-        public Task<BaseResponse<GetReportResponse>> Create(CreateReportRequest request)
+        public async Task<BaseResponse<GetReportResponse>> Create(CreateReportRequest request)
         {
-            throw new NotImplementedException();
+
+            Guid? accountId = UserUtil.GetAccountId(_httpContextAccessor.HttpContext);
+            if (accountId == null)
+            {
+                return new BaseResponse<GetReportResponse>
+                {
+                    Status = StatusCodes.Status400BadRequest.ToString(),
+                    Message = "Bạn cần đăng nhập để thực hiện thao tác này",
+                };
+            }
+
+            if (string.IsNullOrEmpty(request.Type) || !Enum.TryParse<ReportTypeEnum>(request.Type, out var reportType))
+            {
+                return new BaseResponse<GetReportResponse>
+                {
+                    Status = StatusCodes.Status400BadRequest.ToString(),
+                    Message = "Loại báo cáo không hợp lệ",
+                };
+            }
+            var report = _mapper.Map<Report>(request);
+            report.SendAccountId = accountId.Value;
+            report.IsActive = true;
+            report.Status = ReportStatusEnum.Pending.ToString();
+
+            await _unitOfWork.GetRepository<Report>().InsertAsync(report);
+            await _unitOfWork.CommitAsync();
+
+            var result = _mapper.Map<GetReportResponse>(report);
+            return new BaseResponse<GetReportResponse>
+            {
+                Status = StatusCodes.Status201Created.ToString(),
+                Data = result,
+                Message = "Tạo phiếu báo cáo thành công",
+            };
         }
 
-        public Task<BaseResponse<bool>> Delete(Guid id)
+        public async Task<BaseResponse<bool>> Delete(Guid id)
         {
-            throw new NotImplementedException();
+            var repo = _unitOfWork.GetRepository<Report>();
+            var report = await repo.SingleOrDefaultAsync(
+               predicate: x => x.Id == id && x.IsActive == true
+                );
+
+            if (report == null || report.IsActive == false)
+                return new BaseResponse<bool>
+                {
+                    Status = StatusCodes.Status404NotFound.ToString(),
+                    Message = "Phiếu báo cáo không tồn tại ",
+                };
+
+
+            report.IsActive = false;
+            report.DeleteAt = TimeUtil.GetCurrentSEATime();
+
+            repo.UpdateAsync(report);
+            await _unitOfWork.CommitAsync();
+
+            return new BaseResponse<bool>
+            {
+                Status = StatusCodes.Status200OK.ToString(),
+                Data = true,
+                Message = "Xóa phiếu báo cáo thành công",
+            };
         }
 
-        public Task<BaseResponse<IPaginate<GetReportResponse>>> GetAll(int page, int size)
+        public async Task<BaseResponse<IPaginate<GetReportResponse>>> GetAll(int page, int size)
         {
-            throw new NotImplementedException();
+            var repo = _unitOfWork.GetRepository<Report>();
+            var reports = await repo.GetPagingListAsync(
+                selector: r => _mapper.Map<GetReportResponse>(r),
+                predicate: r => r.IsActive == true && r.DeleteAt == null,
+                orderBy: q => q.OrderByDescending(r => r.CreateAt),
+                page: page,
+                size: size
+            );
+
+            return new BaseResponse<IPaginate<GetReportResponse>>
+            {
+                Status = StatusCodes.Status200OK.ToString(),
+                Data = reports,
+                Message = "Lấy danh sách phiếu báo cáo thành công",
+            };
         }
 
-        public Task<BaseResponse<GetReportResponse>> GetById(Guid id)
+        public async Task<BaseResponse<GetReportResponse>> GetById(Guid id)
         {
-            throw new NotImplementedException();
+            var report = await _unitOfWork.GetRepository<Report>()
+                .SingleOrDefaultAsync(
+                    predicate: r => r.Id == id && r.IsActive == true,
+                    include: r => r.Include(r => r.SendAccount).Include(r => r.ReportedAccount)
+                );
+
+            if (report == null)
+            {
+                return new BaseResponse<GetReportResponse>
+                {
+                    Status = StatusCodes.Status404NotFound.ToString(),
+                    Message = "Phiếu báo cáo không tồn tại ",
+                };
+             }
+
+            var result = _mapper.Map<GetReportResponse>(report);
+          
+
+            return new BaseResponse<GetReportResponse> { Status = StatusCodes.Status200OK.ToString(), Data = result, Message = "Lấy thông tin phiếu thành công" };
         }
 
-        public Task<BaseResponse<GetReportResponse>> Update(Guid id, UpdateReportRequest request)
+
+        public async Task<BaseResponse<GetReportResponse>> Update(Guid id, ReportStatusEnum status)
         {
-            throw new NotImplementedException();
+            var repo = _unitOfWork.GetRepository<Report>();
+            var report = await repo.SingleOrDefaultAsync(
+                predicate: x => x.Id == id && x.IsActive == true
+            );
+
+            if (report == null)
+            {
+                return new BaseResponse<GetReportResponse>
+                {
+                    Status = StatusCodes.Status404NotFound.ToString(),
+                    Message = "Không tìm thấy phiếu báo cáo",
+                };
+            }
+
+            report.Status = status.ToString(); // Enum lưu dạng string trong DB
+            report.UpdateAt = TimeUtil.GetCurrentSEATime();
+
+            repo.UpdateAsync(report);
+            await _unitOfWork.CommitAsync();
+
+            var result = _mapper.Map<GetReportResponse>(report);
+            return new BaseResponse<GetReportResponse>
+            {
+                Status = StatusCodes.Status200OK.ToString(),
+                Message = "Cập nhật trạng thái thành công",
+                Data = result
+            };
         }
+
+
+        public async Task<BaseResponse<IPaginate<GetReportResponse>>> GetMyReports(int page, int size)
+        {
+            Guid? accountId = UserUtil.GetAccountId(_httpContextAccessor.HttpContext);
+            if (accountId == null)
+            {
+                return new BaseResponse<IPaginate<GetReportResponse>>
+                {
+                    Status = StatusCodes.Status401Unauthorized.ToString(),
+                    Message = "Bạn cần đăng nhập để thực hiện thao tác này"
+                };
+            }
+
+            var repo = _unitOfWork.GetRepository<Report>();
+            var reports = await repo.GetPagingListAsync(
+                selector: r => _mapper.Map<GetReportResponse>(r),
+                predicate: r => r.SendAccountId == accountId && r.IsActive == true && r.DeleteAt == null,
+                orderBy: q => q.OrderByDescending(r => r.CreateAt),
+                page: page,
+                size: size
+            );
+
+            return new BaseResponse<IPaginate<GetReportResponse>>
+            {
+                Status = StatusCodes.Status200OK.ToString(),
+                Data = reports,
+                Message = "Lấy danh sách phiếu báo cáo của bạn thành công"
+            };
+        }
+
         public List<KeyValuePair<string, string>> GetReportTypes()
         {
             return Enum.GetValues(typeof(ReportTypeEnum))
