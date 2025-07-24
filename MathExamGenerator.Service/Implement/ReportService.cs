@@ -48,6 +48,7 @@ namespace MathExamGenerator.Service.Implement
             }
             var report = _mapper.Map<Report>(request);
             report.SendAccountId = accountId.Value;
+            report.ReportedAccountId = request.ReportedAccountId;
             report.IsActive = true;
             report.Status = ReportStatusEnum.Pending.ToString();
 
