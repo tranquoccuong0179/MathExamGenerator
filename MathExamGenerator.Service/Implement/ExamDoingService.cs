@@ -20,6 +20,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Microsoft.Identity.Client;
+using CloudinaryDotNet.Actions;
 
 namespace MathExamGenerator.Service.Implement
 {
@@ -89,6 +90,23 @@ namespace MathExamGenerator.Service.Implement
                 account.FreeTries--;
                 account.UpdateAt = TimeUtil.GetCurrentSEATime();
                 _unitOfWork.GetRepository<Account>().UpdateAsync(account);
+
+                var transaction = new Transaction
+                {
+                    Id = Guid.NewGuid(),
+                    WalletId = wallet.Id,
+                    DepositId = null,
+                    PackageOrderId = null,
+                    ExamDoingId = examDoing.Id,
+                    Type = "Thanh toán",
+                    Description = "Mua đề thi bằng điểm FreeTries.",
+                    Status = "Success",
+                    Amount = 0.00m,
+                    IsActive = true,
+                    CreateAt = TimeUtil.GetCurrentSEATime(),
+                };
+
+                await _unitOfWork.GetRepository<Transaction>().InsertAsync(transaction);
             } 
             else
             {
@@ -386,7 +404,6 @@ namespace MathExamGenerator.Service.Implement
                 };
             }
 
-            examDoing.ExamId = request.ExamId ?? examDoing.ExamId;
             if (status.HasValue)
             {
                 examDoing.Status = status.ToString();
@@ -409,12 +426,19 @@ namespace MathExamGenerator.Service.Implement
                 }
             }
 
+            bool cashback = false;
+
             if (examDoing.Status == ExamDoingEnum.Finish.ToString())
             {
                 examDoing.Grade = 10.0/examDoing.QuestionHistories.Count()*examDoing.QuestionHistories.Count(x => x.Answer==x.YourAnswer);
 
-                if (examDoing.Grade >= 9.0)
+                var existedTransaction = await _unitOfWork.GetRepository<Transaction>().SingleOrDefaultAsync(
+                        predicate: a => a.ExamDoingId.Equals(examDoing.Id) && a.IsActive == true && a.Amount == 0.00m);
+
+                if (examDoing.Grade >= 9.0 && existedTransaction == null)
                 {
+                    cashback = true;
+
                     var wallet = await _unitOfWork.GetRepository<Wallet>().SingleOrDefaultAsync(
                         predicate: a => a.AccountId.Equals(examDoing.AccountId) && a.IsActive == true);
 
@@ -465,12 +489,22 @@ namespace MathExamGenerator.Service.Implement
                 };
             }
 
-            if (examDoing.Status == ExamDoingEnum.Finish.ToString() && examDoing.Grade >= 9.0)
+            if (examDoing.Status == ExamDoingEnum.Finish.ToString() && examDoing.Grade >= 9.0 && cashback)
             {
                 return new BaseResponse<bool>
                 {
                     Status = StatusCodes.Status200OK.ToString(),
                     Message = "Người dùng đã hoàn thành bài thi và nhận được điểm thưởng với điểm thi >= 9.0",
+                    Data = isSuccessfully
+                };
+            }
+
+            if (examDoing.Status == ExamDoingEnum.Finish.ToString() && examDoing.Grade >= 9.0 && !cashback)
+            {
+                return new BaseResponse<bool>
+                {
+                    Status = StatusCodes.Status200OK.ToString(),
+                    Message = "Người dùng đã hoàn thành bài thi và nhưng không nhận điểm thường vì bài kiểm tra là FreezTries.",
                     Data = isSuccessfully
                 };
             }

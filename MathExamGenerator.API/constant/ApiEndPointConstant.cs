@@ -193,7 +193,7 @@
 
         public static class ExamDoing
         {
-            public const string ExamDoingEndpoint = ApiEndpoint + "/test-history";
+            public const string ExamDoingEndpoint = ApiEndpoint + "/exam-doing";
             public const string GetAll = ExamDoingEndpoint;
             public const string GetById = ExamDoingEndpoint + "/{id}";
             public const string Create = ExamDoingEndpoint;
