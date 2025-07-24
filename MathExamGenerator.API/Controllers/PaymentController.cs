@@ -34,6 +34,14 @@ namespace MathExamGenerator.API.Controllers
             return StatusCode(int.Parse(response.Status), response);
         }
 
+        [HttpPost(ApiEndPointConstant.Payment.CreateExamPayment)]
+        [ProducesResponseType(typeof(BaseResponse<string>), StatusCodes.Status200OK)]
+        [ProducesErrorResponseType(typeof(ProblemDetails))]
+        public async Task<IActionResult> CreateExamPayment([FromBody] PaymentExamRequest request)
+        {
+            var response = await _paymentService.CreateExamPayment(request);
+            return StatusCode(int.Parse(response.Status), response);
 
+        }
     }
 }

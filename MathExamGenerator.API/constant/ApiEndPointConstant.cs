@@ -169,6 +169,7 @@
             public const string PaymentEndPoint = ApiEndpoint + "/payment";
             public const string CreatePayment = PaymentEndPoint;
             public const string HandleWebhook = PaymentEndPoint + "/webhook";
+            public const string CreateExamPayment = PaymentEndPoint + "/exam";
         }
         public static class Comment
         {

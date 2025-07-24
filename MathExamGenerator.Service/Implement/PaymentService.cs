@@ -100,6 +100,8 @@ namespace MathExamGenerator.Service.Implement
 
         }
 
+   
+
         public async Task<BaseResponse<string>> HandleWebhook(WebhookNotification notification)
         {
             try
@@ -191,7 +193,73 @@ namespace MathExamGenerator.Service.Implement
                 };
             }
 
-
         }
+
+        public async Task<BaseResponse<string>> CreateExamPayment(PaymentExamRequest request)
+        {
+            Guid? accountId = UserUtil.GetAccountId(_httpContextAccessor.HttpContext);
+            if (accountId == null)
+            {
+                throw new BadHttpRequestException("Bạn cần đăng nhập để thực hiện thao tác này");
+            }
+
+            var examDoing = await _unitOfWork.GetRepository<ExamDoing>().SingleOrDefaultAsync(
+                predicate: e => e.Id == request.ExamDoingId && e.IsActive == true
+            );
+            if (examDoing == null)
+                throw new NotFoundException("Không tìm thấy bài làm");
+
+            var wallet = await _unitOfWork.GetRepository<Wallet>().SingleOrDefaultAsync(
+                predicate: w => w.AccountId == accountId && w.IsActive == true
+            ) ?? throw new NotFoundException("Không tìm thấy ví");
+
+            if (request.Amount <= 0)
+            {
+                throw new BadHttpRequestException("Số tiền thanh toán phải lớn hơn 0");
+            }
+
+            if (request.Amount > wallet.Point)
+            {
+                var shortfall = request.Amount - wallet.Point;
+                return new BaseResponse<string>
+                {
+                    Status = StatusCodes.Status400BadRequest.ToString(),
+                    Message = $"Số dư ví không đủ. Bạn cần nạp thêm {shortfall} điểm để thực hiện thanh toán.",
+                    Data = null
+                };
+            }
+
+            wallet.Point -= request.Amount;
+            wallet.UpdateAt = TimeUtil.GetCurrentSEATime();
+            _unitOfWork.GetRepository<Wallet>().UpdateAsync(wallet);
+
+            var transaction = new Model.Entity.Transaction
+            {
+                Id = Guid.NewGuid(),
+                WalletId = wallet.Id,
+                ExamDoingId = request.ExamDoingId,
+                Amount = request.Amount,
+                Type = "Mua Bài",
+                Description = "Thanh toán bài làm",
+                Status = "Success", 
+                IsActive = true,
+                CreateAt = TimeUtil.GetCurrentSEATime()
+            };
+
+            await _unitOfWork.GetRepository<Model.Entity.Transaction>().InsertAsync(transaction);
+
+       
+
+            await _unitOfWork.CommitAsync();
+
+            return new BaseResponse<string>
+            {
+                Status = StatusCodes.Status201Created.ToString(),
+                Message = "Thanh toán bài làm thành công",
+                Data = transaction.Id.ToString()
+            };
+        }
+
+
     }
 }
