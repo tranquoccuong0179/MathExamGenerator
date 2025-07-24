@@ -10,7 +10,6 @@ namespace MathExamGenerator.Model.Payload.Request.ExamDoing
 {
     public class UpdateExamDoingRequest
     {
-        public Guid? ExamId { get; set; }
         public TimeSpan? Duration { get; set; }
         public List<UpdateQuestionHistoryRequest> QuestionHistories { get; set; }
     }
