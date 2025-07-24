@@ -16,8 +16,8 @@ namespace MathExamGenerator.Model.Mapper
         public RepportMapper() {
 
             CreateMap<CreateReportRequest, Report>()
-                .ForMember(dest => dest.Id, opt => Guid.NewGuid())
-                .ForMember(dest => dest.CreateAt, opt => TimeUtil.GetCurrentSEATime())
+                .ForMember(dest => dest.Id, opt => opt.MapFrom(_ => Guid.NewGuid()))
+                .ForMember(dest => dest.CreateAt, opt => opt.MapFrom(_ => TimeUtil.GetCurrentSEATime()))
                 .ForMember(dest => dest.UpdateAt, opt => opt.Ignore());
             CreateMap<UpdateReportRequest, Report>()
                 .ForMember(dest => dest.CreateAt, opt => opt.Ignore());

@@ -14,5 +14,6 @@ namespace MathExamGenerator.Service.Interface
     {
         Task<BaseResponse<string>> Create(PaymentRequest request);
         Task<BaseResponse<string>> HandleWebhook(WebhookNotification notification);
+        Task<BaseResponse<string>> CreateExamPayment(PaymentExamRequest request);
     }
 }

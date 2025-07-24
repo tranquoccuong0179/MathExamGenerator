@@ -20,6 +20,7 @@ using Org.BouncyCastle.Asn1.Ocsp;
 using Microsoft.Identity.Client;
 using MathExamGenerator.Model.Enum;
 using Google.Apis.Drive.v3.Data;
+using Microsoft.IdentityModel.Tokens;
 namespace MathExamGenerator.Service.Implement
 {
     public class ExamExchangeService : BaseService<ExamExchangeService>, IExamExchangeService
@@ -43,6 +44,16 @@ namespace MathExamGenerator.Service.Implement
                                 a.IsActive == true &&
                                 a.Role == RoleEnum.STAFF.ToString())
             ?? throw new NotFoundException("Chỉ Staff mới được phép thực hiện hành động này");
+
+            if (request.CategoryId == null || request.CategoryId == Guid.Empty)
+                throw new NotFoundException("Vui lòng chọn danh mục cho phiếu đề thi");
+
+            if (request.Questions == null || request.Questions.Count == 0)
+                throw new NotFoundException("Không có câu hỏi nào được gửi lên.");
+
+            if (request.Questions.Any(q => q.BookTopicId == null || q.BookTopicId == Guid.Empty))
+                throw new NotFoundException("Vui lòng chọn chủ đề cho tất cả các câu hỏi");
+
 
             var examRepo = _unitOfWork.GetRepository<ExamExchange>();
             var categoryRepo = _unitOfWork.GetRepository<Category>();

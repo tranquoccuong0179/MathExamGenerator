@@ -169,6 +169,7 @@
             public const string PaymentEndPoint = ApiEndpoint + "/payment";
             public const string CreatePayment = PaymentEndPoint;
             public const string HandleWebhook = PaymentEndPoint + "/webhook";
+            public const string CreateExamPayment = PaymentEndPoint + "/exam";
         }
         public static class Comment
         {
@@ -295,6 +296,8 @@
             public const string UpdateReport = ReportEndPoint + "/{id}";
             public const string DeleteReport = ReportEndPoint + "/{id}";
             public const string GetReportType = ReportEndPoint + "/type";
+            public const string GetMyReports = ReportEndPoint + "/my";
+
 
         }
 
